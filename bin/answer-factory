@@ -1,12 +1,17 @@
 #!/usr/bin/env ruby
 
+require 'fileutils'
+include FileUtils::Verbose
+
 project_root = ARGV.first
 gem_root = "#{File.dirname(__FILE__)}/.."
 
-Dir.mkdir(project_root) unless Dir.exists?(project_root)
-Dir.mkdir("#{project_root}/lib") unless Dir.exists?("#{project_root}/lib")
-Dir.mkdir("#{project_root}/lib/instructions") unless Dir.exists?("#{project_root}/lib/instructions")
-Dir.mkdir("#{project_root}/lib/operators") unless Dir.exists?("#{project_root}/lib/operators")
-Dir.mkdir("#{project_root}/lib/types") unless Dir.exists?("#{project_root}/lib/types")
+if Dir.exist?(project_root) then
+  puts "project directory /#{project_root} already exists"
+else
+  Dir.mkdir(project_root)
+  cd("./#{project_root}") do
+    touch "./Thorfile"
+  end
+end
 
-Dir.mkdir("#{project_root}/spec") unless Dir.exists?("#{project_root}/spec")

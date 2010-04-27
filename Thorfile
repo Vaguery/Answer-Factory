@@ -15,18 +15,12 @@ class Create_Factory < Thor::Group
     File.dirname(__FILE__)
   end
   
-  
-  def create_factory_folder
-    if Dir.exist?(project_name) then
-      puts "project directory /#{project_name} already exists"
-    else
-      empty_directory(project_name)
-      empty_directory("#{project_name}/lib")
-      empty_directory("#{project_name}/lib/nudge/instructions")
-      empty_directory("#{project_name}/lib/nudge/types")
-      empty_directory("#{project_name}/lib/factory/operators")
-      empty_directory("#{project_name}/spec")
-    end
+  def fill_factory_folder
+    empty_directory("#{project_name}/lib")
+    empty_directory("#{project_name}/lib/nudge/instructions")
+    empty_directory("#{project_name}/lib/nudge/types")
+    empty_directory("#{project_name}/lib/factory/operators")
+    empty_directory("#{project_name}/spec")
   end
 end
 
