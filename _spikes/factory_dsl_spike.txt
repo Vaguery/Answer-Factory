@@ -1,0 +1,56 @@
+# this is JSON
+
+{
+  "Generator_1":
+  {
+    "target_size_in_points": 20,
+    "instruction_names":
+    [
+      "int_add",
+      "int_subtract",
+      "int_divide",
+      "int_multiply",
+      "int_modulo",
+      "int_sign",
+      "int_if",
+      "int_less_than_q",
+      "int_greater_than_q",
+      "int_equal_q",
+      "bool_and",
+      "bool_or",
+      "bool_not"
+    ],
+    "type_names":
+    [
+      "int",
+      "bool"
+    ],
+    "reference_names":
+    [
+      "x1",
+      "x2"
+    ],
+    "how_many": 100
+  }
+}
+
+# this is some DSL [lite]
+
+create_generator "Generator 1", {
+  target_size_in_points: 20,
+  makes: NudgeProgram,
+  instruction_names:["int_add", "int_subtract", "int_divide",
+    "int_multiply", "int_modulo", "int_sign", "int_if",
+    "int_less_than_q", "int_greater_than_q", "int_equal_q",
+    "bool_and", "bool_or", "bool_not"],
+  type_names: ["int", "bool"],
+  reference_names: ["x1", "x2"],
+  how_many: 100
+  }
+  
+  
+create_workstation "Generational 1", {
+  combines_WIP_with: "Generational 2",
+  ships_to: "Generational 2",
+  for_other_settings_see: "Generator 1"
+}

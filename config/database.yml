@@ -1,0 +1,9 @@
+# realy wants to use CouchDB version 0.11 or higher
+
+# edit this to fit your particular CouchDB configuration
+main_database:
+  db_root: http://127.0.0.1:5984              #   URI of your CouchDB server
+  db_name: my_factory                         #   root database handling your AnswerFactory:
+  tag_filter: _design/routing/_view/by_tag    #   don't edit this unless you also
+                                              #     change how it's used in the codebase!
+  
