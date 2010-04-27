@@ -4,7 +4,7 @@ $: << File.join(File.dirname(__FILE__), "/../lib")
 
 require 'spec'
 require 'pp'
-require 'nudge-gp'
+require 'answer-factory'
 require 'erb'
 require 'fakeweb'
 require 'couchrest'

@@ -1,5 +1,5 @@
 require 'active_support'
-require 'lib/nudge-gp'
+require 'lib/answer-factory'
 
 class Extend_Nudge < Thor::Group
   include Thor::Actions

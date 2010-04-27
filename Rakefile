@@ -3,7 +3,7 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "nudgegp"
+    gemspec.name = "answer-factory"
     gemspec.summary = "Genetic Programming in the Nudge language"
     gemspec.description = "The pragmaticgp gem provides a simple framework for building, running and managing genetic programming experiments which automatically discover algorithms and equations to solve user-defined problems."
     gemspec.email = "bill@vagueinnovation.com"

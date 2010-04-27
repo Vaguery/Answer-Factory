@@ -1,5 +1,5 @@
 require 'nudge'
-require '../lib/nudge-gp'
+require '../lib/answer-factory'
 include Nudge
 include NudgeGP
 
