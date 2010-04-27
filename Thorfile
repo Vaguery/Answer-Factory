@@ -1,30 +1,31 @@
 require 'active_support'
 require 'lib/answer-factory'
 
-class Extend_Nudge < Thor::Group
+class Create_Factory < Thor::Group
   include Thor::Actions
   
   # Define arguments and options
   argument :project_name
-  class_option :test_framework, :default => :rspec
-  desc "Creates a new project folder structure for Nudge types, instructions and specs"
+  class_options :test_framework => :rspec
+  
+  desc "Creates a new project folder structure for new Nudge types, instructions, search operators and specs"
   
   
   def self.source_root
     File.dirname(__FILE__)
   end
   
-  def create_project_folder
-    dirname = "#{Extend_Nudge.source_root}/#{project_name}"
-    puts dirname
-    if Dir.exist?(dirname) then
-      puts "project directory 'dirname' already exists"
+  
+  def create_factory_folder
+    if Dir.exist?(project_name) then
+      puts "project directory /#{project_name} already exists"
     else
-      empty_directory(dirname)
-      empty_directory("#{dirname}/lib")
-      empty_directory("#{dirname}/lib/instructions")
-      empty_directory("#{dirname}/lib/interpreter/types")
-      empty_directory("#{dirname}/spec")
+      empty_directory(project_name)
+      empty_directory("#{project_name}/lib")
+      empty_directory("#{project_name}/lib/nudge/instructions")
+      empty_directory("#{project_name}/lib/nudge/types")
+      empty_directory("#{project_name}/lib/factory/operators")
+      empty_directory("#{project_name}/spec")
     end
   end
 end
