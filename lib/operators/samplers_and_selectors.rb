@@ -1,4 +1,4 @@
-module NudgeGP
+module AnswerFactory
   
   class Sampler < SearchOperator
     def initialize (params = {})

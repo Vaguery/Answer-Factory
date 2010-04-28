@@ -1,4 +1,4 @@
-module NudgeGP
+module AnswerFactory
   class Factory
     require 'open-uri'
     require 'configatron'

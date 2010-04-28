@@ -1,4 +1,4 @@
-module NudgeGP
+module AnswerFactory
   
   class Evaluator < SearchOperator
     attr_accessor :name

@@ -11,4 +11,4 @@ require 'couchrest'
 require 'json'
 
 include Nudge
-include NudgeGP
+include AnswerFactory

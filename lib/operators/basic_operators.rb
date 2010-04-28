@@ -1,5 +1,5 @@
 #encoding: utf-8
-module NudgeGP
+module AnswerFactory
   
   # Abstract class that from which specific SearchOperator subclasses inherit initialization
   

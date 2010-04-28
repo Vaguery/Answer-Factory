@@ -1,4 +1,4 @@
-module NudgeGP
+module AnswerFactory
   class Workstation
     attr_reader :name, :capacity, :couchdb_uri, :factory_name
     attr_accessor :downstream_stations
