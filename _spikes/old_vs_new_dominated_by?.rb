@@ -1,7 +1,7 @@
 require 'nudge'
 require '../lib/answer-factory'
 include Nudge
-include NudgeGP
+include AnswerFactory
 
 
 d1 = Answer.new("")

@@ -1,4 +1,4 @@
-module NudgeGP
+module AnswerFactory
   # A Batch is simply an Array of Answers, with validation for all assignment methods
   class Batch < Array
     

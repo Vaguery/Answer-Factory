@@ -3,7 +3,7 @@ require 'couchrest'
 require 'nudge'
 require '../lib/answer-factory'
 include Nudge
-include NudgeGP
+include AnswerFactory
 
 db = CouchRest.database!("http://127.0.0.1:5984/spike_db")
 

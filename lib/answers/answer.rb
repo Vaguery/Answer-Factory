@@ -1,6 +1,6 @@
 require 'set'
 
-module NudgeGP
+module AnswerFactory
   class Answer
     attr_accessor :scores, :tags
     attr_reader :draft_blueprint, :program, :timestamp, :ancestors

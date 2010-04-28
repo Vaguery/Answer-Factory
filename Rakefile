@@ -20,6 +20,7 @@ begin
     gemspec.add_dependency('activesupport', '>= 2.3.5')
     
     #files
+    gemspec.files.include('templates/**')
     gemspec.files.exclude('_spikes/**')
   end
   

@@ -12,3 +12,7 @@ require 'operators/evaluators'
 
 require 'factories/factory'
 require 'factories/workstation'
+
+def AnswerFactory.gem_root
+  File.dirname(__FILE__) + '/..'
+end

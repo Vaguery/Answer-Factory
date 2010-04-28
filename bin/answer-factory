@@ -10,8 +10,7 @@ if Dir.exist?(project_root) then
   puts "project directory /#{project_root} already exists"
 else
   Dir.mkdir(project_root)
-  cd("./#{project_root}") do
-    touch "./Thorfile"
-  end
+  cp("#{gem_root}/Thorfile","#{project_root}/Thorfile")
+  cd("#{project_root}")
+  puts `thor setup_factory:set_up_project_in_this_folder #{project_root}`
 end
-
