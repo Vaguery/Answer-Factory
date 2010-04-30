@@ -69,7 +69,7 @@ class New_Nudge_Type < Thor::Group
   
   
   def camelcased_type_name
-    New_Nudge_Type.type_name(typename_root)
+    @camelcased_type_name = New_Nudge_Type.type_name(typename_root)
   end
   
   def create_lib_file
