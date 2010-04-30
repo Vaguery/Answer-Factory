@@ -30,6 +30,12 @@ class Setup_Factory < Thor::Group
     template("#{answer_factory_gem_path}/templates/answer_factory_activate_template.erb", "./activate.rb")
   end
   
+  def create_spec_helper
+    filename = "spec_helper.rb"
+    template("#{answer_factory_gem_path}/templates/answer_factory_spec_helper_template.erb",
+      "#{New_Nudge_Type.source_root}/spec/#{filename}")
+  end  
+  
   def say_byebye
     puts "your answer-factory project is located in directory #{Dir.pwd}\n"
   end
@@ -57,15 +63,22 @@ class New_Nudge_Type < Thor::Group
     Nudge.gem_root
   end
   
+  def answer_factory_gem_path
+    AnswerFactory.gem_root
+  end
+  
+  
+  def camelcased_type_name
+    New_Nudge_Type.type_name(typename_root)
+  end
+  
   def create_lib_file
-    @camelcased_type_name = New_Nudge_Type.type_name(typename_root)
-    filename = "#{@camelcased_type_name}.rb"
+    filename = "#{camelcased_type_name}.rb"
     template("#{nudge_gem_path}/templates/nudge_type_class.erb", "#{New_Nudge_Type.source_root}/lib/nudge/types/#{filename}")
   end
   
   def create_lib_spec
-    @camelcased_type_name = New_Nudge_Type.type_name(typename_root)
-    filename = "#{@camelcased_type_name}_spec.rb"
+    filename = "#{camelcased_type_name}_spec.rb"
     template("#{nudge_gem_path}/templates/nudge_type_spec.erb", "#{New_Nudge_Type.source_root}/spec/#{filename}")
   end  
   

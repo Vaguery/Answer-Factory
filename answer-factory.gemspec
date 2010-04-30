@@ -58,7 +58,8 @@ Gem::Specification.new do |s|
      "spec/operators/resample_values_spec.rb",
      "spec/operators/uniformBackboneCrossover_spec.rb",
      "spec/spec_helper.rb",
-     "templates/answer_factory_activate_template.erb"
+     "templates/answer_factory_activate_template.erb",
+     "templates/answer_factory_spec_helper_template.erb"
   ]
   s.homepage = %q{http://github.com/Vaguery/PragGP}
   s.rdoc_options = ["--charset=UTF-8"]

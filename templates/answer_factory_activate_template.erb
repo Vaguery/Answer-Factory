@@ -1,1 +1,27 @@
-# this is the runner file
+require 'answer-factory'
+
+####
+####
+#### EDIT THESE SETTINGS TO SUIT YOUR PROJECT'S NEEDS
+####
+####
+
+def AnswerFactory.nudge_instructions_path
+  # Directory path for project-specific Nudge instructions:
+  '/lib/nudge/instructions/*'
+end
+
+def AnswerFactory.nudge_types_path
+  # Directory path for project-specific Nudge types:
+  '/lib/nudge/types/*'
+end
+
+
+####
+####
+#### DO NOT EDIT THE FOLLOWING CODE
+####
+####
+
+Dir.glob(File.dirname(__FILE__) + AnswerFactory.nudge_instructions_path) {|file| require file}
+Dir.glob(File.dirname(__FILE__) + AnswerFactory.nudge_types_path) {|file| require file}
