@@ -3,6 +3,8 @@ $: << File.join(File.dirname(__FILE__), "/../lib")
 require 'rubygems'
 require 'nudge'
 
+require 'couchrest'
+
 require 'answers/answer'
 require 'answers/batch'
 
