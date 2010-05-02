@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{answer-factory}
-  s.version = "0.0.7"
+  s.version = "0.0.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Bill Tozier", "Trek Glowacki", "Jesse Sielaff"]
-  s.date = %q{2010-05-01}
+  s.date = %q{2010-05-02}
   s.default_executable = %q{answer-factory}
   s.description = %q{The pragmaticgp gem provides a simple framework for building, running and managing genetic programming experiments which automatically discover algorithms and equations to solve user-defined problems.}
   s.email = %q{bill@vagueinnovation.com}
@@ -59,6 +59,7 @@ Gem::Specification.new do |s|
      "spec/operators/resample_values_spec.rb",
      "spec/operators/uniformBackboneCrossover_spec.rb",
      "spec/spec_helper.rb",
+     "tasks/setup_factory.thor",
      "templates/answer_factory_activate_template.erb",
      "templates/answer_factory_spec_helper_template.erb"
   ]

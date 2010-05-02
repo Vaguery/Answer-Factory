@@ -11,6 +11,9 @@ if Dir.exist?(project_root) then
 else
   Dir.mkdir(project_root)
   cp("#{gem_root}/Thorfile","#{project_root}/Thorfile")
+  mkdir("#{project_root}/tasks")
+  cp("#{gem_root}/tasks/setup_factory.thor","#{project_root}/tasks/setup_factory.thor")
   cd("#{project_root}")
   puts `thor setup_factory:set_up_project_in_this_folder #{project_root}`
+  rm("./tasks/setup_factory.thor")
 end

@@ -27,12 +27,12 @@ class Setup_Factory < Thor::Group
   end
   
   def create_runner
-    template("#{answer_factory_gem_path}/templates/answer_factory_activate_template.erb", "./activate.rb") unless exists?("./activate.rb")
+    template("#{answer_factory_gem_path}/templates/answer_factory_activate_template.erb", "./activate.rb") unless File.exists?("./activate.rb")
   end
   
   def create_spec_helper
     template("#{answer_factory_gem_path}/templates/answer_factory_spec_helper_template.erb",
-      "#{New_Nudge_Type.source_root}/spec/spec_helper.rb") unless exists?("#{New_Nudge_Type.source_root}/spec/spec_helper.rb")
+      "#{New_Nudge_Type.source_root}/spec/spec_helper.rb") unless File.exists?("#{New_Nudge_Type.source_root}/spec/spec_helper.rb")
   end  
   
   def say_byebye
