@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Bill Tozier", "Trek Glowacki", "Jesse Sielaff"]
-  s.date = %q{2010-04-30}
+  s.date = %q{2010-05-01}
   s.default_executable = %q{answer-factory}
   s.description = %q{The pragmaticgp gem provides a simple framework for building, running and managing genetic programming experiments which automatically discover algorithms and equations to solve user-defined problems.}
   s.email = %q{bill@vagueinnovation.com}
@@ -42,6 +42,7 @@ Gem::Specification.new do |s|
      "spec/config_spec.rb",
      "spec/factories/factory_spec.rb",
      "spec/factories/workstation_spec.rb",
+     "spec/integration_specs/thor_integration.rb",
      "spec/operators/any_one_sampler_spec.rb",
      "spec/operators/dominated_quantile_spec.rb",
      "spec/operators/duplicate_genomes_spec.rb",
@@ -73,6 +74,7 @@ Gem::Specification.new do |s|
      "spec/config_spec.rb",
      "spec/factories/factory_spec.rb",
      "spec/factories/workstation_spec.rb",
+     "spec/integration_specs/thor_integration.rb",
      "spec/operators/any_one_sampler_spec.rb",
      "spec/operators/dominated_quantile_spec.rb",
      "spec/operators/duplicate_genomes_spec.rb",
