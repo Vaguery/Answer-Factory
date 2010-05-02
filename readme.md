@@ -22,10 +22,35 @@ The AnswerFactory infrastructure has been designed to help _regular people_ buil
 
 ## Getting started
 
-You'll need a working (and running) installation of CouchDB.
+The `answer-factory` gem depends on Ruby 1.9 or higher. We recommend [rvm](http://rvm.beginrescueend.com/) if you'd like to maintain several Ruby installations.
+
+You'll also need a working installation of [CouchDB](http://couchdb.apache.org/) available. This can be a remote instance, as long as you have the necessary permissions to create and manage databases.
 
 Then:
-
     gem install answer-factory
     
-This should automatically load dependent gems, including nudge, rspec, and many others.
+This will automatically install several dependencies, including [nudge](http://github.com/Vaguery/Nudge), rspec, and others.
+
+### Creating a new AnswerFactory project
+
+Use this command line script to build an AnswerFactory project folder:
+    answer-factory your-project-name-here
+
+This will create a new directory called 'your-project-name-here', and install a rudimentary subtree of folders and files. Perhaps most important is the `Thorfile`, which contains most of the generators you can use to simplify project creation and management.
+
+### Replicating a pre-existing project or demo
+
+TBD
+
+### Generating new Nudge type defintitions
+
+The Nudge language gem installed along with `answer-factory` includes a full-featured programming language designed for genetic programming projects, with integer, floating-point, boolean, and code types.
+
+Often your project's domain model will call for additional types. To generate some basic infrastructure for a new NudgeType subclass, navigate to the root of your project folder and invoke the thor script
+    thor new_nudge_type your-nudge-type-name
+This will create a template for your class definition in the `/lib/nudge/types` subdirectory (which you should edit as indicated in the comments to use), several standard nudge instruction classes in `/lib/nudge/instructions`, and rspec files.
+
+### Activating the AnswerFactory daemon
+
+Make sure CouchDB is running and available, navigate to your project's root folder, and invoke
+    ruby activate.rb
