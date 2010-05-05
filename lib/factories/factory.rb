@@ -28,6 +28,11 @@ module AnswerFactory
     end
     
     
+    def build_workstation
+      
+    end
+    
+    
     def configure!
       self.configure_constants!
       self.configure_paths!

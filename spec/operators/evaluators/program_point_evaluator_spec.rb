@@ -11,7 +11,7 @@ describe ProgramPointEvaluator do
   
   describe "#evaluate" do
     before(:each) do
-      @ppe = ProgramPointEvaluator.new(:name => :point_count)
+      @ppe = ProgramPointEvaluator.new(:score_label => :point_count)
       @dudes = Batch[
         Answer.new("block {}"),
         Answer.new("block { block {}}"),

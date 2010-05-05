@@ -45,8 +45,16 @@ describe "Factory" do
     end
     
     describe "build_workstation" do
-      it "should create a new workstation"
-      it "should set up all the interior dynamics of the workstation"
+      
+      it "should create a new workstation" do
+        f1 = Factory.new
+        f1.build_workstation
+      end
+      
+      it "should set up all the interior dynamics of the workstation" do
+        
+      end
+      
       it "should use the master config for defaults of the new workstation"
       it "should suffice to create a pass-through workstation just to name it"
     end
@@ -74,11 +82,14 @@ describe "Factory" do
       
       it "should return false if the uri is offline or 404's out" do
         uri = "http://mycouch.db/boo"
-        f1 = Factory.new("boo", couchdb_uri:uri)
+        f1 = Factory.new("boo")
+        f1.configatron.couchdb_uri = uri
+        f1.configatron.couchdb_uri.should == uri
         FakeWeb.register_uri(:any, uri, :body => "Go away!", :status => [404, "Not Found"])
         f1.couch_available?.should == false
         
-        f1 = Factory.new("boo", couchdb_uri:"http://127.0.0.1:9991/place") # depends on this being wrong
+        f1 = Factory.new("boo") # depends on this being wrong
+        f1.configatron.couchdb_uri = "http://127.0.0.1:9991/place"
         f1.couch_available?.should == false
       end
     end

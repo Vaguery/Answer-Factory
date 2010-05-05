@@ -3,6 +3,7 @@ module AnswerFactory
     attr_reader :name, :capacity, :couchdb_uri, :factory_name
     attr_accessor :downstream_stations
     attr_accessor :answers
+    attr_accessor :build_sequence
     
     
     def initialize(name, options = {})
@@ -11,6 +12,7 @@ module AnswerFactory
       @factory_name = options[:factory_name] || 'factory_name'
       @couchdb_uri = options[:couchdb_uri] || "http://127.0.0.1:5984/#{@factory_name}"
       @capacity = options[:capacity] || 100
+      @build_sequence = options[:build_sequence] || Array.new
       @downstream_stations = Array.new
       @answers = Array.new
     end
@@ -20,6 +22,11 @@ module AnswerFactory
       raise ArgumentError, "#{where} is not a Symbol" unless where.kind_of?(Symbol)
       which.remove_tag(self.name)
       which.add_tag(where)
+    end
+    
+    
+    def build!
+      @build_sequence.each {|operation| @answers = operation.generate(@answers)}
     end
     
     

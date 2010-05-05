@@ -106,12 +106,20 @@ describe "Workstation" do
     
     describe "#receive!" do
       it "should access its persistent store"
-      it "should gather its 'current' work_in_process into self#answers"
-      it "should gather its 'current' collaborators' work_in_process into self#collaborator_answers"
+      
+      it "should gather its 'current' work in process into self#answers"
+      
+      it "should gather its 'current' collaborators' work in process into self#collaborator_answers"
     end
     
     
     describe "#build!" do
+      it "should call #generate for each item in self.build_sequence" do
+        w1 = Workstation.new(:test)
+        w1.build_sequence = [RandomGuessOperator.new]
+        w1.build_sequence[0].should_receive(:generate)
+        w1.build!
+      end
       
     end
     

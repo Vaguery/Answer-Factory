@@ -39,7 +39,7 @@ describe TestCaseEvaluator do
   describe "initialize" do
     it "should have a name" do
       lambda{TestCaseEvaluator.new()}.should raise_error(ArgumentError)
-      lambda{TestCaseEvaluator.new(name:"boolean_multiplexer_SSE")}.should_not raise_error
+      lambda{TestCaseEvaluator.new(score_label:"boolean_multiplexer_SSE")}.should_not raise_error
     end
     
     it "should have all the info it needs to set up an Interpreter"
@@ -47,7 +47,7 @@ describe TestCaseEvaluator do
   
   describe "evaluate" do
     before(:each) do
-      @tce = TestCaseEvaluator.new(:name => :error)
+      @tce = TestCaseEvaluator.new(:score_label => :error)
       @dudes = Batch[
         Answer.new("value «int»\n«int» 12"),
         Answer.new("value «int»\n«int» -9912"),

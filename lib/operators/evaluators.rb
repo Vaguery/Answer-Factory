@@ -1,11 +1,11 @@
 module AnswerFactory
   
   class Evaluator < SearchOperator
-    attr_accessor :name
+    attr_accessor :score_label
     
     def initialize(params = {})
-      raise(ArgumentError, "Evaluators must be initialized with names") if params[:name] == nil
-      @name = params[:name]
+      raise(ArgumentError, "Evaluators must have a score_label") if params[:score_label] == nil
+      @score_label = params[:score_label]
     end
   end
   
@@ -18,7 +18,7 @@ module AnswerFactory
       raise(ArgumentError, "Can only evaluate a Batch of Answers") if !batch.kind_of?(Batch)
       batch.each do |i|
         if i.parses?
-          i.scores[@name] = i.program.points
+          i.scores[@score_label] = i.program.points
         else
           raise(ArgumentError, "Program is not parseable")
         end
@@ -59,7 +59,7 @@ module AnswerFactory
       variable_names = params[:references] || []
       
       batch.each do |dude|
-        if !params[:deterministic] || !dude.scores[@name]
+        if !params[:deterministic] || !dude.scores[@score_label]
           score = 0
           readings = {}
           cases.each do |example|
@@ -100,11 +100,11 @@ module AnswerFactory
             score += difference.abs
           end
           # aggregate differences
-          dude.scores[@name] = score.to_f / cases.length
+          dude.scores[@score_label] = score.to_f / cases.length
         
           puts "#{score.to_f / cases.length}" if params[:feedback]
         else
-          puts dude.scores[@name] if params[:feedback]
+          puts dude.scores[@score_label] if params[:feedback]
         end
       end
     end

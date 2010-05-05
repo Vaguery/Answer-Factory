@@ -31,14 +31,15 @@ module AnswerFactory
     # [<tt>myRandomGuesser.generate(1,:randomIntegerLowerBound => 0)</tt>]
     #   makes one Answer whose IntType samples (if any) will be between [0,100]
     
-    def generate(howMany = 1, overridden_options ={})
-      result = Batch.new
-      howMany.times do
-        newGenome = CodeType.any_value(@incoming_options.merge(overridden_options))
+    def generate(crowd, overridden_options = {})
+      every_option = @incoming_options.merge(overridden_options)
+      how_many = every_option[:how_many] || 1
+      how_many.times do
+        newGenome = CodeType.any_value(every_option)
         newDude = Answer.new(newGenome, progress:0)
-        result << newDude
+        crowd << newDude
       end
-      result
+      return crowd
     end
   end
   
