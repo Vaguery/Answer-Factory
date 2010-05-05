@@ -17,8 +17,12 @@ require 'operators/point_crossover_operator'
 require 'operators/point_delete_operator'
 require 'operators/point_mutation_operator'
 
+require 'operators/test_case_evaluator'
+require 'operators/program_point_count_evaluator'
+
+
+
 require 'operators/samplers_and_selectors'
-require 'operators/evaluators'
 
 require 'factories/factory'
 require 'factories/workstation'

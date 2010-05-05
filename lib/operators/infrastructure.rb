@@ -9,4 +9,15 @@ module AnswerFactory
        @incoming_options = options
      end
   end
+  
+  
+  class Evaluator < SearchOperator
+    attr_accessor :score_label
+    
+    def initialize(params = {})
+      raise(ArgumentError, "Evaluators must have a score_label") if params[:score_label] == nil
+      @score_label = params[:score_label]
+    end
+  end
+  
 end

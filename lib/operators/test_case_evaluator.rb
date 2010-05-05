@@ -1,35 +1,4 @@
 module AnswerFactory
-  
-  class Evaluator < SearchOperator
-    attr_accessor :score_label
-    
-    def initialize(params = {})
-      raise(ArgumentError, "Evaluators must have a score_label") if params[:score_label] == nil
-      @score_label = params[:score_label]
-    end
-  end
-  
-  
-  
-  
-  
-  class ProgramPointEvaluator < Evaluator
-    def evaluate(batch)
-      raise(ArgumentError, "Can only evaluate a Batch of Answers") if !batch.kind_of?(Batch)
-      batch.each do |i|
-        if i.parses?
-          i.scores[@score_label] = i.program.points
-        else
-          raise(ArgumentError, "Program is not parseable")
-        end
-      end
-    end
-  end
-  
-  
-  
-  
-  
   class TestCase
     attr_accessor :bindings, :expectations, :gauges
     
