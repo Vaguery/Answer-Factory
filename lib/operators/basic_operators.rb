@@ -1,77 +1,10 @@
 #encoding: utf-8
 module AnswerFactory
   
-  # Abstract class that from which specific SearchOperator subclasses inherit initialization
-  
-  class SearchOperator
-    attr_accessor :incoming_options
-    
-     def initialize(options={})
-       @incoming_options = options
-     end
-  end
   
   
   
   
-  class RandomGuessOperator < SearchOperator
-    
-    # returns an Array of random Answers
-    #
-    # the first (optional) parameter specifies how many to make, and defaults to 1
-    # the second (also optional) parameter is a hash that
-    # can temporarily override those set in the initialization
-    #
-    # For example, if
-    # <tt>myRandomGuesser = RandomGuessOperator.new(:randomIntegerLowerBound => -90000)</tt>
-    #
-    # [<tt>myRandomGuesser.generate()</tt>]
-    #   produces a list of 1 Answer, and if it has any IntType samples they will be in [-90000,100]
-    #   (since the default +:randomIntegerLowerBound+ is 100)
-    # [<tt>myRandomGuesser.generate(1,:randomIntegerLowerBound => 0)</tt>]
-    #   makes one Answer whose IntType samples (if any) will be between [0,100]
-    
-    def generate(crowd, overridden_options = {})
-      every_option = @incoming_options.merge(overridden_options)
-      how_many = every_option[:how_many] || 1
-      how_many.times do
-        newGenome = CodeType.any_value(every_option)
-        newDude = Answer.new(newGenome, progress:0)
-        crowd << newDude
-      end
-      return crowd
-    end
-  end
-  
-  
-  
-  
-  class ResampleAndCloneOperator < SearchOperator
-    
-    # returns an Array of clones of Answers randomly selected from the crowd passed in
-    # 
-    # the first (required) parameter is an Array of Answers
-    # the second (optional) parameter is how many samples to take, and defaults to 1
-    #
-    # For example, if
-    # <tt>@currentPopulation = [a list of 300 Answers]</tt> and
-    # <tt>myRandomSampler = ResampleAndCloneOperator.new(@currentPopulation)</tt>
-    # [<tt>myRandomSampler.generate()</tt>]
-    #   produces a list of 1 Answer, which is a clone of somebody from <tt>@currentPopulation</tt>
-    # [<tt>myRandomGuesser.generate(11)</tt>]
-    #   returns a list of 11 Answers cloned from <tt>@currentPopulation</tt>,
-    #   possibly including repeats
-    
-    def generate(crowd, howMany = 1)
-      result = Batch.new
-      howMany.times do
-        donor = crowd.sample
-        clone = Answer.new(donor.blueprint, progress:donor.progress + 1)
-        result << clone
-      end
-      return result
-    end
-  end
   
   
   

@@ -46,10 +46,7 @@ describe "Factory" do
     
     describe "build_workstation" do
       
-      it "should create a new workstation" do
-        f1 = Factory.new
-        f1.build_workstation
-      end
+      it "should create a new workstation"
       
       it "should set up all the interior dynamics of the workstation" do
         
