@@ -15,6 +15,7 @@ begin
     gemspec.add_dependency('nudge', '>= 0.2')
     gemspec.add_dependency('thor', '>= 0.13')
     gemspec.add_dependency('couchrest', '>= 0.33')
+    gemspec.add_dependency('configatron', '>= 2.6.2')
     gemspec.add_dependency('fakeweb', '>= 0.33')
     gemspec.add_dependency('sinatra', '>= 0.9.4')
     gemspec.add_dependency('activesupport', '>= 2.3.5')

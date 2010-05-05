@@ -77,7 +77,7 @@ describe "Batches" do
           @uri = "http://127.0.0.1/baz:5984"
         end
         
-        it "create a new Batch" do
+        it "creates a new Batch" do
           Batch.load_tagged_answers(@uri,"foo").should be_a_kind_of(Batch)
         end
         
@@ -86,7 +86,6 @@ describe "Batches" do
           Batch.load_tagged_answers(@uri, "workstation_1")
         end
         
-        it "should work"
       end
       
     end
