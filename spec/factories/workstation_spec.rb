@@ -37,7 +37,6 @@ describe "Workstation" do
   end
   
   
-  
   describe "capacity" do
     it "should accept a #capacity attribute in initialization" do
       w1 = Workstation.new(:ws, capacity:12)
@@ -62,8 +61,8 @@ describe "Workstation" do
   
   
   describe "answers" do
-    it "should be an Array that's empty initially" do
-      Workstation.new(:place).answers.should == []
+    it "should be a Batch that's empty initially" do
+      Workstation.new(:place).answers.should be_a_kind_of(Batch)
     end
   end
   
@@ -92,7 +91,6 @@ describe "Workstation" do
   
   
   
-  
   describe "#cycle" do
     it "should invoke #receive!, #build!, #ship! and #scrap!" do
       w1 = Workstation.new(:place)
@@ -105,7 +103,12 @@ describe "Workstation" do
     
     
     describe "#receive!" do
-      it "should access its persistent store"
+      
+      # the superclass we're testing (Workstation) should do nothing here,
+      # but there are some helper methods defined for use in subclasses;
+      # we should test those
+      
+      it "should access the persistent store"
       
       it "should gather its 'current' work in process into self#answers"
       
@@ -114,27 +117,101 @@ describe "Workstation" do
     
     
     describe "#build!" do
-      it "should call #generate for each item in self.build_sequence" do
-        w1 = Workstation.new(:test)
-        w1.build_sequence = [RandomGuessOperator.new]
-        w1.build_sequence[0].should_receive(:generate)
-        w1.build!
-      end
       
+      # the superclass we're testing (Workstation) should do nothing here,
+      # but there are some helper methods defined for use in subclasses;
+      # we should test those
+      
+      describe "process_with" do
+        before(:each) do
+          @w1 = Workstation.new(:pity_foo)
+          @w1.answers = Batch[Answer.new("block{}")]
+          @sampler = AnyOneSampler.new
+        end
+        
+        it "should accept one parameter" do
+          @w1.method(:process_with).arity.should == 1
+        end
+        
+        it "should only accept a search operator" do
+          lambda{@w1.process_with(8)}.should raise_error(ArgumentError)
+          lambda{@w1.process_with(AnyOneSampler.new)}.should_not raise_error
+        end
+        
+        it "should call the search operator's '#generate" do
+          @sampler.should_receive(:generate)
+          @w1.process_with(@sampler)
+        end
+        
+        it "should pass in self#answers to the call to #generate" do
+          @sampler.should_receive(:generate).with(@w1.answers)
+          @w1.process_with(@sampler)
+        end
+        
+        it "should return a Batch" do
+          @w1.process_with(@sampler).should be_a_kind_of(Batch)
+        end
+      end
     end
     
     
     describe "#ship!" do
-      it "should be an Array of stored procedures"
-      it "should always include (as a last entry) a Proc that returns 'false'"
-      it "should call all the Procs in order, for every member of its population"
-      it "should select a random downstream destination if none is specified by the rule"
-      it "should fail silently if there are no downstream stations"
-      it "should call every rule, in turn, sending every Answer off before moving on"
+      
+      # the superclass we're testing (Workstation) should do nothing here,
+      # but there are some helper methods defined for use in subclasses;
+      # we should test those
+      
+      describe "ship_to" do
+        before(:each) do
+          @w2 = Workstation.new(:lulu)
+          @a1 = Answer.new("do fun_stuff")
+          @a1.add_tag :lulu
+          @a2 = Answer.new("do sad_stuff")
+          @a2.add_tag :lulu
+          @w2.answers = Batch[@a1,@a2]
+        end
+        
+        it "should accept a single argument" do
+          @w2.method(:ship_to).arity.should == 1
+        end
+        
+        it "should check the argument is a symbol" do
+          lambda{@w2.ship_to(8)}.should raise_error(ArgumentError)
+          lambda{@w2.ship_to(:heaven)}.should_not raise_error
+        end
+        
+        it "should pass every element of @answers into that block" do
+          Math.should_receive(:sin).exactly(2).times
+          @w2.ship_to(:heaven) {|a| Math.sin(12.0)}
+        end
+        
+        it "should add a new location tag to the answers in the filtered subset" do
+          @a1.should_receive(:add_tag).with(:xyzzy)
+          @a2.should_receive(:add_tag).with(:xyzzy)
+          @w2.ship_to(:xyzzy) {|a| true}
+        end
+        
+        it "should remove the old location tag to the answers in the filtered subset" do
+          @a1.should_receive(:remove_tag).with(:lulu)
+          @a2.should_receive(:remove_tag).with(:lulu)
+          @w2.ship_to(:xyzzy) {|a| true}
+        end
+        
+        it "should not touch the tags of answers not in the filtered subset" do
+          @a1.should_receive(:remove_tag).with(:lulu)
+          @a2.should_not_receive(:remove_tag).with(:lulu)
+          @w2.ship_to(:xyzzy) {|a| a.blueprint.include? "fun"}
+        end
+      end
     end
     
     
     describe "scrap!" do
+      
+      # the superclass we're testing (Workstation) should do nothing here,
+      # but there are some helper methods defined for use in subclasses;
+      # we should test those
+      
       it "should be an Array of stored procedures"
       it "should return 'true' to indicate that a particular Answer should be scrapped"
       it "should use an Array of stored procedures"

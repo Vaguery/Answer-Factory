@@ -2,8 +2,8 @@
 
 GuesserWorkstation.workflow_definition do
   
-  # 'to :inventory!' is missing, so execution
-  # falls back to [empty] super Workstation.inventory!
+  # 'to :receive!' is missing, so execution
+  # falls back to [empty] super Workstation.receive!
   
   to :build! do
     consecutive :answers do
@@ -29,7 +29,7 @@ end
 # population GA workstation, receiving answers from upstream (somewhere)
 
 PopGAWorkstation.workflow_definition do
-  to :inventory! do
+  to :receive! do
     consecutive :answers do
       gather Proc{|a| a.locations.include? @name} 
       gather Proc{...} # a.locations.overlaps @collaborator.names
@@ -55,9 +55,9 @@ PopGAWorkstation.workflow_definition do
   to :ship! do
   emd
   
+  @highest_progress = (@answers.collect {|a| a.progress}).max
+  
   to :scrap! do
-    @highest_progress = (@answers.collect {|a| a.progress}).max
-    
     # 'scrap' filters all @answers, changing location, saving and
     # removing them immediately from @answers
     scrap "too_old" => Proc{|a| a.progress < @highest_progress} 
@@ -70,7 +70,7 @@ end
 
 HillclimberWorkstation.workflow_definition do
 
-  to :inventory! do
+  to :receive! do
     gather_into :answers => Proc{|a| a.locations.include? @name} 
   end
   
@@ -95,8 +95,9 @@ HillclimberWorkstation.workflow_definition do
     end
   end
   
+  @highest_progress = (@answers.collect {|a| a.progress}).max
+  
   to :ship! do
-    @highest_progress = (@answers.collect {|a| a.progress}).max
     # "sends" those, saves them, and removes immediately from @answers [if true]
     ship_to :next_station => Proc{|a| a.progress == @highest_progress} 
   end
@@ -109,12 +110,12 @@ end
 
 
 # "polisher" that applies particle swarm search to one nondominated 
-# answer in its inventory, throwing away all intermediate
+# answer in its receive, throwing away all intermediate
 # results, and shipping off the nondominated one(s)
 
 Polisher.workflow_definition do
   
-  to :inventory! do
+  to :receive! do
     # there may be 0 or more
     gather_into :answers => Proc{|a| a.locations.include? @name}
   end
@@ -186,7 +187,7 @@ end
 
 TwoSpeciesCompetitiveEvaluator.workflow_definition do
   
-  to :inventory! do
+  to :receive! do
     
     # Note that this factory should deal with different
     #"species" more cleanly than this code implies!
@@ -224,8 +225,8 @@ TwoSpeciesCompetitiveEvaluator.workflow_definition do
   end
   
   to :ship! do
-    ship_to :where_answers_go => Proc{|answer| answer.tags.!include? "trainer"}
-    ship_to :where_trainers_go => Proc{|answer| answer.tags.include? "trainer"}
+    ship_to :where_answers_go {|answer| answer.tags.!include? "trainer"}
+    ship_to :where_trainers_go {|answer| answer.tags.include? "trainer"}
   end
   
   to :scrap! do

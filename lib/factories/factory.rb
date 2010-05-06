@@ -28,7 +28,6 @@ module AnswerFactory
     end
     
     
-    
     def configure!
       self.configure_constants!
       self.configure_paths!
