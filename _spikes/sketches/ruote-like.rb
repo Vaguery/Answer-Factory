@@ -1,24 +1,27 @@
 # random sampling (yer basic guesser)
 
-GuesserWorkstation.workflow_definition do
+class GuesserWorkstation << Workstation
   
-  # 'to :receive!' is missing, so execution
-  # falls back to [empty] super Workstation.receive!
+  # 'def receive!' is missing, so execution
+  # falls back to super
   
-  to :build! do
+  
+  def :build!
     consecutive :answers do
       # make a new answer, and merge that into @answers
       process_with my_random_sampler 
     end
   end
   
-  to :ship! do
+  
+  def :ship!
     # "sends" all answers to :next_station, saves them to the db,
     # and removes them immediately from @answers
     ship_to(:next_station) {|answer| true} 
   end
   
-  to :scrap! do
+  
+  def :scrap!
     # just in case?
     # "sends" all remaining answers to :scrapheap, saves them to the db
     scrap_everything
@@ -28,15 +31,17 @@ end
 
 # population GA workstation, receiving answers from upstream (somewhere)
 
-PopGAWorkstation.workflow_definition do
-  to :receive! do
-    consecutive :answers do
-      gather {|a| a.locations.include? @name} 
-      gather {...} # a.locations.overlaps @collaborator.names
+class PopGAWorkstation < Workstation
+  def :receive!
+    gather_mine # returns all answers with self.name in #tags
+    
+    self.collaborator_names.each do |neighbor|
+      gather_into("collaborators") {|a| a.tags.include?(neighbor.to_s)}
     end
   end
   
-  to :build! do
+  
+  def :build!
     channel :answers do
       # generate (increment progress), and pass into next line
       process_with my_crossover_operator_instance 
@@ -51,13 +56,15 @@ PopGAWorkstation.workflow_definition do
     end
   end
   
+  
   # nothing to ship; this is the end of a line
-  to :ship! do
+  def :ship!
   emd
   
-  @highest_progress = (@answers.collect {|a| a.progress}).max
   
-  to :scrap! do
+  def :scrap!
+    @highest_progress = (@answers.collect {|a| a.progress}).max
+    
     # 'scrap' filters all @answers, changing location, saving and
     # removing them immediately from @answers
     scrap_if("too_old") {|a| a.progress < @highest_progress} 
@@ -68,13 +75,14 @@ end
 
 # random hillclimbing workstation, with random guessing if needed
 
-HillclimberWorkstation.workflow_definition do
-
-  to :receive! do
-    gather {|a| a.locations.include? @name} 
+class HillclimberWorkstation < Workstation
+  
+  def :receive!
+    gather_mine 
   end
   
-  to :build! do
+  
+  def :build!
     # if there are none, create one
     if @answers.empty?
       consecutive :answers do
@@ -95,14 +103,16 @@ HillclimberWorkstation.workflow_definition do
     end
   end
   
-  @highest_progress = (@answers.collect {|a| a.progress}).max
   
-  to :ship! do
+  def :ship!
+    @highest_progress = (@answers.collect {|a| a.progress}).max
+    
     # "sends" those, saves them, and removes immediately from @answers [if true]
     ship_to(:next_station) {|a| a.progress == @highest_progress} 
   end
   
-  to :scrap! do
+  
+  def :scrap!
     scrap_everything # "sends" anything left to location "scrapheap"
   end
 end
@@ -113,14 +123,14 @@ end
 # answer in its receive, throwing away all intermediate
 # results, and shipping off the nondominated one(s)
 
-Polisher.workflow_definition do
+class Polisher < Workstation
   
-  to :receive! do
-    # there may be 0 or more
-    gather {|a| a.locations.include? @name}
+  def :receive!
+    gather_mine
   end
   
-  to :build! do
+  
+  def :build!
     # we start from @answers but do not merge results until
     # the end of this block:
     channel :answers do
@@ -168,14 +178,16 @@ Polisher.workflow_definition do
     end
   end
   
-  to :ship! do
+  
+  def :ship!
     ship_to(:next_station) {|answer| answer.tags.include? "ship_A_to_B"}
   end
+  
   
   # we're not scrapping anything
   # we've just shipped off the best, and will maybe receive more work later
   # meanwhile, we keep polishing what we've got
-  to :scrap! do
+  def :scrap!
   end
 end
 
@@ -185,10 +197,9 @@ end
 # uses two populations, one of answers and one of "test suites".
 # Both groups are evaluated at the same time.
 
-TwoSpeciesCompetitiveEvaluator.workflow_definition do
+class TwoSpeciesCompetitiveEvaluator < Workstation
   
-  to :receive! do
-    
+  def :receive!
     # Note that this factory should deal with different
     #"species" more cleanly than this code implies!
     
@@ -196,7 +207,8 @@ TwoSpeciesCompetitiveEvaluator.workflow_definition do
     gather_into(:trainers) {|a| (a.locations.include? @name) && (a.tags.include? "trainer")}
   end
   
-  to :build! do
+  
+  def :build!
     consecutive :answers do
       # perhaps the trainers here are linear genomes only, with just integer values
       # and they're used to select training cases from a large
@@ -224,12 +236,14 @@ TwoSpeciesCompetitiveEvaluator.workflow_definition do
     end
   end
   
-  to :ship! do
+  
+  def :ship!
     ship_to(:where_answers_go) {|answer| answer.tags.!include? "trainer"}
     ship_to(:where_trainers_go) {|answer| answer.tags.include? "trainer"}
   end
   
-  to :scrap! do
+  
+  def :scrap!
     # nothing should be left
   end
 end

@@ -1,4 +1,5 @@
 module AnswerFactory
+  
   class Workstation
     attr_reader :name, :capacity, :couchdb_uri, :factory_name
     attr_accessor :downstream_stations
@@ -22,6 +23,12 @@ module AnswerFactory
       raise ArgumentError, "#{where} is not a Symbol" unless where.kind_of?(Symbol)
       which.remove_tag(self.name)
       which.add_tag(where)
+    end
+    
+    
+    def gather_mine
+      result = CouchRest.view("#{@couchdb_uri}/_design/#{@name.to_s}/_view/current")
+      puts result
     end
     
     
