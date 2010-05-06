@@ -4,7 +4,7 @@ module AnswerFactory
   class Answer
     attr_accessor :scores, :tags
     attr_reader :draft_blueprint, :program, :timestamp, :ancestors
-    attr_reader :initialization_options, :progress
+    attr_reader :initialization_options, :progress, :couch_id
     
     
     def initialize(blueprint, options = {})
@@ -12,11 +12,12 @@ module AnswerFactory
         blueprint.kind_of?(String) || blueprint.kind_of?(NudgeProgram)
       build_from_blueprint!(blueprint)
       
-      @scores = Hash.new do |hash, key|
+      @scores = options[:scores] || Hash.new do |hash, key|
         raise ArgumentError, "scores must use symbols as keys" unless key.kind_of?(Symbol)
         nil
       end
       @timestamp = Time.now
+      @couch_id = options[:couch_id] || ""
       @initialization_options = options
       @progress = options[:progress] || 0
       @ancestors = options[:ancestors] || []
@@ -121,6 +122,19 @@ module AnswerFactory
   
   
   def data
-    {'blueprint' => self.blueprint, 'tags' => self.tags, 'scores' => self.scores, 'timestamp' => @timestamp}
+    {'blueprint' => self.blueprint, 'tags' => self.tags, 'scores' => self.scores, 'progress' => @progress, 'timestamp' => @timestamp}
+  end
+  
+  
+  def from_serial_hash(hash)
+    value_hash = hash["value"]
+    tag_set = Set.new(value_hash["tags"].collect {|t| t.to_sym})
+    symbolized_scores = value_hash["scores"].inject({}) {|memo,(k,v)| memo[k.to_sym] = v; memo }
+    
+    Answer.new(value_hash["blueprint"],
+      couch_id:value_hash["_id"],
+      tags:tag_set,
+      scores:symbolized_scores,
+      progress:value_hash["progress"])
   end
 end

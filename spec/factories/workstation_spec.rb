@@ -116,27 +116,7 @@ describe "Workstation" do
       # we should test those
       
       describe "gather_mine" do
-        before(:each) do
-          @uri = "http://127.0.0.1:5984/my_factory"
-          @ws1 = Workstation.new(:ws1, couchdb_uri:@uri)
-          @design_doc = "#{@uri}/_design/ws1/_view/current"  # we'll assume this has been set up!
-          
-          # FakeWeb.allow_net_connect = false
-        end
         
-        it "should connect to the right view in the right design doc in the persistent store" do
-          FakeWeb.register_uri(:any, @design_doc, :body => "We are here!", :status => [200, "OK"])
-          CouchRest.should_receive(:view).with(@design_doc)
-          @ws1.gather_mine
-        end
-        
-        it "should receive a String as a result" 
-        
-        it "should construct a new Batch from that result"
-        
-        it "should raise an error if it can't parse the result into a Batch"
-        
-        it "should add that Batch into its Workstation#answers attribute"
       end
       
       

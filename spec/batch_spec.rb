@@ -74,24 +74,38 @@ describe "Batches" do
       
       describe "reading" do
         before(:each) do
-          @uri = "http://127.0.0.1/baz:5984"
+          @uri = "http://127.0.0.1:5984/my_factory"
+          @design_doc = "ws1/current"  # we'll assume this has been set up!
+          @view_uri = "http://127.0.0.1:5984/my_factory/_design/ws1/_view/current"
+          FakeWeb.allow_net_connect = false
+          @canned = '{"total_rows":1,"offset":0,"rows":[{"id":"0f60c293ad736abfdb083d33f71ef9ab","key":"ws1","value":{"_id":"0f60c293ad736abfdb083d33f71ef9ab","_rev":"1-473467b6dc1a4cba3498dd6eeb8e3206","blueprint":"do bar","tags":[],"scores":{},"progress":12,"timestamp":"2010/04/14 17:09:14 +0000"}}]}'
+          
         end
         
-        it "creates a new Batch" do
-          Batch.load_tagged_answers(@uri,"foo").should be_a_kind_of(Batch)
+        it "should connect to the right view in the right design doc in the persistent store" do
+          FakeWeb.register_uri(:any, @view_uri, :body => @canned, :status => [200, "OK"])
+          lambda{Batch.load_from_couch(@uri,@design_doc)}.should_not raise_error
+            # because it hit the right URI!
         end
         
-        it "should access the database" do
-          CouchRest.should_receive(:database).with(@uri)
-          Batch.load_tagged_answers(@uri, "workstation_1")
-        end
+        it "should handle errors returned from CouchDB"
         
+        it "should handle db connection problems"
+        
+        it "should create an Answer for every row received" do
+          FakeWeb.register_uri(:any, @view_uri, :body => @canned, :status => [200, "OK"])
+          little_batch = Batch.load_from_couch(@uri,@design_doc)
+          little_batch.length.should == 1
+          little_batch[0].blueprint.should == "do bar"
+        end
+
+        it "should raise an warning and create an empty Batch if it can't parse the result" do
+          FakeWeb.register_uri(:any, @view_uri, :body => "some random crap", :status => [200, "OK"])
+          little_batch = Batch.load_from_couch(@uri,@design_doc)
+          little_batch.length.should == 0
+        end
       end
       
     end
-    
-    
-    it "should have a Batch.load_from_couch method that reads a bunch of Answers from the db"
-    
   end
 end

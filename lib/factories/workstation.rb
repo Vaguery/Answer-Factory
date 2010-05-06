@@ -27,8 +27,10 @@ module AnswerFactory
     
     
     def gather_mine
-      result = CouchRest.view("#{@couchdb_uri}/_design/#{@name.to_s}/_view/current")
-      puts result
+      db = CouchRest.database(@couchdb_uri)
+      gather_view = "#{@name.to_s}/current"
+      response = db.view(gather_view)
+      p response
     end
     
     

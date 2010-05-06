@@ -34,11 +34,23 @@ module AnswerFactory
     end
     
     
-    def self.load_tagged_answers(couchdb_uri, tag)
+    def self.load_from_couch(couchdb_uri, design_doc)
       raise ArgumentError, "#{couchdb_uri} is not a String" unless couchdb_uri.kind_of?(String)
-      raise ArgumentError, "#{tag} is not a String" unless tag.kind_of?(String)
+      raise ArgumentError, "#{design_doc} is not a String" unless design_doc.kind_of?(String)
+      
+      batch = Batch.new
+      
       db = CouchRest.database(couchdb_uri) # add the view document and key here
-      return Batch.new
+      begin
+        response = db.view(design_doc)
+        response["rows"].each do |hash|
+          puts hash["values"]
+          batch << Answer.from_serial_hash(hash)
+        end
+      rescue JSON::ParserError => e
+        puts "Batch not read due to JSON ParserError: '#{e.message}'"
+      end
+      return batch
     end
     
     

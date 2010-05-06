@@ -7,7 +7,14 @@ include AnswerFactory
 
 db = CouchRest.database!("http://127.0.0.1:5984/spike_db")
 
-answers = 10.times.collect {Answer.new(NudgeProgram.random, tags:["workstation_#{rand(10)}", "workstation_#{rand(10)}"])}
+answers = 10.times.collect {
+  Answer.new(
+  NudgeProgram.random,
+  progress:rand(30),
+  tags:[
+    "workstation_#{rand(10)}",
+    "workstation_#{rand(10)}"
+  ])}
 
 answers.each {|i| i.scores["error"] = rand()*rand(100)}
 answers.each {|i| i.scores["badness"] = rand()*rand(100)-50}

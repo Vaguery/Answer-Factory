@@ -78,7 +78,7 @@ describe "Answer" do
   describe "serialization" do
     describe "writing" do
       before(:each) do
-        @a1 = Answer.new("block {do a}")
+        @a1 = Answer.new("block {do a}", progress:12)
       end
       
       it "should contain the blueprint" do
@@ -94,12 +94,44 @@ describe "Answer" do
         @a1.data['scores'].should == @a1.scores
       end
       
+      it "should contain the progress" do
+        @a1.data['progress'].should == @a1.progress
+      end
+      
+      
       it "should contain the timestamp" do
         @a1.data['timestamp'].should == @a1.timestamp
       end
     end
     
     describe "reading" do
+      before(:each) do
+        @couchified = {"id"=>"0f60c293ad736abfdb083d33f71ef9ab", "key"=>"ws1", "value"=>{"_id"=>"0f60c293ad736abfdb083d33f71ef9ab", "_rev"=>"1-473467b6dc1a4cba3498dd6eeb8e3206", "blueprint"=>"do bar", "tags"=>["quux", "whatevz"], "scores"=>{"badness" => 12.345}, "progress" => 12, "timestamp"=>"2010/04/14 17:09:14 +0000"}}
+        @my_a = Answer.from_serial_hash(@couchified)
+      end
+      
+      it "should record the couch_doc_id" do
+        @my_a.couch_id.should == "0f60c293ad736abfdb083d33f71ef9ab"
+      end
+      
+      it "should accept a blueprint string" do
+        @my_a.blueprint.should == "do bar"
+      end
+      
+      it "should collect the tag Array into a Set of symbols" do
+        @my_a.tags.should be_a_kind_of(Set)
+        @my_a.tags.should include(:quux)
+        @my_a.tags.should include(:whatevz)
+      end
+            
+      it "should gather up the scores Hash" do
+        @my_a.scores.should be_a_kind_of(Hash)
+        @my_a.scores.should include(:badness)
+      end
+      
+      it "should read the progress" do
+        @my_a.progress.should == 12
+      end
       
     end
   end
