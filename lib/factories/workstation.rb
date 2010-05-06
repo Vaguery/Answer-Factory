@@ -61,6 +61,10 @@ module AnswerFactory
       (@answers.find_all &filter).each {|a| a.add_tag :SCRAP; a.remove_tag @name}
     end
     
+    def scrap_everything
+      scrap_if("everything dies") {|x| true}
+    end
+    
     
     def cycle
       self.receive!

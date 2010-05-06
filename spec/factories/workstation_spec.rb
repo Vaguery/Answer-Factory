@@ -245,6 +245,41 @@ describe "Workstation" do
           @w3.scrap_if("insufficient progress") {|a| a.progress < 10}
         end
       end
+      
+      describe "scrap_everything" do
+        before(:each) do
+          @w4 = Workstation.new(:ice_station_zebra)
+          @a1 = Answer.new("do anything", tags:[:ice_station_zebra])
+          @a2 = Answer.new("do whatevz", tags:[:ice_station_zebra])
+          @w4.answers = Batch[@a1,@a2]
+        end
+        
+        it "should have arity 0" do
+          @w4.method(:scrap_everything).arity.should == 0
+        end
+        
+        it "should call scrap_if" do
+          @w4.should_receive(:scrap_if)
+          @w4.scrap_everything
+        end
+        
+        it "should send every answer to :SCRAP" do
+          @w4.answers.each {|a| a.tags.should_not include(:SCRAP)}
+          @w4.scrap_everything
+          @w4.answers.each {|a| a.tags.should include(:SCRAP)}
+        end
+        
+        it "should remove the current location from every answer" do
+          @w4.answers.each {|a| a.tags.should include(:ice_station_zebra)}
+          @w4.scrap_everything
+          @w4.answers.each {|a| a.tags.should_not include(:ice_station_zebra)}
+        end
+        
+        it "should be safe to repeat the statement" do
+          @w4.scrap_everything
+          lambda{@w4.scrap_everything}.should_not raise_error
+        end
+      end
     end
   end
 end
