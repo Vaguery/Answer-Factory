@@ -56,6 +56,12 @@ module AnswerFactory
       # should be overridden in a subclass definition
     end
     
+    
+    def scrap_if(why, &filter)
+      (@answers.find_all &filter).each {|a| a.add_tag :SCRAP; a.remove_tag @name}
+    end
+    
+    
     def cycle
       self.receive!
       self.build!

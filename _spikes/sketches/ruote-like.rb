@@ -15,7 +15,7 @@ GuesserWorkstation.workflow_definition do
   to :ship! do
     # "sends" all answers to :next_station, saves them to the db,
     # and removes them immediately from @answers
-    ship_to :next_station => Proc{|answer| true} 
+    ship_to(:next_station) {|answer| true} 
   end
   
   to :scrap! do
@@ -31,8 +31,8 @@ end
 PopGAWorkstation.workflow_definition do
   to :receive! do
     consecutive :answers do
-      gather Proc{|a| a.locations.include? @name} 
-      gather Proc{...} # a.locations.overlaps @collaborator.names
+      gather {|a| a.locations.include? @name} 
+      gather {...} # a.locations.overlaps @collaborator.names
     end
   end
   
@@ -60,7 +60,7 @@ PopGAWorkstation.workflow_definition do
   to :scrap! do
     # 'scrap' filters all @answers, changing location, saving and
     # removing them immediately from @answers
-    scrap "too_old" => Proc{|a| a.progress < @highest_progress} 
+    scrap_if("too_old") {|a| a.progress < @highest_progress} 
   end
 end
 
@@ -71,7 +71,7 @@ end
 HillclimberWorkstation.workflow_definition do
 
   to :receive! do
-    gather_into :answers => Proc{|a| a.locations.include? @name} 
+    gather {|a| a.locations.include? @name} 
   end
   
   to :build! do
@@ -99,7 +99,7 @@ HillclimberWorkstation.workflow_definition do
   
   to :ship! do
     # "sends" those, saves them, and removes immediately from @answers [if true]
-    ship_to :next_station => Proc{|a| a.progress == @highest_progress} 
+    ship_to(:next_station) {|a| a.progress == @highest_progress} 
   end
   
   to :scrap! do
@@ -117,7 +117,7 @@ Polisher.workflow_definition do
   
   to :receive! do
     # there may be 0 or more
-    gather_into :answers => Proc{|a| a.locations.include? @name}
+    gather {|a| a.locations.include? @name}
   end
   
   to :build! do
@@ -169,7 +169,7 @@ Polisher.workflow_definition do
   end
   
   to :ship! do
-    ship_to :next_station => Proc{|answer| answer.tags.include? "ship_A_to_B"}
+    ship_to(:next_station) {|answer| answer.tags.include? "ship_A_to_B"}
   end
   
   # we're not scrapping anything
@@ -192,8 +192,8 @@ TwoSpeciesCompetitiveEvaluator.workflow_definition do
     # Note that this factory should deal with different
     #"species" more cleanly than this code implies!
     
-    gather_into :answers => Proc{|a| (a.locations.include? @name) && !(a.tags.include? "trainer")}
-    gather_into :trainers => Proc{|a| (a.locations.include? @name) && (a.tags.include? "trainer")}
+    gather_into(:answers) {|a| (a.locations.include? @name) && !(a.tags.include? "trainer")}
+    gather_into(:trainers) {|a| (a.locations.include? @name) && (a.tags.include? "trainer")}
   end
   
   to :build! do
@@ -225,8 +225,8 @@ TwoSpeciesCompetitiveEvaluator.workflow_definition do
   end
   
   to :ship! do
-    ship_to :where_answers_go {|answer| answer.tags.!include? "trainer"}
-    ship_to :where_trainers_go {|answer| answer.tags.include? "trainer"}
+    ship_to(:where_answers_go) {|answer| answer.tags.!include? "trainer"}
+    ship_to(:where_trainers_go) {|answer| answer.tags.include? "trainer"}
   end
   
   to :scrap! do

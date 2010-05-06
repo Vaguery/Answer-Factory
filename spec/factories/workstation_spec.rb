@@ -164,10 +164,8 @@ describe "Workstation" do
       describe "ship_to" do
         before(:each) do
           @w2 = Workstation.new(:lulu)
-          @a1 = Answer.new("do fun_stuff")
-          @a1.add_tag :lulu
-          @a2 = Answer.new("do sad_stuff")
-          @a2.add_tag :lulu
+          @a1 = Answer.new("do fun_stuff", tags:[:lulu])
+          @a2 = Answer.new("do sad_stuff", tags:[:lulu])
           @w2.answers = Batch[@a1,@a2]
         end
         
@@ -180,7 +178,7 @@ describe "Workstation" do
           lambda{@w2.ship_to(:heaven)}.should_not raise_error
         end
         
-        it "should pass every element of @answers into that block" do
+        it "should pass every element of @answers into the associated block" do
           Math.should_receive(:sin).exactly(2).times
           @w2.ship_to(:heaven) {|a| Math.sin(12.0)}
         end
@@ -199,7 +197,7 @@ describe "Workstation" do
         
         it "should not touch the tags of answers not in the filtered subset" do
           @a1.should_receive(:remove_tag).with(:lulu)
-          @a2.should_not_receive(:remove_tag).with(:lulu)
+          @a2.should_not_receive(:remove_tag)
           @w2.ship_to(:xyzzy) {|a| a.blueprint.include? "fun"}
         end
       end
@@ -212,13 +210,41 @@ describe "Workstation" do
       # but there are some helper methods defined for use in subclasses;
       # we should test those
       
-      it "should be an Array of stored procedures"
-      it "should return 'true' to indicate that a particular Answer should be scrapped"
-      it "should use an Array of stored procedures"
-      it "should return a single boolean to indicate that scrapping should continue"
-      it "should always include (as a last entry) a Proc that checks whether population > capacity"
-      it "should set the workstation of scrapped Answers to Scrapyard"
-      it "should call rules in order, scrapping all indicated Answers, until scrap_trigger? is false"
+      describe "scrap_if" do
+        before(:each) do
+          @w3 = Workstation.new(:falafel)
+          @a1 = Answer.new("do fun_stuff", progress:1, tags:[:falafel])
+          @a2 = Answer.new("do sad_stuff", progress:99, tags:[:falafel])
+          @w3.answers = Batch[@a1,@a2]
+        end
+        
+        it "should accept a single argument" do
+          @w3.method(:scrap_if).arity.should == 1
+        end
+        
+        it "should pass every element of @answers into a block" do
+          Math.should_receive(:cos).exactly(2).times
+          @w3.scrap_if("Math says so") {|a| Math.cos(12.0)}
+        end
+        
+        it "should add a new location tag :SCRAP to the answers in the filtered subset" do
+          @a1.should_receive(:add_tag).with(:SCRAP)
+          @a2.should_receive(:add_tag).with(:SCRAP)
+          @w3.scrap_if("everything dies") {|a| true}
+        end
+        
+        it "should remove the old location tag to the answers in the filtered subset" do
+          @a1.should_receive(:remove_tag).with(:falafel)
+          @a2.should_receive(:remove_tag).with(:falafel)
+          @w3.scrap_if("entropy") {|a| true}
+        end
+        
+        it "should not touch the tags of answers not in the filtered subset" do
+          @a1.should_receive(:remove_tag).with(:falafel)
+          @a2.should_not_receive(:remove_tag)
+          @w3.scrap_if("insufficient progress") {|a| a.progress < 10}
+        end
+      end
     end
   end
 end
