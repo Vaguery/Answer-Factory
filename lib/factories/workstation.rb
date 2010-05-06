@@ -27,10 +27,7 @@ module AnswerFactory
     
     
     def gather_mine
-      db = CouchRest.database(@couchdb_uri)
-      gather_view = "#{@name.to_s}/current"
-      response = db.view(gather_view)
-      p response
+      @answers += Batch.load_from_couch(@couchdb_uri, "#{name}/current")
     end
     
     

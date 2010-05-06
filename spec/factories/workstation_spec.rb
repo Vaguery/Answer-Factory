@@ -116,18 +116,32 @@ describe "Workstation" do
       # we should test those
       
       describe "gather_mine" do
+        before(:each) do
+          @w1 = Workstation.new(:ws1, factory_name:"this_factory")
+          @uri = "http://127.0.0.1:5984/this_factory"
+          @design_doc = "ws1/current"  # we'll assume this has been set up!
+          @view_uri = "http://127.0.0.1:5984/this_factory/_design/ws1/_view/current"
+          FakeWeb.allow_net_connect = false
+          @canned = '{"total_rows":1,"offset":0,"rows":[{"id":"0f60c293ad736abfdb083d33f71ef9ab","key":"ws1","value":{"_id":"0f60c293ad736abfdb083d33f71ef9ab","_rev":"1-473467b6dc1a4cba3498dd6eeb8e3206","blueprint":"do bar","tags":[],"scores":{"badness": 12.345},"progress":12,"timestamp":"2010/04/14 17:09:14 +0000"}}]}'
+        end
         
+        it "should use the Batch#load_from_couch method" do
+          FakeWeb.register_uri(:any, @view_uri, :body => @canned, :status => [200, "OK"])
+          Batch.should_receive(:load_from_couch).with(@uri,@design_doc).and_return(Batch.new)
+          @w1.gather_mine
+        end
+        
+        it "should add that Batch into self#answers" do
+          FakeWeb.register_uri(:any, @view_uri, :body => @canned, :status => [200, "OK"])
+          @w1.answers.length.should == 0
+          @w1.gather_mine
+          @w1.answers.length.should == 1
+          @w1.answers[0].scores[:badness].should == 12.345
+        end
       end
       
       
       describe "gather_into" do
-        it "should connect to the persistent store"
-        
-        it "should receive a result"
-        
-        it "should construct a new Batch from that result"
-        
-        it "should add that Batch into the specified batch"
       end
     end
     
