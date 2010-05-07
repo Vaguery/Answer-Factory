@@ -39,7 +39,7 @@ class GeneratorStation < Workstation
   end
   
   def ship!
-    ship_to(:next_station) {|answer| true} 
+    ship_to(:breeder) {|answer| true} 
   end
 end
 
@@ -59,8 +59,8 @@ class EvolverStation < Workstation
   end
   
   def build!
-    process_with @my_crossover_operator_instance
-    process_with @my_evaluator_instance
+    process_with @my_crossover_operator
+    # process_with @my_length_evaluator
   end
   
   def scrap!
@@ -91,6 +91,8 @@ Dir.glob(File.dirname(__FILE__) + configatron.project.workstations.path) {|file|
 project = Factory.new
 workstations = [GeneratorStation.new(:maker), EvolverStation.new(:breeder)]
 
-workstations.each do |ws|
-  ws.cycle
+10.times do
+  workstations.each do |ws|
+    ws.cycle
+  end
 end

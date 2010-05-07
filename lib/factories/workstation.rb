@@ -79,11 +79,17 @@ module AnswerFactory
     end
     
     
+    def after_cycle!
+      @answers.bulk_save!(couchdb_uri)
+      @answers = Batch.new
+    end
+    
     def cycle
       self.receive!
       self.build!
       self.ship!
       self.scrap!
+      self.after_cycle!
     end
   end
 end

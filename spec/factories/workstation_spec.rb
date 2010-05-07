@@ -80,22 +80,42 @@ describe "Workstation" do
   
   
   describe "#cycle" do
+    before(:each) do
+      FakeWeb.register_uri(:any, "http://127.0.0.1:5984/this_factory/_bulk_docs",
+        :body => @canned, :status => [200, "OK"])
+    end
     
     describe "the #before_cycle method" do
       it "should empty @answers"
     end
     
     it "should invoke #receive!, #build!, #ship! and #scrap!" do
-      w1 = Workstation.new(:place)
-      w1.should_receive(:receive!)
-      w1.should_receive(:build!)
-      w1.should_receive(:ship!)
-      w1.should_receive(:scrap!)
-      w1.cycle
+      configatron.temp do
+        configatron.factory.couchdb.server = "http://127.0.0.1:5984"
+        configatron.factory.couchdb.name = "this_factory"
+        
+        w1 = Workstation.new(:this_factory)
+        w1.stub!(:after_cycle!)
+        w1.should_receive(:receive!)
+        w1.should_receive(:build!)
+        w1.should_receive(:ship!)
+        w1.should_receive(:scrap!)
+        w1.cycle
+      end
     end
     
     describe "the #after_cycle method" do
-      it "should save everything in @answers to the persistent store"
+      it "should save everything in @answers to the persistent store" do
+        configatron.temp do
+          configatron.factory.couchdb.server = "http://127.0.0.1:5984"
+          configatron.factory.couchdb.name = "this_factory"
+          
+          FakeWeb.allow_net_connect = false
+          @w1 = Workstation.new(:ws1, factory_name:"this_factory")
+          @w1.answers.should_receive(:bulk_save!)
+          @w1.after_cycle!
+        end
+      end
     end
     
     describe "#receive!" do
@@ -106,8 +126,6 @@ describe "Workstation" do
       describe "gather_mine" do
         before(:each) do
           @w1 = Workstation.new(:ws1, factory_name:"this_factory")
-          configatron.factory.couchdb.server = "http://127.0.0.1:5984"
-          configatron.factory.couchdb.name = "this_factory"
           
           @uri = "http://127.0.0.1:5984/this_factory"
           @design_doc = "ws1/current"  # we'll assume this has been set up!
@@ -118,6 +136,9 @@ describe "Workstation" do
         
         it "should use the Batch#load_from_couch method" do
           configatron.temp do
+            configatron.factory.couchdb.server = "http://127.0.0.1:5984"
+            configatron.factory.couchdb.name = "this_factory"
+            
             FakeWeb.register_uri(:any, @view_uri, :body => @canned, :status => [200, "OK"])
             Batch.should_receive(:load_from_couch).with(@uri,@design_doc).and_return(Batch.new)
             @w1.gather_mine
@@ -125,11 +146,16 @@ describe "Workstation" do
         end
         
         it "should add that Batch into self#answers" do
-          FakeWeb.register_uri(:any, @view_uri, :body => @canned, :status => [200, "OK"])
-          @w1.answers.length.should == 0
-          @w1.gather_mine
-          @w1.answers.length.should == 1
-          @w1.answers[0].scores[:badness].should == 12.345
+          configatron.temp do
+            configatron.factory.couchdb.server = "http://127.0.0.1:5984"
+            configatron.factory.couchdb.name = "this_factory"
+          
+            FakeWeb.register_uri(:any, @view_uri, :body => @canned, :status => [200, "OK"])
+            @w1.answers.length.should == 0
+            @w1.gather_mine
+            @w1.answers.length.should == 1
+            @w1.answers[0].scores[:badness].should == 12.345
+          end
         end
       end
       

@@ -1,5 +1,6 @@
 module AnswerFactory
   class ProgramPointEvaluator < Evaluator
+    
     def evaluate(batch)
       raise(ArgumentError, "Can only evaluate a Batch of Answers") if !batch.kind_of?(Batch)
       batch.each do |i|
@@ -10,5 +11,8 @@ module AnswerFactory
         end
       end
     end
+    
+    alias  generate evaluate
+    
   end
 end
