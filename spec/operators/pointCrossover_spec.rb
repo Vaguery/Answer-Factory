@@ -56,5 +56,10 @@ describe "PointCrossoverOperator" do
       babies = @myXover.generate([@dude1, @dude2],10)
       babies.each {|baby| [8,12].should include(baby.progress)}
     end
+    
+    it "should return a Batch" do
+      babies = @myXover.generate(Batch.[](@dude1, @dude2))
+      babies.should be_a_kind_of(Batch)
+    end
   end
 end

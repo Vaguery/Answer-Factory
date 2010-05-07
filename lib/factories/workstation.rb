@@ -34,7 +34,9 @@ module AnswerFactory
     
     
     def gather_mine
-      @answers += Batch.load_from_couch(couchdb_uri, "#{name}/current")
+      gathered = Batch.load_from_couch(couchdb_uri, "#{name}/current")
+      puts "gathered: #{gathered.class}"
+      @answers = gathered
     end
     
     

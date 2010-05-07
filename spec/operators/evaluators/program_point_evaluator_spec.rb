@@ -39,5 +39,10 @@ describe ProgramPointEvaluator do
       @ppe.evaluate(@dudes)
       @dudes.each {|dude| origIDs.should include(dude.object_id)}
     end
+    
+    it "should return a Batch" do
+      @ppe.evaluate(@dudes).should be_a_kind_of(Batch)
+    end
+    
   end
 end

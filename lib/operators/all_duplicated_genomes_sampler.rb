@@ -1,4 +1,5 @@
 module AnswerFactory
+  
   class AllDuplicatedGenomesSampler < Sampler
     def generate(crowd)
       result = Batch.new
@@ -11,4 +12,5 @@ module AnswerFactory
       return result
     end
   end
+
 end
