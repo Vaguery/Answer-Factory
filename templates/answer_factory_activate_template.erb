@@ -6,16 +6,83 @@ require 'answer-factory'
 ####
 ####
 
-# Nudge language extensions:
+
+#### CouchDB access:
+configatron.factory.couchdb.server =          'http://127.0.0.1:5984'
+
+#### Factory settings:
+configatron.factory.name =                    'my_factory'
+
+#### Workstation definitions:
+configatron.project.workstations.path =       '/lib/factory/workstations/*'
+
+#### Nudge language extensions:
 configatron.project.nudge.instructions.path = '/lib/nudge/instructions/*'
 configatron.project.nudge.types.path =        '/lib/nudge/types/*'
 
 
+
+#### normally these should be in /lib/factory/workstations/**
+
+class GeneratorStation < Workstation
+  attr_reader :random_program_maker
+  
+  def initialize(name, options = {})
+    super
+    @random_program_maker = RandomGuessOperator.new(how_many:10)
+  end
+  
+  def build!
+    process_with @my_random_sampler
+  end
+  
+  def :ship!
+    ship_to(:next_station) {|answer| true} 
+  end
+end
+
+
+class EvolverStation < Workstation
+  attr_reader :my_crossover_operator
+  attr_reader :my_length_evaluator
+  
+  def initialize(name, options = {})
+    super
+    @my_crossover_operator = PointCrossoverOperator.new
+    @my_length_evaluator = ProgramPointEvaluator.new
+  end
+  
+  def :receive!
+    gather_mine
+  end
+  
+  def :build!
+    process_with @my_crossover_operator_instance
+    process_with @my_evaluator_instance
+  end
+  
+  def :scrap!
+    @highest_progress = (@answers.collect {|a| a.progress}).max
+    scrap_if("too_old") {|a| a.progress < @highest_progress} 
+  end
+end
+
+
 ####
 ####
-#### DON'T EDIT PAST THIS POINT
+#### DON'T EDIT BEYOND THIS POINT
 ####
 ####
 
+# extend Nudge
 Dir.glob(File.dirname(__FILE__) + configatron.project.nudge.instructions.path) {|file| require file}
 Dir.glob(File.dirname(__FILE__) + configatron.project.nudge.types.path) {|file| require file}
+
+# confirm database access
+raise "CouchDB not available at #{configatron.factory.couchdb.server}" unless
+  Factory.couch_available?()
+
+# extend Workstation
+Dir.glob(File.dirname(__FILE__) + configatron.project.workstations.path) {|file| require file}
+
+

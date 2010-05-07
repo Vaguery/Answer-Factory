@@ -4,7 +4,6 @@ module AnswerFactory
     attr_reader :name, :capacity, :factory_name
     attr_accessor :downstream_stations
     attr_accessor :answers
-    attr_accessor :build_sequence
     
     
     def initialize(name, options = {})
@@ -12,7 +11,6 @@ module AnswerFactory
       @name = name
       @factory_name = configatron.factory.name
       @capacity = options[:capacity] || 100
-      @build_sequence = options[:build_sequence] || Array.new
       @downstream_stations = Array.new
       @answers = Batch.new
     end

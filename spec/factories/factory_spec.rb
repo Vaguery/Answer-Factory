@@ -142,14 +142,14 @@ describe "Factory" do
         
         it "should have a method to check that couchDB is accessible" do
           f1 = Factory.new(name:"boo")
-          lambda{f1.couch_available?}.should_not raise_error
+          lambda{Factory.couch_available?}.should_not raise_error
         end
         
         it "should return true if the uri is reachable" do
           uri = "http://mycouch.db/boo"
           f1 = Factory.new(name:"boo", couchdb_server:uri)
           FakeWeb.register_uri(:any, uri, :body => "We are here!", :status => [200, "OK"])
-          f1.couch_available?.should == true
+          Factory.couch_available?.should == true
         end
         
         it "should return false if the uri is offline or 404's out" do
@@ -157,10 +157,10 @@ describe "Factory" do
           f1 = Factory.new(name:"boo", couchdb_server:uri)
           FakeWeb.register_uri(:any, "http://mycouch.db/boo",
             :body => "Go away!", :status => [404, "Not Found"])
-          f1.couch_available?.should == false
+          Factory.couch_available?.should == false
           
           f1 = Factory.new(name:"boo", couchdb_server:"http://127.0.0.1:9991/place")
-          f1.couch_available?.should == false
+          Factory.couch_available?.should == false
         end
       end
     end

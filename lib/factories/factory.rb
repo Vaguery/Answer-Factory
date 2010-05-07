@@ -57,7 +57,7 @@ module AnswerFactory
     end
     
     
-    def couch_available?
+    def self.couch_available?
       open(configatron.factory.couchdb.server).status
       true
     rescue StandardError
