@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__), "./../spec_helper")
 
 
 describe "Factory" do
-
+  
   it "should have a name" do
     Factory.new("foo_factory").name.should == "foo_factory"
   end
@@ -14,12 +14,12 @@ describe "Factory" do
   
   describe "Factory configuration methods" do
     describe "configatron integration" do
-      it "should respond to #configatron" do
-        Factory.new.should respond_to(:configatron)
+      it "should be possible to talk to to #configatron" do
+        lambda{configatron.my_thing}.should_not raise_error
       end
     end
-
-
+    
+    
     describe "configure_paths" do
       it "should respond to #configure_paths" do
         Factory.new.should respond_to(:configure_paths!)
@@ -50,53 +50,35 @@ describe "Factory" do
 
     describe "database setup" do
       describe "paths" do
-        it "should read from database.yml" do
-          f1 = Factory.new("super_fancy")
-          f1.configatron.should_receive(:configure_from_yaml)
-          f1.configure!
+        it "should have reasonable defaults"
+        
+        describe "setting from file" do
+          it "should populate configatron.main_database.db_root"
+          
+          it "should populate configatron.main_database.db_name"
         end
-
-        describe "subject" do
-          before(:each) do
-            @f1 = Factory.new()
-            @f1.configure!
-          end
-
-          it "should populate configatron.main_database.db_root" do
-            @f1.configatron.main_database.db_root.should == "http://127.0.0.1:5984"
-          end
-
-          it "should populate configatron.main_database.db_name" do
-            @f1.configatron.main_database.db_name.should == "my_factory" # from the config file
-          end
-
-          it "should populate configatron.main_database.tag_filter" do
-            @f1.configatron.main_database.tag_filter.should == "_design/routing/_view/by_tag"
-          end
-        end
-
-      end
-
-      describe "checking for CouchDB access" do
-        it "should call Factory#couch_db?"
-      end
-
-      describe "setting up initial db" do
-        it "should not remove old records unless asked to do so"
-        it "should be possible to erase the db if a flag is set"
-        it "should set up the design document"
-        it "should write the search-by-tag filter view to the design document"
       end
     end
-
-
-    describe "Nudge language setup" do
-      it "should set up the Instructions"
-
-      it "should set up the Types"
-
+    
+    
+    describe "Nudge Language setup" do
+      it "should have reasonable defaults"
+      
+      describe "setting from file" do
+        it "should replace configatron.ontology.nudge.types"
+        it "should replace configatron.ontology.nudge.instructions"
+      end
     end
-
+    
+    
+    describe "Workstation setup" do
+      it "should have reasonable defaults"
+      
+      describe "setting from file" do
+        it "should replace configatron.workstations"
+        it "should replace 'configatron.[workstation_name].[settings]' for each workstation"
+      end
+    end
   end
   
   
@@ -131,14 +113,14 @@ describe "Factory" do
   end
   
   
-  describe "build" do
+  describe "build_from_config" do
     it "should read the config files"
     
     it "should #reset"
   end
   
   
-  describe "reset" do
+  describe "reset_from_config" do
     it "should erase the couchdb"
     
     it "should set up a new couchdb"

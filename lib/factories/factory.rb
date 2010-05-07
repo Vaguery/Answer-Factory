@@ -1,7 +1,6 @@
 module AnswerFactory
   class Factory
     require 'open-uri'
-    require 'configatron'
     
     attr_reader :name
     attr_reader :instruction_library, :type_library
@@ -36,18 +35,18 @@ module AnswerFactory
     
     
     def configure_constants!
-      self.configatron.factory_name = self.name
+      configatron.factory_name = self.name
     end
     
     
     def configure_paths!
-      self.configatron.factory_root = File.expand_path("#{File.dirname(__FILE__)}/../..")
+      configatron.factory_root = File.expand_path("#{File.dirname(__FILE__)}/../..")
     end
     
     
     def configure_databases!
-      self.configatron.configure_from_yaml("#{self.configatron.factory_root}/config/database.yml")
-      self.configatron.couchdb_uri = "#{self.configatron.main_database.db_root}/#{self.name}"
+      configatron.configure_from_yaml("#{self.configatron.factory_root}/config/database.yml")
+      configatron.couchdb_uri = "#{self.configatron.main_database.db_root}/#{self.name}"
     end
   end
 end
