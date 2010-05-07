@@ -18,10 +18,12 @@ module AnswerFactory
       end
       @timestamp = Time.now
       @couch_id = options[:couch_id] || ""
-      @initialization_options = options
       @progress = options[:progress] || 0
+        puts @progress
       @ancestors = options[:ancestors] || []
       @tags = Set.new(options[:tags]) || Set.new
+      
+      @initialization_options = options
     end
     
     
@@ -122,7 +124,11 @@ module AnswerFactory
   
   
   def data
-    {'blueprint' => self.blueprint, 'tags' => self.tags, 'scores' => self.scores, 'progress' => @progress, 'timestamp' => @timestamp}
+    {'blueprint' => self.blueprint,
+      'tags' => self.tags, 
+      'scores' => self.scores,
+      'progress' => self.progress,
+      'timestamp' => self.timestamp}
   end
   
   
