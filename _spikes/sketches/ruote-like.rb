@@ -6,7 +6,7 @@ class GuesserWorkstation << Workstation
   # falls back to super
   
   
-  def :build!
+  def build!
     consecutive :answers do
       # make a new answer, and merge that into @answers
       process_with my_random_sampler 
@@ -14,14 +14,14 @@ class GuesserWorkstation << Workstation
   end
   
   
-  def :ship!
+  def ship!
     # "sends" all answers to :next_station, saves them to the db,
     # and removes them immediately from @answers
     ship_to(:next_station) {|answer| true} 
   end
   
   
-  def :scrap!
+  def scrap!
     # just in case?
     # "sends" all remaining answers to :scrapheap, saves them to the db
     scrap_everything
@@ -32,7 +32,7 @@ end
 # population GA workstation, receiving answers from upstream (somewhere)
 
 class PopGAWorkstation < Workstation
-  def :receive!
+  def receive!
     gather_mine # returns all answers with self.name in #tags
     
     self.collaborator_names.each do |neighbor|
@@ -41,7 +41,7 @@ class PopGAWorkstation < Workstation
   end
   
   
-  def :build!
+  def build!
     channel :answers do
       # generate (increment progress), and pass into next line
       process_with my_crossover_operator_instance 
@@ -58,11 +58,11 @@ class PopGAWorkstation < Workstation
   
   
   # nothing to ship; this is the end of a line
-  def :ship!
+  def ship!
   emd
   
   
-  def :scrap!
+  def scrap!
     @highest_progress = (@answers.collect {|a| a.progress}).max
     
     # 'scrap' filters all @answers, changing location, saving and
@@ -77,12 +77,12 @@ end
 
 class HillclimberWorkstation < Workstation
   
-  def :receive!
+  def receive!
     gather_mine 
   end
   
   
-  def :build!
+  def build!
     # if there are none, create one
     if @answers.empty?
       consecutive :answers do
@@ -104,7 +104,7 @@ class HillclimberWorkstation < Workstation
   end
   
   
-  def :ship!
+  def ship!
     @highest_progress = (@answers.collect {|a| a.progress}).max
     
     # "sends" those, saves them, and removes immediately from @answers [if true]
@@ -112,7 +112,7 @@ class HillclimberWorkstation < Workstation
   end
   
   
-  def :scrap!
+  def scrap!
     scrap_everything # "sends" anything left to location "scrapheap"
   end
 end
@@ -125,12 +125,12 @@ end
 
 class Polisher < Workstation
   
-  def :receive!
+  def receive!
     gather_mine
   end
   
   
-  def :build!
+  def build!
     # we start from @answers but do not merge results until
     # the end of this block:
     channel :answers do
@@ -179,7 +179,7 @@ class Polisher < Workstation
   end
   
   
-  def :ship!
+  def ship!
     ship_to(:next_station) {|answer| answer.tags.include? "ship_A_to_B"}
   end
   
@@ -187,7 +187,7 @@ class Polisher < Workstation
   # we're not scrapping anything
   # we've just shipped off the best, and will maybe receive more work later
   # meanwhile, we keep polishing what we've got
-  def :scrap!
+  def scrap!
   end
 end
 
@@ -199,7 +199,7 @@ end
 
 class TwoSpeciesCompetitiveEvaluator < Workstation
   
-  def :receive!
+  def receive!
     # Note that this factory should deal with different
     #"species" more cleanly than this code implies!
     
@@ -208,7 +208,7 @@ class TwoSpeciesCompetitiveEvaluator < Workstation
   end
   
   
-  def :build!
+  def build!
     consecutive :answers do
       # perhaps the trainers here are linear genomes only, with just integer values
       # and they're used to select training cases from a large
@@ -237,13 +237,13 @@ class TwoSpeciesCompetitiveEvaluator < Workstation
   end
   
   
-  def :ship!
+  def ship!
     ship_to(:where_answers_go) {|answer| answer.tags.!include? "trainer"}
     ship_to(:where_trainers_go) {|answer| answer.tags.include? "trainer"}
   end
   
   
-  def :scrap!
+  def scrap!
     # nothing should be left
   end
 end

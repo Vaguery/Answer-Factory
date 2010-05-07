@@ -1,4 +1,5 @@
 require 'answer-factory'
+include AnswerFactory
 
 ####
 ####
@@ -36,7 +37,7 @@ class GeneratorStation < Workstation
     process_with @my_random_sampler
   end
   
-  def :ship!
+  def ship!
     ship_to(:next_station) {|answer| true} 
   end
 end
@@ -49,19 +50,19 @@ class EvolverStation < Workstation
   def initialize(name, options = {})
     super
     @my_crossover_operator = PointCrossoverOperator.new
-    @my_length_evaluator = ProgramPointEvaluator.new
+    @my_length_evaluator = ProgramPointEvaluator.new(score_label:"length")
   end
   
-  def :receive!
+  def receive!
     gather_mine
   end
   
-  def :build!
+  def build!
     process_with @my_crossover_operator_instance
     process_with @my_evaluator_instance
   end
   
-  def :scrap!
+  def scrap!
     @highest_progress = (@answers.collect {|a| a.progress}).max
     scrap_if("too_old") {|a| a.progress < @highest_progress} 
   end
@@ -86,3 +87,9 @@ raise "CouchDB not available at #{configatron.factory.couchdb.server}" unless
 Dir.glob(File.dirname(__FILE__) + configatron.project.workstations.path) {|file| require file}
 
 
+project = Factory.new
+workstations = [GeneratorStation.new(:maker), EvolverStation.new(:breeder)]
+
+workstations.each do |ws|
+  ws.cycle
+end

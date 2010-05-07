@@ -27,6 +27,12 @@ module AnswerFactory
     end
     
     
+    def receive!
+      # Workstation is a superclass; the default behavior (doing nothing)
+      # should be overridden in a subclass definition
+    end
+    
+    
     def gather_mine
       @answers += Batch.load_from_couch(couchdb_uri, "#{name}/current")
     end
