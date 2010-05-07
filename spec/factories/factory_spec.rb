@@ -147,6 +147,10 @@ describe "Factory" do
   
   describe "databases" do
     describe "#couch_available?" do
+      before(:each) do
+        FakeWeb.allow_net_connect = false
+      end
+      
       it "should have a method to check that couchDB is accessible" do
         f1 = Factory.new(name:"boo")
         lambda{f1.couch_available?}.should_not raise_error
@@ -154,22 +158,19 @@ describe "Factory" do
       
       it "should return true if the uri is reachable" do
         uri = "http://mycouch.db/boo"
-        f1 = Factory.new(name:"boo")
-        f1.configatron.couchdb_uri = uri
+        f1 = Factory.new(name:"boo", couchdb_server:uri)
         FakeWeb.register_uri(:any, uri, :body => "We are here!", :status => [200, "OK"])
         f1.couch_available?.should == true
       end
       
       it "should return false if the uri is offline or 404's out" do
         uri = "http://mycouch.db/boo"
-        f1 = Factory.new(name:"boo")
-        f1.configatron.couchdb_uri = uri
-        f1.configatron.couchdb_uri.should == uri
-        FakeWeb.register_uri(:any, uri, :body => "Go away!", :status => [404, "Not Found"])
+        f1 = Factory.new(name:"boo", couchdb_server:uri)
+        FakeWeb.register_uri(:any, "http://mycouch.db/boo",
+          :body => "Go away!", :status => [404, "Not Found"])
         f1.couch_available?.should == false
         
-        f1 = Factory.new(name:"boo") # depends on this being wrong
-        f1.configatron.couchdb_uri = "http://127.0.0.1:9991/place"
+        f1 = Factory.new(name:"boo", couchdb_server:"http://127.0.0.1:9991/place")
         f1.couch_available?.should == false
       end
     end

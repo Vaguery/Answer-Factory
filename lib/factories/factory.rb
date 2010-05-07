@@ -14,35 +14,33 @@ module AnswerFactory
       
       # Factory instance settings
       @name = options[:name] ||
-        (configatron.factory.name unless configatron.factory.name.nil?) ||
+        configatron.factory.retrieve(:name,nil) ||
         "my_factory"
       
       @workstation_names = options[:workstation_names] ||
-              (configatron.factory.workstation_names unless configatron.factory.workstation_names.nil?) ||
-              Array.new
+        configatron.factory.retrieve(:workstation_names, nil) ||
+        Array.new
       
       # CouchDB settings
       @couchdb_server = options[:couchdb_server] ||
-              (configatron.factory.couchdb.server unless configatron.factory.couchdb.server.nil?) ||
-              "http://127.0.0.1:5984"
+        configatron.factory.couchdb.retrieve(:server, nil) ||
+        "http://127.0.0.1:5984"
       
       # Nudge language settings
       @nudge_instructions = options[:nudge_instructions] ||
-        (configatron.nudge.instructions.all unless configatron.nudge.instructions.all.nil?) ||
+        configatron.nudge.instructions.retrieve(:all, nil) ||
         Instruction.all_instructions
       
       @nudge_types = options[:nudge_types] ||
-          (configatron.nudge.types.all unless configatron.nudge.types.all.nil?) ||
-          NudgeType.all_types
+        configatron.nudge.types.retrieve(:all, nil) ||
+        NudgeType.all_types
       
-      
-      
-      save_configuration!
+      update_configatron!
     end
     
     # this apparent redundancy saves project-based
     # and command-line overrides
-    def save_configuration!
+    def update_configatron!
       configatron.factory.name = @name
       configatron.nudge.instructions.all = @nudge_instructions
       configatron.nudge.types.all = @nudge_types
@@ -52,7 +50,7 @@ module AnswerFactory
     
     
     def couch_available?
-      open(configatron.couchdb_uri).status
+      open(configatron.factory.couchdb.server).status
       true
     rescue StandardError
       false 
