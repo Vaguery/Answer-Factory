@@ -1,4 +1,5 @@
 require 'answer-factory'
+include Nudge
 include AnswerFactory
 
 ####
@@ -34,7 +35,7 @@ class GeneratorStation < Workstation
   end
   
   def build!
-    process_with @my_random_sampler
+    process_with @random_program_maker
   end
   
   def ship!
