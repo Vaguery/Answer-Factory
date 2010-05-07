@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'couchrest'
 require 'nudge'
-require 'answer-factory'
+require '../lib/answer-factory'
 include Nudge
 include AnswerFactory
 

@@ -44,7 +44,6 @@ module AnswerFactory
       begin
         response = db.view(design_doc)
         response["rows"].each do |hash|
-          puts hash["values"]
           batch << Answer.from_serial_hash(hash)
         end
       rescue JSON::ParserError => e

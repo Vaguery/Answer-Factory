@@ -19,7 +19,6 @@ module AnswerFactory
       @timestamp = Time.now
       @couch_id = options[:couch_id] || ""
       @progress = options[:progress] || 0
-        puts @progress
       @ancestors = options[:ancestors] || []
       @tags = Set.new(options[:tags]) || Set.new
       
