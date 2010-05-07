@@ -2,8 +2,7 @@ require File.join(File.dirname(__FILE__), "./../spec_helper")
 
 
 describe "Workstation" do
-  
-  describe "names" do
+  describe "#name" do
     it "should have a name" do
       Workstation.new(:my_workthing).name.should == :my_workthing
     end
@@ -14,26 +13,14 @@ describe "Workstation" do
     end
     
     it "should have a factory_name" do
-      Workstation.new(:ws).factory_name.should be_a_kind_of(String)
+      Workstation.new(:ws).should respond_to(:factory_name)
     end
     
-    it "should have a default factory_name of 'factory_name'" do
-      Workstation.new(:ws).factory_name.should == 'factory_name'
-    end
-    
-    it "should be possible to set the factory_name via an initialization option" do
-      Workstation.new(:ws, factory_name:'foo').factory_name.should == 'foo'
-    end
-  end
-  
-  
-  describe "database" do
-    it "should have a URI for a CouchDB instance" do
-      Workstation.new(:ws).couchdb_uri.should be_a_kind_of(String)
-    end
-    
-    it "should default to http://127.0.0.1:5984/\#{@factory_name}" do
-      Workstation.new(:ws).couchdb_uri.should == "http://127.0.0.1:5984/factory_name"
+    it "should get factory_name from configatron" do
+      configatron.temp do
+        configatron.factory.name = 'somewhere_lovely'
+        Workstation.new(:ws).factory_name.should == 'somewhere_lovely'
+      end
     end
   end
   
@@ -119,6 +106,9 @@ describe "Workstation" do
       describe "gather_mine" do
         before(:each) do
           @w1 = Workstation.new(:ws1, factory_name:"this_factory")
+          configatron.factory.couchdb.server = "http://127.0.0.1:5984"
+          configatron.factory.couchdb.name = "this_factory"
+          
           @uri = "http://127.0.0.1:5984/this_factory"
           @design_doc = "ws1/current"  # we'll assume this has been set up!
           @view_uri = "http://127.0.0.1:5984/this_factory/_design/ws1/_view/current"
@@ -127,9 +117,11 @@ describe "Workstation" do
         end
         
         it "should use the Batch#load_from_couch method" do
-          FakeWeb.register_uri(:any, @view_uri, :body => @canned, :status => [200, "OK"])
-          Batch.should_receive(:load_from_couch).with(@uri,@design_doc).and_return(Batch.new)
-          @w1.gather_mine
+          configatron.temp do
+            FakeWeb.register_uri(:any, @view_uri, :body => @canned, :status => [200, "OK"])
+            Batch.should_receive(:load_from_couch).with(@uri,@design_doc).and_return(Batch.new)
+            @w1.gather_mine
+          end
         end
         
         it "should add that Batch into self#answers" do

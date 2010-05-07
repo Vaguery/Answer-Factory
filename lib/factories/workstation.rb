@@ -1,7 +1,7 @@
 module AnswerFactory
   
   class Workstation
-    attr_reader :name, :capacity, :couchdb_uri, :factory_name
+    attr_reader :name, :capacity, :factory_name
     attr_accessor :downstream_stations
     attr_accessor :answers
     attr_accessor :build_sequence
@@ -10,8 +10,7 @@ module AnswerFactory
     def initialize(name, options = {})
       raise ArgumentError, "#{name} is not a Symbol" unless name.kind_of?(Symbol)
       @name = name
-      @factory_name = options[:factory_name] || 'factory_name'
-      @couchdb_uri = options[:couchdb_uri] || "http://127.0.0.1:5984/#{@factory_name}"
+      @factory_name = configatron.factory.name
       @capacity = options[:capacity] || 100
       @build_sequence = options[:build_sequence] || Array.new
       @downstream_stations = Array.new
@@ -25,9 +24,13 @@ module AnswerFactory
       which.add_tag(where)
     end
     
+    def couchdb_uri
+      "#{configatron.factory.couchdb.server}/#{configatron.factory.couchdb.name}"
+    end
+    
     
     def gather_mine
-      @answers += Batch.load_from_couch(@couchdb_uri, "#{name}/current")
+      @answers += Batch.load_from_couch(couchdb_uri, "#{name}/current")
     end
     
     

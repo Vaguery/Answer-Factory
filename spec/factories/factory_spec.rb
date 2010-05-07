@@ -9,6 +9,10 @@ describe "Factory" do
       end
       
       describe "Factory.new should have reasonable default values" do
+        before(:each) do
+          configatron.reset!
+        end
+        
         it "should use 'my_factory' for #name" do
           f1 = Factory.new
           f1.name.should == "my_factory"
@@ -23,6 +27,12 @@ describe "Factory" do
           f1 = Factory.new
           f1.couchdb_server.should == 'http://127.0.0.1:5984'
         end
+        
+        it "should use self.name for #couchdb_name" do
+          f1 = Factory.new(name:"bob")
+          f1.couchdb_name.should == f1.name
+        end
+        
         
         it "should use Nudge::Instruction.all_instructions for #nudge_instructions" do
           f1 = Factory.new
@@ -77,6 +87,13 @@ describe "Factory" do
           end
         end
         
+        it "should hit configatron for #couchdb_name" do
+          configatron.temp do
+            configatron.factory.couchdb.name = "succotash"
+            f1 = Factory.new
+            f1.couchdb_name.should == "succotash"
+          end
+        end
       end
       
       
@@ -106,19 +123,44 @@ describe "Factory" do
             Factory.new(couchdb_server:"http://127.0.0.1:9999")
             configatron.factory.couchdb.server.should == "http://127.0.0.1:9999"
           end
+          
+          it "should overwrite #factory.couchdb.server" do
+            Factory.new(couchdb_name:"miss_jackson")
+            configatron.factory.couchdb.name.should == "miss_jackson"
+          end
         end
       end
       
     end
-
-    describe "database setup" do
-      describe "paths" do
-        it "should have reasonable defaults"
+    
+    
+    describe "databases" do
+      describe "#couch_available?" do
+        before(:each) do
+          FakeWeb.allow_net_connect = false
+        end
         
-        describe "setting from file" do
-          it "should populate configatron.main_database.db_root"
+        it "should have a method to check that couchDB is accessible" do
+          f1 = Factory.new(name:"boo")
+          lambda{f1.couch_available?}.should_not raise_error
+        end
+        
+        it "should return true if the uri is reachable" do
+          uri = "http://mycouch.db/boo"
+          f1 = Factory.new(name:"boo", couchdb_server:uri)
+          FakeWeb.register_uri(:any, uri, :body => "We are here!", :status => [200, "OK"])
+          f1.couch_available?.should == true
+        end
+        
+        it "should return false if the uri is offline or 404's out" do
+          uri = "http://mycouch.db/boo"
+          f1 = Factory.new(name:"boo", couchdb_server:uri)
+          FakeWeb.register_uri(:any, "http://mycouch.db/boo",
+            :body => "Go away!", :status => [404, "Not Found"])
+          f1.couch_available?.should == false
           
-          it "should populate configatron.main_database.db_name"
+          f1 = Factory.new(name:"boo", couchdb_server:"http://127.0.0.1:9991/place")
+          f1.couch_available?.should == false
         end
       end
     end
@@ -143,40 +185,4 @@ describe "Factory" do
       end
     end
   end
-  
-  
-  describe "databases" do
-    describe "#couch_available?" do
-      before(:each) do
-        FakeWeb.allow_net_connect = false
-      end
-      
-      it "should have a method to check that couchDB is accessible" do
-        f1 = Factory.new(name:"boo")
-        lambda{f1.couch_available?}.should_not raise_error
-      end
-      
-      it "should return true if the uri is reachable" do
-        uri = "http://mycouch.db/boo"
-        f1 = Factory.new(name:"boo", couchdb_server:uri)
-        FakeWeb.register_uri(:any, uri, :body => "We are here!", :status => [200, "OK"])
-        f1.couch_available?.should == true
-      end
-      
-      it "should return false if the uri is offline or 404's out" do
-        uri = "http://mycouch.db/boo"
-        f1 = Factory.new(name:"boo", couchdb_server:uri)
-        FakeWeb.register_uri(:any, "http://mycouch.db/boo",
-          :body => "Go away!", :status => [404, "Not Found"])
-        f1.couch_available?.should == false
-        
-        f1 = Factory.new(name:"boo", couchdb_server:"http://127.0.0.1:9991/place")
-        f1.couch_available?.should == false
-      end
-    end
-  end
-  
-  
-  
-  
 end

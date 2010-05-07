@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{answer-factory}
-  s.version = "0.0.12"
+  s.version = "0.0.13"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Bill Tozier", "Trek Glowacki", "Jesse Sielaff"]
-  s.date = %q{2010-05-06}
+  s.date = %q{2010-05-07}
   s.default_executable = %q{answer-factory}
   s.description = %q{The pragmaticgp gem provides a simple framework for building, running and managing genetic programming experiments which automatically discover algorithms and equations to solve user-defined problems.}
   s.email = %q{bill@vagueinnovation.com}
@@ -26,7 +26,6 @@ Gem::Specification.new do |s|
      "_spikes/old_vs_new_dominated_by?.rb",
      "answer-factory.gemspec",
      "bin/answer-factory",
-     "config/database.yml",
      "lib/answer-factory.rb",
      "lib/answers/answer.rb",
      "lib/answers/batch.rb",
@@ -50,9 +49,10 @@ Gem::Specification.new do |s|
      "readme.md",
      "spec/answer_spec.rb",
      "spec/batch_spec.rb",
-     "spec/config_spec.rb",
      "spec/factories/factory_spec.rb",
      "spec/factories/workstation_spec.rb",
+     "spec/integration_specs/activate_integration.rb",
+     "spec/integration_specs/build_integration.rb",
      "spec/integration_specs/thor_integration.rb",
      "spec/operators/any_one_sampler_spec.rb",
      "spec/operators/dominated_quantile_spec.rb",
@@ -83,9 +83,10 @@ Gem::Specification.new do |s|
   s.test_files = [
     "spec/answer_spec.rb",
      "spec/batch_spec.rb",
-     "spec/config_spec.rb",
      "spec/factories/factory_spec.rb",
      "spec/factories/workstation_spec.rb",
+     "spec/integration_specs/activate_integration.rb",
+     "spec/integration_specs/build_integration.rb",
      "spec/integration_specs/thor_integration.rb",
      "spec/operators/any_one_sampler_spec.rb",
      "spec/operators/dominated_quantile_spec.rb",

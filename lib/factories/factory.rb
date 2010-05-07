@@ -5,7 +5,7 @@ module AnswerFactory
     attr_reader :name
     attr_reader :nudge_instructions
     attr_reader :nudge_types
-    attr_reader :couchdb_server
+    attr_reader :couchdb_server, :couchdb_name
     attr_accessor :workstation_names
     attr_reader :original_options_hash
     
@@ -21,10 +21,16 @@ module AnswerFactory
         configatron.factory.retrieve(:workstation_names, nil) ||
         Array.new
       
+      
       # CouchDB settings
       @couchdb_server = options[:couchdb_server] ||
         configatron.factory.couchdb.retrieve(:server, nil) ||
         "http://127.0.0.1:5984"
+      
+      @couchdb_name = options[:couchdb_name] ||
+        configatron.factory.couchdb.retrieve(:name, nil) ||
+        @name
+      
       
       # Nudge language settings
       @nudge_instructions = options[:nudge_instructions] ||
@@ -38,6 +44,7 @@ module AnswerFactory
       update_configatron!
     end
     
+    
     # this apparent redundancy saves project-based
     # and command-line overrides
     def update_configatron!
@@ -46,6 +53,7 @@ module AnswerFactory
       configatron.nudge.types.all = @nudge_types
       configatron.factory.workstation_names = @workstation_names
       configatron.factory.couchdb.server = @couchdb_server
+      configatron.factory.couchdb.name = @couchdb_name
     end
     
     

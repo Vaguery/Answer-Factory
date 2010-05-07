@@ -2,26 +2,20 @@ require 'answer-factory'
 
 ####
 ####
-#### EDIT THESE SETTINGS TO SUIT YOUR PROJECT'S NEEDS
+#### EDIT THESE SETTINGS TO SUIT YOUR PROJECT:
 ####
 ####
 
-def AnswerFactory.nudge_instructions_path
-  # Directory path for project-specific Nudge instructions:
-  '/lib/nudge/instructions/*'
-end
-
-def AnswerFactory.nudge_types_path
-  # Directory path for project-specific Nudge types:
-  '/lib/nudge/types/*'
-end
+# Nudge language extensions:
+configatron.project.nudge.instructions.path = '/lib/nudge/instructions/*'
+configatron.project.nudge.types.path =        '/lib/nudge/types/*'
 
 
 ####
 ####
-#### DO NOT EDIT THE FOLLOWING CODE
+#### DON'T EDIT PAST THIS POINT
 ####
 ####
 
-Dir.glob(File.dirname(__FILE__) + AnswerFactory.nudge_instructions_path) {|file| require file}
-Dir.glob(File.dirname(__FILE__) + AnswerFactory.nudge_types_path) {|file| require file}
+Dir.glob(File.dirname(__FILE__) + configatron.project.nudge.instructions.path) {|file| require file}
+Dir.glob(File.dirname(__FILE__) + configatron.project.nudge.types.path) {|file| require file}
