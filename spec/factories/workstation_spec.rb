@@ -93,6 +93,11 @@ describe "Workstation" do
   
   
   describe "#cycle" do
+    
+    describe "the #before_cycle method" do
+      it "should empty @answers"
+    end
+    
     it "should invoke #receive!, #build!, #ship! and #scrap!" do
       w1 = Workstation.new(:place)
       w1.should_receive(:receive!)
@@ -102,11 +107,7 @@ describe "Workstation" do
       w1.cycle
     end
     
-    describe "the #before method" do
-      it "should empty @answers"
-    end
-    
-    describe "the #after method" do
+    describe "the #after_cycle method" do
       it "should save everything in @answers to the persistent store"
     end
     
