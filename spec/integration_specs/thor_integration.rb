@@ -19,7 +19,7 @@ describe "Setup_Factory" do
   
   it "should create a subdirectory /lib in the current directory"
   
-  # it "should create a subdirectory /lib/factory/operators in the current directory"
+  # it "should create a subdirectory /lib/factory/machines in the current directory"
   # 
   # it "should create a subdirectory /lib/nudge/types in the current directory"
   # 
