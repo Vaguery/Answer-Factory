@@ -52,5 +52,9 @@ describe "Machines::BuildRandom" do
       whatevz.should be_a_kind_of(Batch)
       whatevz.each {|a| a.parses?.should == true}
     end
+    
+    it "should respond to :generate as well as :build" do
+      @basic_maker.generate.should be_a_kind_of(Batch)
+    end
   end
 end

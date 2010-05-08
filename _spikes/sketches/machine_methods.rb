@@ -2,10 +2,27 @@
 #build
 #score
 
-BuildRandom.build(how_many:1, code_generation_overrides:{})
+# DONE:
 
+BuildRandom.build(how_many:1, code_generation_overrides:{})
 SampleAnyOne.screen(batch)
 RemoveAnyOne.screen(batch)
+
+# NEXT:
+
+SelectNondominated.screen(batch, criteria:all_shared_scores)
+
+CrossoverPairsAtOneRandomPoint.build(
+  batch, 
+  how_many:default, 
+  matching:pairwise, 
+  overflow:cycle
+  )
+
+VaryFootnotesUniformly.build(...)
+
+
+# POSSIBLE:
 
 SampleUniform.screen(batch, prob:0.5)
 RemoveUniform.screen(batch, prob:0.5)
@@ -27,7 +44,6 @@ SelectByDominationTournament.screen(batch, how_many:?, tournament_size: 2, crite
 SelectDuplicates.screen(batch) # only those with identical blueprints
 RemoveDuplicates.screen(batch) # removing any with identical blueprints
 
-SelectNondominated.screen(batch, criteria:all_shared_scores)
 RemoveNondominated.screen(batch, criteria:all_shared_scores)
 
 SelectDominationLayer.screen(batch, criteria:all_shared_scores, layer:0)
@@ -55,11 +71,4 @@ VaryCodeblockUniformly.build(
   )
 
 VaryFootnotesAtOnePoint.build(batch, how_many:1)
-VaryFootnotesUniformly.build(...)
 
-MixAtOneRandomPoint.build(
-  batch, 
-  how_many:default, 
-  matching:pairwise, 
-  overflow:cycle
-  )

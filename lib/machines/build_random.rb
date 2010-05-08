@@ -14,6 +14,8 @@ module AnswerFactory
         how_many.times {result << Answer.new(NudgeProgram.random(all_options))}
         return result
       end
+      
+      alias generate build
     end
   end
 end
