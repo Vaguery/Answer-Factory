@@ -5,8 +5,7 @@ module AnswerFactory
     
     
     class SelectNondominated < Machine
-      
-      
+
       def screen(batch, overriden_options={})
         raise ArgumentError, "SelectNondominated#screen cannot process class #{batch.class}" unless
           batch.kind_of?(Batch)
@@ -26,6 +25,8 @@ module AnswerFactory
         
         return result
       end
+      
+      alias :generate :screen
     end
   end
 end

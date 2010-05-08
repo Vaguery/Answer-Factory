@@ -71,5 +71,9 @@ describe "Machines::SelectNondominated" do
       @best.screen(@highlander).object_id.should_not == @highlander.object_id
     end
   end
+  
+  it "should respond to :generate as an alias to :screen" do
+    Machines::SelectNondominated.new.should respond_to(:generate)
+  end
 end
 

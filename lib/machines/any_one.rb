@@ -5,7 +5,7 @@ module AnswerFactory
     
     
     class SampleAnyOne < Machine
-
+      
       def screen(batch)
         raise ArgumentError, "SampleAnyOne#screen: argument is not a Batch" unless
           batch.kind_of?(Batch)
@@ -32,5 +32,7 @@ module AnswerFactory
       
       alias :generate :screen
     end
+    
+    
   end
 end
