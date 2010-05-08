@@ -8,7 +8,7 @@ module AnswerFactory
     
     
     def initialize(blueprint, options = {})
-      raise ArgumentError unless
+      raise ArgumentError, "Answer cannot be initialized with a #{blueprint.class}" unless
         blueprint.kind_of?(String) || blueprint.kind_of?(NudgeProgram)
       build_from_blueprint!(blueprint)
       

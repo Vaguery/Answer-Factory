@@ -11,6 +11,7 @@ require 'answers/batch'
 
 require 'machines/infrastructure'
 require 'machines/any_one'
+require 'machines/build_random'
 
 require 'factories/factory'
 require 'factories/workstation'

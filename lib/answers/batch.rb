@@ -15,7 +15,8 @@ module AnswerFactory
     
     
     def <<(obj)
-      raise ArgumentError unless obj.kind_of?(Answer)
+      raise ArgumentError, "Batch.<< cannot append class #{obj.class}" unless
+        obj.kind_of?(Answer)
       super
     end
     

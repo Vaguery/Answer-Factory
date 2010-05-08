@@ -2,6 +2,7 @@
 #build
 #score
 
+BuildRandom.build(how_many:1, code_generation_overrides:{})
 
 SampleAnyOne.screen(batch)
 RemoveAnyOne.screen(batch)
