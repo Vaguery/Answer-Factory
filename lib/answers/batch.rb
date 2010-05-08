@@ -21,7 +21,8 @@ module AnswerFactory
     
     
     def initialize(*args)
-      raise ArgumentError unless args.inject(true) {|anded, a| anded & a.kind_of?(Answer)}
+      raise ArgumentError, "Batches can only contain Answers" unless
+        args.inject(true) {|anded, a| anded & a.kind_of?(Answer)}
       super
     end
     

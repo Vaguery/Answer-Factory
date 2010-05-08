@@ -35,7 +35,6 @@ module AnswerFactory
     
     def gather_mine
       gathered = Batch.load_from_couch(couchdb_uri, "#{name}/current")
-      puts "gathered: #{gathered.class}"
       @answers = gathered
     end
     
@@ -48,7 +47,7 @@ module AnswerFactory
     
     def process_with(operator)
       raise ArgumentError, "Workstation#process_with cannot process with a #{operator.class}" unless
-        operator.kind_of?(SearchOperator)
+        operator.kind_of?(Machines::Machine)
       operator.generate(@answers)
     end
     

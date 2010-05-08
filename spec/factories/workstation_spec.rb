@@ -174,7 +174,7 @@ describe "Workstation" do
         before(:each) do
           @w1 = Workstation.new(:pity_foo)
           @w1.answers = Batch[Answer.new("block{}")]
-          @sampler = AnyOneSampler.new
+          @sampler = Machines::SampleAnyOne.new
         end
         
         it "should accept one parameter" do
@@ -183,7 +183,7 @@ describe "Workstation" do
         
         it "should only accept a search operator" do
           lambda{@w1.process_with(8)}.should raise_error(ArgumentError)
-          lambda{@w1.process_with(AnyOneSampler.new)}.should_not raise_error
+          lambda{@w1.process_with(@sampler)}.should_not raise_error
         end
         
         it "should call the search operator's '#generate" do
