@@ -12,8 +12,9 @@ require 'answers/batch'
 require 'machines/infrastructure'
 require 'machines/any_one'
 require 'machines/build_random'
-require 'machines/select_nondominated'
 require 'machines/evaluate_simple_score'
+require 'machines/select_nondominated'
+require 'machines/vary_values_uniformly'
 
 
 

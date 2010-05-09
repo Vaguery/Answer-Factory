@@ -4,7 +4,9 @@ describe "Machines::EvaluateSimpleScore" do
   describe "#score method" do
     
     before(:each) do
-      @pointer = Machines::EvaluateSimpleScore.new(:name => :grault)
+      @pointer = Machines::EvaluateSimpleScore.new(
+        :name => :grault,
+        scorer:Proc.new {0})
       @baa = Batch.[](Answer.new("do foo"), Answer.new("do quux"))
     end
     
@@ -36,7 +38,7 @@ describe "Machines::EvaluateSimpleScore" do
     end
     
     it "should use a :name from the initialization options, if no call option overrides it" do
-      Machines::EvaluateSimpleScore.new(:name => :bar).score(@baa)
+      Machines::EvaluateSimpleScore.new(:name => :bar).score(@baa) {2}
       @baa.each {|a| a.scores.should include(:bar)}
     end
     
@@ -52,28 +54,53 @@ describe "Machines::EvaluateSimpleScore" do
       (@baa.collect {|a| a.scores[:grault]}).should == [6,7]
     end
     
-    it "should run a stored Proc if no block is given"
+    it "should run a stored :scorer Proc initialization option if no block is given" do
+      @baa.each {|a| @pointer.options[:scorer].should_receive(:call).with(a)}
+      @pointer.score(@baa)
+    end
     
-    it "should respect a :memoizable? option in the args if one is passed in" do
-      pending
+    it "should raise an error if no :scorer block is available in either option Hash" do
+      lambda{Machines::EvaluateSimpleScore.new.score(@baa,name:"a")}.should raise_error(
+          ArgumentError,
+          "EvaluateSimpleScore: No scoring block available")
+    end
+    
+    it "should respect a :static_score? option in the args if one is passed in" do
       @baa[0].scores[:grault] = 999
-      @baa[1].scores[:grault] = 999
-      @pointer.score(@baa, memoizable?:false) {|a| a.blueprint.length} # update scores
+      @pointer.score(@baa, static_score?:false) {|a| a.blueprint.length} # update scores
       @baa[0].scores[:grault].should == 6
       
       @baa[0].scores[:grault] = 999
-      @baa[1].scores[:grault] = 999
-      @pointer.score(@baa, memoizable?:true) {|a| a.blueprint.length} # update scores
+      @pointer.score(@baa, static_score?:true) {|a| a.blueprint.length} # update scores
       @baa[0].scores[:grault].should == 999
     end
     
-    it "should fall back to the initialized :memoizable? option if not passed in"
+    it "should fall back to the initialized :static_score? option if not passed in" do
+      zero = Machines::EvaluateSimpleScore.new(
+        :name => :zero,
+        scorer:Proc.new {0},
+        static_score?:true)
+        
+      zero.score(@baa) # set up scores
+      zero.score(@baa) {12}
+      @baa[0].scores[:zero].should == 0
+      zero.score(@baa, static_score?:false) {12}
+      @baa[0].scores[:zero].should == 12
+    end
     
-    it "should fall back to a default of false if not set as an option"
+    it "should fall back to a default of false if not set as an option" do
+      one = Machines::EvaluateSimpleScore.new(
+        :name => :one,
+        scorer:Proc.new {1})
+      one.score(@baa)
+      one.score(@baa) {2}
+      @baa[0].scores[:one].should == 2
+    end
     
-    it "should not re-evaluate an Answer with a [non-nil] score, if :memoizable? is true"
-    
-    it "should write a new score to each Answer's #scores Hash"
+    it "should write a new score to each Answer's #scores Hash" do
+      @baa.each {|a| a.scores.should_receive(:[]=).with(:two,2)}
+      @pointer.score(@baa, :name => :two) {2}
+    end
   end
   
   it "should respond to :generate as an alias to :score" do

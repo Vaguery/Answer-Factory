@@ -8,11 +8,13 @@ BuildRandom.build(how_many:1, code_generation_overrides:{})
 SampleAnyOne.screen(batch)
 RemoveAnyOne.screen(batch)
 SelectNondominated.screen(batch, criteria:all_shared_scores)
+EvaluateSimpleScore.score(batch)
 
 
 # NEXT:
+VaryValuesUniformly.build(...)
 
-EvaluateSimpleScore.score(batch)
+
 EvaluateFromTestCases.score(batch)
 
 CrossoverPairsAtOneRandomPoint.build(
@@ -22,7 +24,6 @@ CrossoverPairsAtOneRandomPoint.build(
   overflow:cycle
   )
 
-VaryFootnotesUniformly.build(...)
 
 
 # POSSIBLE:
