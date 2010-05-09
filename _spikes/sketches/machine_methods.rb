@@ -7,10 +7,13 @@
 BuildRandom.build(how_many:1, code_generation_overrides:{})
 SampleAnyOne.screen(batch)
 RemoveAnyOne.screen(batch)
+SelectNondominated.screen(batch, criteria:all_shared_scores)
+
 
 # NEXT:
 
-SelectNondominated.screen(batch, criteria:all_shared_scores)
+EvaluateSimpleScore.score(batch)
+EvaluateFromTestCases.score(batch)
 
 CrossoverPairsAtOneRandomPoint.build(
   batch, 
@@ -52,7 +55,6 @@ RemoveDominationLayer.screen(batch, criteria:all_shared_scores, layer:0)
 SelectBestQuantile.screen(batch, criteria:all_shared_scores)
 RemoveBestQuantile.screen(batch, criteria:all_shared_scores)
 
-EvaluateOneScore.score(batch)
 
 VaryCodeblockAtOnePoint.build(
   batch, 

@@ -13,6 +13,8 @@ require 'machines/infrastructure'
 require 'machines/any_one'
 require 'machines/build_random'
 require 'machines/select_nondominated'
+require 'machines/evaluate_simple_score'
+
 
 
 require 'factories/factory'
