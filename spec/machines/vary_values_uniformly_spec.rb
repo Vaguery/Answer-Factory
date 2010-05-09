@@ -29,18 +29,41 @@ describe "Machines::VaryValuesUniformly" do
       @fiddler.build(@two).object_id.should_not == @two.object_id
     end
     
-    it "should not modify any Answer object in its argument Batch"
+    it "should not modify or include any Answer object in its argument Batch" do
+      original_ids = @two.collect {|a| a.object_id}
+      result_ids = @fiddler.build(@two).collect {|a| a.object_id}
+      (original_ids & result_ids).length.should == 0
+    end
     
+    it "should change one or more footnotes of each argument Answer"
     
-    describe ":how_many option" do
+    describe ":proportion_changed option" do
+      it "should change a :proportion_changed of them, determined by a call option"
       
+      it "should truncate the :proportion_changed value to the range [0.0,1.0]"
+      
+      it "should use the initialization :proportion_changed option if there isn't a call option"
+      
+      it "should default to proportion_changed:0.5 if none was set as an option"
     end
     
     
     describe "Nudge options" do
       
+      it "should invoke the given footnotes' NudgeType.any_value method"
+      
+      it "should pass through its merged options to the .any_value call"
+      
     end
     
     
+    describe ":number_of_variants option" do
+      it "should produce a :number_of_variants for each arg Answer, determined by a call option"
+      
+      it "should use the initialization :number_of_variants option if there isn't a call option"
+      
+      it "should default to number_of_variants:1 if none was set as an option"
+      
+    end
   end
 end
