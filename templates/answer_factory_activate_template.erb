@@ -13,7 +13,7 @@ include AnswerFactory
 configatron.factory.couchdb.server =          'http://127.0.0.1:5984'
 
 #### Factory settings:
-configatron.factory.name =                    'my_factory'
+configatron.factory.name =                    'sample_factory'
 
 #### Workstation definitions:
 configatron.project.workstations.path =       '/lib/factory/workstations/*'
@@ -31,7 +31,10 @@ class GeneratorStation < Workstation
   
   def initialize(name, options = {})
     super
-    @random_program_maker = RandomGuessOperator.new(how_many:10)
+    @random_program_maker = BuildRandom.new(
+      how_many:10,
+      target_size_in_points:7, 
+      reference_names:["x1", "x2"])
   end
   
   def build!
@@ -45,13 +48,16 @@ end
 
 
 class EvolverStation < Workstation
-  attr_reader :my_crossover_operator
+  attr_reader :my_value_adjuster
   attr_reader :my_length_evaluator
   
   def initialize(name, options = {})
     super
-    @my_crossover_operator = PointCrossoverOperator.new
-    @my_length_evaluator = ProgramPointEvaluator.new(score_label:"length")
+    @my_value_adjuster = MutateFootnotesUniform.new(
+      target_size_in_points:7)
+    @my_length_evaluator = EvaluateSimpleScore.new(
+      :name => :blueprint_length,
+      scorer:Proc.new {|a| a.blueprint.length})
   end
   
   def receive!
@@ -59,13 +65,13 @@ class EvolverStation < Workstation
   end
   
   def build!
-    process_with @my_crossover_operator
-    # process_with @my_length_evaluator
+    process_with @my_value_adjuster
+    process_with @my_length_evaluator
   end
   
   def scrap!
-    @highest_progress = (@answers.collect {|a| a.progress}).max
-    scrap_if("too_old") {|a| a.progress < @highest_progress} 
+    @best_score = @answers.collect {|a| a.scores[:blueprint_length]}).max
+    scrap_if("too_long") {|a| (a.scores[:blueprint_length] < @best_score) && (rand < 0.5)} 
   end
 end
 

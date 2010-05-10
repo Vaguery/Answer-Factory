@@ -85,10 +85,6 @@ describe "Workstation" do
         :body => @canned, :status => [200, "OK"])
     end
     
-    describe "the #before_cycle method" do
-      it "should empty @answers"
-    end
-    
     it "should invoke #receive!, #build!, #ship! and #scrap!" do
       configatron.temp do
         configatron.factory.couchdb.server = "http://127.0.0.1:5984"
