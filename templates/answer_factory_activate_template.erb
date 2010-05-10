@@ -108,7 +108,7 @@ db = CouchRest.database!("#{configatron.factory.couchdb.server}/#{configatron.fa
 db.delete!
 db.create!
 
-db.batch_save_doc({'_id' => "_design/breeder", views: { current: { map: "function(doc) { if(doc.tags.length > 0) { for(var idx in doc.tags) { if(doc.tags[idx] == 'breeder') {emit(doc._id, doc)   }}}}"}}})
+db.save_doc({'_id' => "_design/breeder", views: { current: { map: "function(doc) { if(doc.tags.length > 0) { for(var idx in doc.tags) { if(doc.tags[idx] == 'breeder') {emit(doc._id, doc)   }}}}"}}})
 
 2.times do
   workstations.each do |ws|

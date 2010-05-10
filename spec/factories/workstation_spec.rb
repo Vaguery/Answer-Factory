@@ -108,7 +108,7 @@ describe "Workstation" do
           
           FakeWeb.allow_net_connect = false
           @w1 = Workstation.new(:ws1, factory_name:"this_factory")
-          @w1.answers.should_receive(:batch_save!)
+          @w1.answers.should_receive(:bulk_save!)
           @w1.after_cycle!
         end
       end

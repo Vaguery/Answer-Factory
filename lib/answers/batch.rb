@@ -28,11 +28,11 @@ module AnswerFactory
     end
     
     
-    def batch_save!(couchdb_uri)
+    def bulk_save!(couchdb_uri)
       raise ArgumentError, "#{couchdb_uri} is not a String" unless couchdb_uri.kind_of?(String)
       
       db = CouchRest.database!(couchdb_uri)
-      db.batch_save(self.data)
+      db.bulk_save(self.data)
     end
     
     
