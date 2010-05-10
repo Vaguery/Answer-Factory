@@ -70,7 +70,6 @@ describe "Batches" do
             @b1.data.should == [ @a1.data ]
             @b1 << @a1
             @b1.data.should == [ @a1.data,  @a1.data]
-            
           end
         end
       end

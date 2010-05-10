@@ -81,13 +81,13 @@ describe "Answer" do
         @a1 = Answer.new("block {do a}", progress:12)
       end
       
-      it "should not contain the couch_id, if none was set" do
-        @a1.data['_id'].should == ""
+      it "should not contain the CouchDB _id, if none was set" do
+        @a1.data['_id'].should == nil
       end
       
       it "should contain the couch_id, if one is set" do
         a2 = Answer.new("",couch_id:'1234')
-        a2.data['_id'].should == '1234'
+        a2.data['id'].should == '1234'
       end
       
       
@@ -96,7 +96,7 @@ describe "Answer" do
       end
       
       it "should contain the tags" do
-        @a1.data['tags'].should == @a1.tags
+        @a1.data['tags'].should == @a1.tags.to_a
       end
       
       
@@ -116,7 +116,7 @@ describe "Answer" do
     
     describe "reading" do
       before(:each) do
-        @couchified = {"id"=>"0f60c293ad736abfdb083d33f71ef9ab", "key"=>"ws1", "value"=>{"_id"=>"0f60c293ad736abfdb083d33f71ef9ab", "_rev"=>"1-473467b6dc1a4cba3498dd6eeb8e3206", "blueprint"=>"do bar", "tags"=>["quux", "whatevz"], "scores"=>{"badness" => 12.345}, "progress" => 12, "timestamp"=>"2010/04/14 17:09:14 +0000"}}
+        @couchified = {"id"=>"0f60c293ad736abfdb083d33f71ef9ab", "key"=>"ws1", "value"=>{"id"=>"0f60c293ad736abfdb083d33f71ef9ab", "_rev"=>"1-473467b6dc1a4cba3498dd6eeb8e3206", "blueprint"=>"do bar", "tags"=>["quux", "whatevz"], "scores"=>{"badness" => 12.345}, "progress" => 12, "timestamp"=>"2010/04/14 17:09:14 +0000"}}
         @my_a = Answer.from_serial_hash(@couchified)
       end
       

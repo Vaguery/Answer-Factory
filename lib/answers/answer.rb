@@ -4,7 +4,8 @@ module AnswerFactory
   class Answer
     attr_accessor :scores, :tags
     attr_reader :draft_blueprint, :program, :timestamp, :ancestors
-    attr_reader :initialization_options, :progress, :couch_id
+    attr_reader :initialization_options, :progress
+    attr_accessor :couch_id
     
     
     def initialize(blueprint, options = {})
@@ -123,12 +124,13 @@ module AnswerFactory
   
   
   def data
-    { '_id' => self.couch_id,
-      'blueprint' => self.blueprint,
-      'tags' => self.tags, 
+    basics = self.couch_id.empty? ? {} : Hash['id',self.couch_id]
+    basics.merge!({'blueprint' => self.blueprint,
+      'tags' => self.tags.to_a, 
       'scores' => self.scores,
       'progress' => self.progress,
-      'timestamp' => self.timestamp}
+      'timestamp' => self.timestamp})
+    return basics
   end
   
   
@@ -136,11 +138,12 @@ module AnswerFactory
     value_hash = hash["value"]
     tag_set = Set.new(value_hash["tags"].collect {|t| t.to_sym})
     symbolized_scores = value_hash["scores"].inject({}) {|memo,(k,v)| memo[k.to_sym] = v; memo }
-    
+        
     Answer.new(value_hash["blueprint"],
-      couch_id:value_hash["_id"],
+      couch_id:value_hash['id'],
       tags:tag_set,
       scores:symbolized_scores,
-      progress:value_hash["progress"])
+      progress:value_hash["progress"],
+      timestamp:value_hash["timestamp"])
   end
 end
