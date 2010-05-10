@@ -81,7 +81,7 @@ module AnswerFactory
     
     
     def after_cycle!
-      @answers.bulk_save!(couchdb_uri)
+      @answers.batch_save!(couchdb_uri)
       @answers = Batch.new
     end
     

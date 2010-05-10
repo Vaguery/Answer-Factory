@@ -22,5 +22,5 @@ answers.each {|i| i.scores["badness"] = rand()*rand(100)-50}
 
 answers.each {|i| puts i.data}
 
-result = db.bulk_save(answers.collect {|i| i.data})
+result = db.batch_save(answers.collect {|i| i.data})
 puts result

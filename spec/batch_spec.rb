@@ -32,14 +32,14 @@ describe "Batches" do
       FakeWeb.allow_net_connect = false
     end
     
-    describe "bulk_save!" do
-      it "should have a #bulk_save method" do
-        Batch.new.should respond_to(:bulk_save!)
+    describe "batch_save!" do
+      it "should have a #batch_save method" do
+        Batch.new.should respond_to(:batch_save!)
       end
       
       it "should validate a String as its argument" do
-        lambda{Batch.new.bulk_save!("some string")}.should_not raise_error(ArgumentError)
-        lambda{Batch.new.bulk_save!(8812)}.should raise_error(ArgumentError)
+        lambda{Batch.new.batch_save!("some string")}.should_not raise_error(ArgumentError)
+        lambda{Batch.new.batch_save!(8812)}.should raise_error(ArgumentError)
       end
       
       
@@ -54,15 +54,15 @@ describe "Batches" do
         it "should create the database if it doesn't exist" do
           FakeWeb.register_uri(:any, @uri, :body => "We are here!", :status => [200, "OK"])
           CouchRest.stub(:database!).and_return(the_db = Object.new)
-          the_db.stub!(:bulk_save)
+          the_db.stub!(:batch_save)
           CouchRest.should_receive(:database!)
-          Batch.new.bulk_save!(@uri)
+          Batch.new.batch_save!(@uri)
         end
 
-        it "should bulk_save the Answers" do
+        it "should batch_save the Answers" do
           CouchRest.stub(:database!).and_return(the_db = Object.new)
-          the_db.should_receive(:bulk_save)
-          @b1.bulk_save!(@uri)
+          the_db.should_receive(:batch_save)
+          @b1.batch_save!(@uri)
         end
         
         describe "data" do
