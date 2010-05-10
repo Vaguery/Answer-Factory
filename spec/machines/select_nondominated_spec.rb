@@ -70,6 +70,11 @@ describe "Machines::SelectNondominated" do
     it "should return a new Batch object" do
       @best.screen(@highlander).object_id.should_not == @highlander.object_id
     end
+    
+    it "should not change the :progress of the Answers" do
+      @best.screen(@highlander).each {|a| a.progress.should == 0}
+    end
+    
   end
   
   it "should respond to :generate as an alias to :screen" do

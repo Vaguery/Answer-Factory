@@ -56,5 +56,10 @@ describe "Machines::BuildRandom" do
     it "should respond to :generate as well as :build" do
       @basic_maker.generate.should be_a_kind_of(Batch)
     end
+    
+    it "should produce Answers with progress:0" do
+      @basic_maker.build(how_many:4).each {|a| a.progress.should == 0}
+    end
+    
   end
 end

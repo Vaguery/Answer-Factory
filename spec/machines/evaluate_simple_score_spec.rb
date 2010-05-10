@@ -101,6 +101,10 @@ describe "Machines::EvaluateSimpleScore" do
       @baa.each {|a| a.scores.should_receive(:[]=).with(:two,2)}
       @pointer.score(@baa, :name => :two) {2}
     end
+    
+    it "should not increment the :progress of the Answers" do
+      @pointer.score(@baa).each {|a| a.progress.should == 0}
+    end
   end
   
   it "should respond to :generate as an alias to :score" do

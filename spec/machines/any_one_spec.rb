@@ -34,6 +34,7 @@ describe "Machines::SampleAnyOne" do
     it "should contain a direct reference to an object in the argument Batch" do
       (@two.collect {|a| a.object_id}).should include(@sampler.screen(@two)[0].object_id)
     end
+    
   end
   
   

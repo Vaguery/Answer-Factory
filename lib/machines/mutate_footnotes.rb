@@ -35,7 +35,7 @@ module AnswerFactory
               new_fn = which_fns_change.include?(f) ? mutated_footnote_value(fn[f],all_options) : fn[f]
               new_blueprint << "\n#{new_fn.strip}"
             end
-            result << Answer.new(new_blueprint)
+            result << Answer.new(new_blueprint, progress:(orig.progress+1))
           end
         end
         

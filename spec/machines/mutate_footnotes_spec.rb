@@ -90,6 +90,10 @@ describe "Machines::MutateFootnotesUniform" do
       end
       
     end
+    
+    it "should increment the :progress attribute of the derived Answers, regardless of other settings" do
+      @fiddler.build(@two).each {|a| a.progress.should == 1}
+    end
   end
   
   
