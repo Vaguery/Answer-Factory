@@ -7,7 +7,7 @@ module AnswerFactory
     class BuildRandom < Machine
       
       
-      def build(overridden_options = {})
+      def build(batch = nil, overridden_options = {})
         all_options = @options.merge(overridden_options)
         how_many = all_options[:how_many] || 1
         result = Batch.new

@@ -123,7 +123,8 @@ module AnswerFactory
   
   
   def data
-    {'blueprint' => self.blueprint,
+    { '_id' => self.couch_id,
+      'blueprint' => self.blueprint,
       'tags' => self.tags, 
       'scores' => self.scores,
       'progress' => self.progress,

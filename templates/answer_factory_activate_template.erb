@@ -31,18 +31,20 @@ class GeneratorStation < Workstation
   
   def initialize(name, options = {})
     super
-    @random_program_maker = BuildRandom.new(
+    @random_program_maker = Machines::BuildRandom.new(
       how_many:10,
       target_size_in_points:7, 
       reference_names:["x1", "x2"])
   end
   
   def build!
-    process_with @random_program_maker
+    @answers = process_with @random_program_maker
+    puts "#{self.name}: built and now have: #{@answers.length}"
   end
   
   def ship!
     ship_to(:breeder) {|answer| true} 
+    puts "#{self.name}: shipping to #{@answers.collect {|a| a.tags.to_a}.inspect}"
   end
 end
 
@@ -53,25 +55,30 @@ class EvolverStation < Workstation
   
   def initialize(name, options = {})
     super
-    @my_value_adjuster = MutateFootnotesUniform.new(
+    @my_value_adjuster = Machines::MutateFootnotesUniform.new(
       target_size_in_points:7)
-    @my_length_evaluator = EvaluateSimpleScore.new(
+    @my_length_evaluator = Machines::EvaluateSimpleScore.new(
       :name => :blueprint_length,
       scorer:Proc.new {|a| a.blueprint.length})
   end
   
   def receive!
     gather_mine
+    puts "#{self.name}: received and now have: #{@answers.length}"
   end
   
   def build!
     process_with @my_value_adjuster
     process_with @my_length_evaluator
+    puts "#{self.name}: built and now have: #{@answers.length}"
   end
   
   def scrap!
-    @best_score = @answers.collect {|a| a.scores[:blueprint_length]}).max
-    scrap_if("too_long") {|a| (a.scores[:blueprint_length] < @best_score) && (rand < 0.5)} 
+    puts "\n\n#{self.name}: tags begin as #{@answers.collect {|a| a.tags.to_a}}"
+    @best_score = (@answers.collect {|a| a.scores[:blueprint_length]}).min
+    scrap_if("too_long") {|a| (a.scores[:blueprint_length] > @best_score)}
+    puts "#{self.name}: tags ended as #{@answers.collect {|a| a.tags.to_a}}"
+    puts "#{self.name}: scores ended as #{@answers.collect {|a| a.scores.values}}\n\n"
   end
 end
 
@@ -93,11 +100,17 @@ raise "CouchDB not available at #{configatron.factory.couchdb.server}" unless
 # extend Workstation
 Dir.glob(File.dirname(__FILE__) + configatron.project.workstations.path) {|file| require file}
 
-
-project = Factory.new
+project = Factory.new()
 workstations = [GeneratorStation.new(:maker), EvolverStation.new(:breeder)]
 
-10.times do
+# write view document(s)
+db = CouchRest.database!("#{configatron.factory.couchdb.server}/#{configatron.factory.name}")
+db.delete!
+db.create!
+
+db.batch_save_doc({'_id' => "_design/breeder", views: { current: { map: "function(doc) { if(doc.tags.length > 0) { for(var idx in doc.tags) { if(doc.tags[idx] == 'breeder') {emit(doc._id, doc)   }}}}"}}})
+
+2.times do
   workstations.each do |ws|
     ws.cycle
   end

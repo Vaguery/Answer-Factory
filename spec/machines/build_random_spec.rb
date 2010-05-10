@@ -13,12 +13,16 @@ describe "Machines::BuildRandom" do
       @basic_maker.should respond_to(:build)
     end
     
+    it "should accept a Batch (though it ignores it)" do
+      lambda{@basic_maker.build(Batch.new)}.should_not raise_error
+    end
+    
     it "should return a Batch" do
       @basic_maker.build.should be_a_kind_of(Batch)
     end
     
     it "should accept an option :how_many to set the number of items in the Batch" do
-      @basic_maker.build(how_many:12).length.should == 12
+      @basic_maker.build(nil,how_many:12).length.should == 12
     end
     
     it "should use the initialized :how_many parameter if not passed one in the call" do
@@ -31,14 +35,14 @@ describe "Machines::BuildRandom" do
     
     it "should call NudgeProgram.random for each new Answer it makes" do
       NudgeProgram.should_receive(:random).exactly(4).times.and_return(NudgeProgram.new("do a"))
-      @basic_maker.build(how_many:4)
+      @basic_maker.build(nil,how_many:4)
     end
     
     it "should pass a merge of its saved options and the #build options to NudgeProgram.random" do
       NudgeProgram.should_receive(:random).
         with(hash_including(target_size_in_points:12)).
         and_return(NudgeProgram.new("foo"))
-      @basic_maker.build(how_many:1, target_size_in_points:12)
+      @basic_maker.build(nil,how_many:1, target_size_in_points:12)
       
       NudgeProgram.should_receive(:random).
         with(hash_including(reference_names:["x1", "x2"])).

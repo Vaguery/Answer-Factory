@@ -81,6 +81,16 @@ describe "Answer" do
         @a1 = Answer.new("block {do a}", progress:12)
       end
       
+      it "should not contain the couch_id, if none was set" do
+        @a1.data['_id'].should == ""
+      end
+      
+      it "should contain the couch_id, if one is set" do
+        a2 = Answer.new("",couch_id:'1234')
+        a2.data['_id'].should == '1234'
+      end
+      
+      
       it "should contain the blueprint" do
         @a1.data['blueprint'].should == @a1.blueprint
       end
