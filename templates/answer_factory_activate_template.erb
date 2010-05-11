@@ -39,18 +39,19 @@ class GeneratorStation < Workstation
   def receive!
     gather_mine
     puts "#{self.name}: received and now have: #{@answers.length}"
-    puts "\n\n#{self.name}: tags begin as #{@answers.collect {|a| a.tags.to_a}}"
+    puts "\n\n#{self.name}: locations are #{@answers.collect {|a| a.location}}"
     
   end
   
   def build!
     @answers = process_with @random_program_maker
+    @answers.each {|a| a.location = 'maker'}
     puts "#{self.name}: built and now have: #{@answers.length}"
   end
   
   def ship!
     ship_to(:breeder) {|answer| true} 
-    puts "#{self.name}: shipping to #{@answers.collect {|a| a.tags.to_a}.inspect}"
+    puts "#{self.name}: shipping to #{@answers.collect {|a| a.location}.inspect}"
   end
 end
 
@@ -68,7 +69,7 @@ class EvaluatorStation1 < Workstation
   def receive!
     gather_mine
     puts "#{self.name}: received and now have: #{@answers.length}"
-    puts "\n\n#{self.name}: tags begin as #{(@answers.collect {|a| a.tags.to_a})}"
+    puts "\n\n#{self.name}: locations are #{@answers.collect {|a| a.location}}"
   end
   
   def build!
@@ -78,14 +79,14 @@ class EvaluatorStation1 < Workstation
   
   def ship!
     ship_to(:marker) {|answer| rand < 0.5} 
-    puts "#{self.name} SHIP: shipping to #{@answers.collect {|a| a.tags.to_a}.inspect}"
+    puts "#{self.name} SHIP: shipping to #{@answers.collect {|a| a.location}.inspect}"
   end
   
   def scrap!
-    puts "\n\n#{self.name} SCRAP: tags begin as #{(@answers.collect {|a| a.tags.to_a})}"
+    puts "\n\n#{self.name} SCRAP: tags begin as #{(@answers.collect {|a| a.location})}"
     @best_score = (@answers.collect {|a| a.scores[:blueprint_length]}).min
     scrap_if("too_long") {|a| (a.scores[:blueprint_length] > @best_score)}
-    puts "#{self.name} SCRAP: tags ended as #{(@answers.collect {|a| a.tags.to_a})}"
+    puts "#{self.name} SCRAP: tags ended as #{(@answers.collect {|a| a.location})}"
     puts "#{self.name} SCRAP: scores ended as #{(@answers.collect {|a| a.scores.values})}\n\n"
   end
 end
@@ -104,7 +105,7 @@ class EvaluatorStation2 < Workstation
   def receive!
     gather_mine
     puts "#{self.name}: received and now have: #{@answers.length}"
-    puts "\n\n#{self.name}: tags begin as #{(@answers.collect {|a| a.tags.to_a})}"
+    puts "\n\n#{self.name}: locations are #{@answers.collect {|a| a.location}}"
   end
   
   def build!
@@ -113,10 +114,10 @@ class EvaluatorStation2 < Workstation
   end
   
   def scrap!
-    puts "\n\n#{self.name} SCRAP: tags begin as #{(@answers.collect {|a| a.tags.to_a})}"
+    puts "\n\n#{self.name} SCRAP: tags begin as #{(@answers.collect {|a| a.location})}"
     @best_score = (@answers.collect {|a| a.scores[:points]}).min
     scrap_if("too_long") {|a| (a.scores[:points] > @best_score)}
-    puts "#{self.name} SCRAP: tags ended as #{(@answers.collect {|a| a.tags.to_a})}"
+    puts "#{self.name} SCRAP: tags ended as #{(@answers.collect {|a| a.location})}"
     puts "#{self.name} SCRAP: scores ended as #{(@answers.collect {|a| a.scores.values})}\n\n"
   end
 end
@@ -156,15 +157,27 @@ db.create!
 
 
 # create required view document(s) [should be part of generating each workstation]
-db.batch_save_doc({'_id' => "_design/marker", views: { current: { map: "function(doc) { if(doc.tags.length > 0) { for(var idx in doc.tags) { if(doc.tags[idx] == 'marker') {emit(doc._id, doc)   }}}}"}}})
+db.batch_save_doc({'_id' => "_design/marker", views: { current: { map: "function(doc) {
+  if(doc.location == 'marker') {
+    emit(doc._id, doc);
+  }
+}"}}})
 
-db.batch_save_doc({'_id' => "_design/breeder", views: { current: { map: "function(doc) { if(doc.tags.length > 0) { for(var idx in doc.tags) { if(doc.tags[idx] == 'breeder') {emit(doc._id, doc)   }}}}"}}})
+db.batch_save_doc({'_id' => "_design/breeder", views: { current: { map: "function(doc) {
+  if(doc.location == 'breeder') {
+    emit(doc._id, doc);
+  }
+}"}}})
 
-db.batch_save_doc({'_id' => "_design/maker", views: { current: { map: "function(doc) { if(doc.tags.length > 0) { for(var idx in doc.tags) { if(doc.tags[idx] == 'maker') {emit(doc._id, doc)   }}}}"}}})
+db.batch_save_doc({'_id' => "_design/maker", views: { current: { map: "function(doc) {
+  if(doc.location == 'maker') {
+    emit(doc._id, doc);
+  }
+}"}}})
 
 
 # final workcycle behavior
-5.times do
+10.times do
   workstations.each do |ws|
     ws.cycle
   end

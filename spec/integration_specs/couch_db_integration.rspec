@@ -113,6 +113,29 @@ describe "CouchDB stuff" do
         @ws1.answers.each {|a| a.couch_rev.should_not == ""}
       end
     end
+    
+    
+    describe "shipping" do
+      before(:each) do
+        @ws1 = ShipperStation.new(:this_place)
+        @batch = Batch.[](
+          Answer.new("do a", location: :this_place), 
+          Answer.new("do b", location: :this_place),
+          Answer.new("do c", location: :elsewhere))
+        CouchRest.database!(@db_uri).
+          batch_save_doc({'_id' => "_design/this_place",
+            views: { current: { map: 
+              "function(doc) { if(doc.location == 'this_place') { emit(doc._id, doc); } }"}}})
+        @batch.bulk_save!(@db_uri)
+      end
+      
+      it "should not be able to re-gather Answers it has shipped away" do
+        @ws1.cycle # load, ship, and save
+        @ws1.receive!
+        @ws1.answers.length.should == 0
+      end
+    end
+    
   end
   
   
