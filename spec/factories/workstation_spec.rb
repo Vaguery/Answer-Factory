@@ -85,7 +85,7 @@ describe "Workstation" do
         :body => @canned, :status => [200, "OK"])
     end
     
-    it "should invoke #receive!, #build!, #ship! and #scrap!" do
+    it "should invoke #receive!, #build!, #ship!, #scrap! and #after_cycle!" do
       configatron.temp do
         configatron.factory.couchdb.server = "http://127.0.0.1:5984"
         configatron.factory.couchdb.name = "this_factory"
@@ -96,6 +96,7 @@ describe "Workstation" do
         w1.should_receive(:build!)
         w1.should_receive(:ship!)
         w1.should_receive(:scrap!)
+        w1.should_receive(:after_cycle!)
         w1.cycle
       end
     end
@@ -243,6 +244,8 @@ describe "Workstation" do
           @a2.should_not_receive(:remove_tag)
           @w2.ship_to(:xyzzy) {|a| a.blueprint.include? "fun"}
         end
+        
+        it "should only ship things that are still there"
       end
     end
     
@@ -287,6 +290,8 @@ describe "Workstation" do
           @a2.should_not_receive(:remove_tag)
           @w3.scrap_if("insufficient progress") {|a| a.progress < 10}
         end
+        
+        it "should not scrap things that aren't at that location"
       end
       
       describe "scrap_everything" do
@@ -322,6 +327,9 @@ describe "Workstation" do
           @w4.scrap_everything
           lambda{@w4.scrap_everything}.should_not raise_error
         end
+        
+        it "should not scrap things that aren't at that location"
+        
       end
     end
   end
