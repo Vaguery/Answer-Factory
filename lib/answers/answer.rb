@@ -145,7 +145,7 @@ module AnswerFactory
         
     Answer.new(value_hash["blueprint"],
       couch_id:value_hash['id'],
-      couch_rev:value_hash['_rev'],
+      couch_rev:value_hash['rev'],
       tags:tag_set,
       scores:symbolized_scores,
       progress:value_hash["progress"],

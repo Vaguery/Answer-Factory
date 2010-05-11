@@ -54,16 +54,26 @@ describe "Batches" do
         it "should create the database if it doesn't exist" do
           FakeWeb.register_uri(:any, @uri, :body => "We are here!", :status => [200, "OK"])
           CouchRest.stub(:database!).and_return(the_db = Object.new)
-          the_db.stub!(:bulk_save)
+          the_db.stub!(:bulk_save).and_return([])
           CouchRest.should_receive(:database!)
           Batch.new.bulk_save!(@uri)
         end
 
         it "should bulk_save the Answers" do
           CouchRest.stub(:database!).and_return(the_db = Object.new)
-          the_db.should_receive(:bulk_save)
+          the_db.should_receive(:bulk_save).and_return([])
           @b1.bulk_save!(@uri)
         end
+        
+        it "should capture the _id and _rev from couch_db's response" do
+          CouchRest.stub(:database!).and_return(the_db = Object.new)
+          the_db.should_receive(:bulk_save).and_return(
+            [{"id"=>"123", "rev"=>"4-567"}])
+          @b1.bulk_save!(@uri)
+          @b1[0].couch_id.should == "123"
+          @b1[0].couch_rev.should == "4-567"
+        end
+        
         
         describe "data" do
           it "should return an array of its contents' #data" do

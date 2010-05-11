@@ -125,13 +125,18 @@ describe "Answer" do
     
     describe "reading" do
       before(:each) do
-        @couchified = {"id"=>"0f60c293ad736abfdb083d33f71ef9ab", "key"=>"ws1", "value"=>{"id"=>"0f60c293ad736abfdb083d33f71ef9ab", "_rev"=>"1-473467b6dc1a4cba3498dd6eeb8e3206", "blueprint"=>"do bar", "tags"=>["quux", "whatevz"], "scores"=>{"badness" => 12.345}, "progress" => 12, "timestamp"=>"2010/04/14 17:09:14 +0000"}}
+        @couchified = {"id"=>"0f60c293ad736abfdb083d33f71ef9ab", "key"=>"ws1", "value"=>{"id"=>"0f60c293ad736abfdb083d33f71ef9ab", "rev"=>"1-473467b6dc1a4cba3498dd6eeb8e3206", "blueprint"=>"do bar", "tags"=>["quux", "whatevz"], "scores"=>{"badness" => 12.345}, "progress" => 12, "timestamp"=>"2010/04/14 17:09:14 +0000"}}
         @my_a = Answer.from_serial_hash(@couchified)
       end
       
-      it "should record the couch_doc_id" do
+      it "should record the couchdb_id" do
         @my_a.couch_id.should == "0f60c293ad736abfdb083d33f71ef9ab"
       end
+      
+      it "should record the couchdb_rev" do
+        @my_a.couch_rev.should == "1-473467b6dc1a4cba3498dd6eeb8e3206"
+      end
+      
       
       it "should accept a blueprint string" do
         @my_a.blueprint.should == "do bar"

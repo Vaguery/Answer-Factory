@@ -32,9 +32,11 @@ module AnswerFactory
       raise ArgumentError, "#{couchdb_uri} is not a String" unless couchdb_uri.kind_of?(String)
       
       db = CouchRest.database!(couchdb_uri)
-      response = db.bulk_save(self.data, use_uuids = false)
-      # self.each_index {|idx| self[idx].couch_id = (response.collect {|r| r["id"]})[idx]}
-      # return response
+      response = db.bulk_save(self.data)
+      response.each_index do |idx|
+        self[idx].couch_id = response[idx]["id"]
+        self[idx].couch_rev = response[idx]["rev"]
+      end
     end
     
     
