@@ -73,6 +73,10 @@ describe "Answer" do
       Answer.new("").should respond_to(:location)
     end
     
+    it "should have a default :location of :NOWHERE" do
+      Answer.new("").location.should == :NOWHERE
+    end
+    
     it "be possible to set :location via an initialization option" do
       Answer.new("", location:"nearby").location.should == "nearby"
     end
@@ -98,7 +102,7 @@ describe "Answer" do
   describe "serialization" do
     describe "writing" do
       before(:each) do
-        @a1 = Answer.new("block {do a}", progress:12)
+        @a1 = Answer.new("block {do a}", progress:12, location: :here)
       end
       
       it "should not contain the CouchDB _id, if none was set" do
@@ -118,7 +122,6 @@ describe "Answer" do
         @a1.couch_rev = "88888"
         @a1.data['_rev'].should == "88888"
       end
-      
       
       it "should contain the blueprint" do
         @a1.data['blueprint'].should == @a1.blueprint
@@ -149,7 +152,7 @@ describe "Answer" do
     
     describe "reading" do
       before(:each) do
-        @couchified = {"id"=>"0f60c293ad736abfdb083d33f71ef9ab", "key"=>"ws1", "value"=>{"id"=>"0f60c293ad736abfdb083d33f71ef9ab", "rev"=>"1-473467b6dc1a4cba3498dd6eeb8e3206", "blueprint"=>"do bar", "location"=>"here","tags"=>["quux", "whatevz"], "scores"=>{"badness" => 12.345}, "progress" => 12, "timestamp"=>"2010/04/14 17:09:14 +0000"}}
+        @couchified = {"id"=>"0f60c293ad736abfdb083d33f71ef9ab", "key"=>"ws1", "value"=>{"_id"=>"0f60c293ad736abfdb083d33f71ef9ab", "_rev"=>"1-473467b6dc1a4cba3498dd6eeb8e3206", "blueprint"=>"do bar", "location"=>"here","tags"=>["quux", "whatevz"], "scores"=>{"badness" => 12.345}, "progress" => 12, "timestamp"=>"2010/04/14 17:09:14 +0000"}}
         @my_a = Answer.from_serial_hash(@couchified)
       end
       
@@ -167,7 +170,7 @@ describe "Answer" do
       end
       
       it "should accumulate the :location" do
-        @my_a.location.should == "here"
+        @my_a.location.should == :here
       end
       
       it "should collect the tag Array into a Set of symbols" do

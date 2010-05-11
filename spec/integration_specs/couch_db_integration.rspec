@@ -2,9 +2,20 @@ require File.join(File.dirname(__FILE__), "./../spec_helper")
 
 # CouchDB MUST BE RUNNING BEFORE YOU RUN THESE
 
+class ShipperStation < Workstation
+  def receive!
+    gather_mine
+  end
+  
+  def ship!
+    ship_to(:that_place) {|answer| true} 
+  end
+end
+
 
 describe "CouchDB stuff" do
   before(:each) do
+    
     configatron.factory.couchdb.server = "http://127.0.0.1:5984"
     configatron.factory.couchdb.name = "integration_test_db"
     break("CouchDB is offline") unless Factory.couch_available?
@@ -74,13 +85,33 @@ describe "CouchDB stuff" do
   end
   
   
-  describe "Workstation ship!" do
-    describe "ship_to" do
+  describe "Workstations passing Batches around" do
+    
+    describe "gathering" do
       before(:each) do
-        @ws1 = Workstation.new(:masher)
-        @batch = Batch.[](Answer.new("do a", location: :masher), Answer.new("do b", location: :masher))
+        @ws1 = ShipperStation.new(:this_place)
+        @batch = Batch.[](
+          Answer.new("do a", location: :this_place), 
+          Answer.new("do b", location: :this_place),
+          Answer.new("do c", location: :elsewhere))
+        CouchRest.database!(@db_uri).
+          batch_save_doc({'_id' => "_design/this_place",
+            views: { current: { map: 
+              "function(doc) { if(doc.location == 'this_place') { emit(doc._id, doc); } }"}}})
+        @batch.bulk_save!(@db_uri)
       end
       
+      it "should gather the right ones" do
+        @ws1.receive!
+        @ws1.answers.length.should == 2
+        @ws1.answers.collect {|a| a.blueprint}.sort.should == ["do a", "do b"]
+      end
+      
+      it "should capture the :_id and :_rev fields of the records" do
+        @ws1.receive!
+        @ws1.answers.each {|a| a.couch_id.should_not == ""}
+        @ws1.answers.each {|a| a.couch_rev.should_not == ""}
+      end
     end
   end
   

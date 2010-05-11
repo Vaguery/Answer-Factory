@@ -19,7 +19,7 @@ module AnswerFactory
       end
       @timestamp = Time.now
       @couch_id = options[:couch_id] || ""
-      @location = options[:location] || ""
+      @location = options[:location] || :NOWHERE
       @couch_rev = options[:couch_rev] || ""
       @progress = options[:progress] || 0
       @ancestors = options[:ancestors] || []
@@ -137,7 +137,7 @@ module AnswerFactory
     basics["_rev"] = self.couch_rev unless self.couch_rev.empty? 
     
     basics.merge!({'blueprint' => self.blueprint,
-      'location' => self.location,
+      'location' => self.location.to_sym,
       'tags' => self.tags.to_a, 
       'scores' => self.scores,
       'progress' => self.progress,
@@ -152,9 +152,9 @@ module AnswerFactory
     symbolized_scores = value_hash["scores"].inject({}) {|memo,(k,v)| memo[k.to_sym] = v; memo }
         
     Answer.new(value_hash["blueprint"],
-      couch_id:value_hash['id'],
-      couch_rev:value_hash['rev'],
-      location:value_hash["location"],
+      couch_id:value_hash['_id'],
+      couch_rev:value_hash['_rev'],
+      location:(value_hash["location"] || "NOWHERE").to_sym,
       tags:tag_set,
       scores:symbolized_scores,
       progress:value_hash["progress"],
