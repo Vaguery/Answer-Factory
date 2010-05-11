@@ -23,6 +23,7 @@ class Setup_Factory < Thor::Group
     empty_directory("./lib/nudge/instructions")
     empty_directory("./lib/nudge/types")
     empty_directory("./lib/factory/machines")
+    empty_directory("./lib/factory/workstations")
     empty_directory("./spec")
   end
   

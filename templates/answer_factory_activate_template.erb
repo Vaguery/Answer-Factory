@@ -23,7 +23,6 @@ configatron.project.nudge.instructions.path = '/lib/nudge/instructions/*'
 configatron.project.nudge.types.path =        '/lib/nudge/types/*'
 
 
-
 #### normally these should be in /lib/factory/workstations/**
 
 class GeneratorStation < Workstation
@@ -40,7 +39,7 @@ class GeneratorStation < Workstation
   def receive!
     gather_mine
     puts "#{self.name}: received and now have: #{@answers.length}"
-    puts "\n\n#{self.name}: tags begin as #{(@answers.collect {|a| a.tags.to_a}).flatten}"
+    puts "\n\n#{self.name}: tags begin as #{@answers.collect {|a| a.tags.to_a}}"
     
   end
   
@@ -69,25 +68,25 @@ class EvaluatorStation1 < Workstation
   def receive!
     gather_mine
     puts "#{self.name}: received and now have: #{@answers.length}"
-    puts "\n\n#{self.name}: tags begin as #{(@answers.collect {|a| a.tags.to_a}).flatten}"
+    puts "\n\n#{self.name}: tags begin as #{(@answers.collect {|a| a.tags.to_a})}"
   end
   
   def build!
     @answers = process_with @my_length_evaluator
-    puts "#{self.name}: built and now have: #{@answers.length}"
+    puts "#{self.name} BUILD : built and now have: #{@answers.length}"
   end
   
   def ship!
     ship_to(:marker) {|answer| rand < 0.5} 
-    puts "#{self.name}: shipping to #{@answers.collect {|a| a.tags.to_a}.inspect}"
+    puts "#{self.name} SHIP: shipping to #{@answers.collect {|a| a.tags.to_a}.inspect}"
   end
   
   def scrap!
-    puts "\n\n#{self.name}: tags begin as #{(@answers.collect {|a| a.tags.to_a}).flatten}"
+    puts "\n\n#{self.name} SCRAP: tags begin as #{(@answers.collect {|a| a.tags.to_a})}"
     @best_score = (@answers.collect {|a| a.scores[:blueprint_length]}).min
     scrap_if("too_long") {|a| (a.scores[:blueprint_length] > @best_score)}
-    puts "#{self.name}: tags ended as #{(@answers.collect {|a| a.tags.to_a})}"
-    puts "#{self.name}: scores ended as #{(@answers.collect {|a| a.scores.values})}\n\n"
+    puts "#{self.name} SCRAP: tags ended as #{(@answers.collect {|a| a.tags.to_a})}"
+    puts "#{self.name} SCRAP: scores ended as #{(@answers.collect {|a| a.scores.values})}\n\n"
   end
 end
 
@@ -99,26 +98,26 @@ class EvaluatorStation2 < Workstation
     super
     @my_length_evaluator = Machines::EvaluateSimpleScore.new(
       :name => :points,
-      scorer:Proc.new {|a| a.blueprint.points})
+      scorer:Proc.new {|a| a.points})
   end
   
   def receive!
     gather_mine
     puts "#{self.name}: received and now have: #{@answers.length}"
-    puts "\n\n#{self.name}: tags begin as #{(@answers.collect {|a| a.tags.to_a}).flatten}"
+    puts "\n\n#{self.name}: tags begin as #{(@answers.collect {|a| a.tags.to_a})}"
   end
   
   def build!
     @answers = process_with @my_length_evaluator
-    puts "#{self.name}: built and now have: #{@answers.length}"
+    puts "#{self.name} BUILD : built and now have: #{@answers.length}"
   end
   
   def scrap!
-    puts "\n\n#{self.name}: tags begin as #{(@answers.collect {|a| a.tags.to_a}).flatten}"
+    puts "\n\n#{self.name} SCRAP: tags begin as #{(@answers.collect {|a| a.tags.to_a})}"
     @best_score = (@answers.collect {|a| a.scores[:points]}).min
     scrap_if("too_long") {|a| (a.scores[:points] > @best_score)}
-    puts "#{self.name}: tags ended as #{(@answers.collect {|a| a.tags.to_a}).flatten}"
-    puts "#{self.name}: scores ended as #{(@answers.collect {|a| a.scores.values}).flatten}\n\n"
+    puts "#{self.name} SCRAP: tags ended as #{(@answers.collect {|a| a.tags.to_a})}"
+    puts "#{self.name} SCRAP: scores ended as #{(@answers.collect {|a| a.scores.values})}\n\n"
   end
 end
 
@@ -141,17 +140,22 @@ raise "CouchDB not available at #{configatron.factory.couchdb.server}" unless
 # extend Workstation
 Dir.glob(File.dirname(__FILE__) + configatron.project.workstations.path) {|file| require file}
 
-project = Factory.new()
-workstations = [GeneratorStation.new(:maker),EvaluatorStation1.new(:breeder)]
-  # GeneratorStation.new(:maker)],
-  # EvaluatorStation1.new(:breeder),
-  # EvaluatorStation2.new(:marker)]
 
-# write view document(s)
+### these should get tucked away elsewhere:
+
+project = Factory.new()
+workstations =[
+  GeneratorStation.new(:maker),
+  EvaluatorStation1.new(:breeder),
+  EvaluatorStation2.new(:marker)]
+
+# reset database
 db = CouchRest.database!("#{configatron.factory.couchdb.server}/#{configatron.factory.name}")
 db.delete!
 db.create!
 
+
+# create required view document(s) [should be part of generating each workstation]
 db.batch_save_doc({'_id' => "_design/marker", views: { current: { map: "function(doc) { if(doc.tags.length > 0) { for(var idx in doc.tags) { if(doc.tags[idx] == 'marker') {emit(doc._id, doc)   }}}}"}}})
 
 db.batch_save_doc({'_id' => "_design/breeder", views: { current: { map: "function(doc) { if(doc.tags.length > 0) { for(var idx in doc.tags) { if(doc.tags[idx] == 'breeder') {emit(doc._id, doc)   }}}}"}}})
@@ -159,11 +163,7 @@ db.batch_save_doc({'_id' => "_design/breeder", views: { current: { map: "functio
 db.batch_save_doc({'_id' => "_design/maker", views: { current: { map: "function(doc) { if(doc.tags.length > 0) { for(var idx in doc.tags) { if(doc.tags[idx] == 'maker') {emit(doc._id, doc)   }}}}"}}})
 
 
-test = {"_id" => "test_doc", "wild" => "and random"}
-db.save_doc(test)
-test["foo" => "bar"]
-db.save_doc(test)
-
+# final workcycle behavior
 5.times do
   workstations.each do |ws|
     ws.cycle

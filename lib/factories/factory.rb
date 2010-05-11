@@ -63,6 +63,5 @@ module AnswerFactory
     rescue StandardError
       false 
     end
-    
   end
 end
