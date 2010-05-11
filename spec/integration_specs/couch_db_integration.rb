@@ -16,20 +16,43 @@ describe "CouchDB stuff" do
       @batch = Batch.[](Answer.new("do a"), Answer.new("do b"))
     end
     
-    it "should capture the returned IDs and save them from the couch response hash" do
-      response = @batch.bulk_save!(@db_uri)
-      ids = response.collect {|r| r["id"]}
-      @batch.each {|a| ids.should include(a._id)}
+    it "should be possible to set the couchdb_id and have that be actually used" do
+      @batch[0].couch_id = "001"
+      @batch[1].couch_id = "002"
+      ids = @batch.bulk_save!(@db_uri).collect {|r| r["id"]}
+      puts ids
+      ids.should == ["001", "002"]
+    end
+    
+    it "should be possible to overwrite a document with new info" do
+      db = CouchRest.database!(@db_uri)
+      doc = CouchRest::Document.new({"_id" => "junk00001", "foo" => nil, "bar" => nil})
+      doc.database = db
+      puts doc.uri
+      db.bulk_save_doc(doc)
+      
+      doc["foo"] = 1000
+      doc.save
     end
     
     it "should be possible to overwrite the same Answers with new info" do
-      ids_1 = @batch.bulk_save!(@db_uri).collect {|r| r["id"]}
-      @batch[0].scores[:foo] = 88
-      @batch[1].scores[:foo] = 99
-      ids_2 = @batch.bulk_save!(@db_uri).collect {|r| r["id"]}
-      puts ids_2
-      puts ids_1
+      @batch[0].couch_id = "003"
+      @batch[1].couch_id = "004"
+      ids = @batch.bulk_save!(@db_uri).collect {|r| r["id"]}
+      ids.should == ["003", "004"]
+      @batch[0].couch_id.should == "003"
+
     end
+    
+    
+    # 
+    # 
+    # it "should capture the returned IDs and save them from the couch response hash" do
+    #   response = @batch.bulk_save!(@db_uri)
+    #   ids = response.collect {|r| r["id"]}
+    #   @batch.each {|a| ids.should include(a.couch_id)}
+    # end
+    # 
     
   end
   

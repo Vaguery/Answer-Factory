@@ -5,7 +5,7 @@ module AnswerFactory
     attr_accessor :scores, :tags
     attr_reader :draft_blueprint, :program, :timestamp, :ancestors
     attr_reader :initialization_options, :progress
-    attr_accessor :couch_id
+    attr_accessor :couch_id, :couch_rev
     
     
     def initialize(blueprint, options = {})
@@ -19,6 +19,7 @@ module AnswerFactory
       end
       @timestamp = Time.now
       @couch_id = options[:couch_id] || ""
+      @couch_rev = options[:couch_rev] || ""
       @progress = options[:progress] || 0
       @ancestors = options[:ancestors] || []
       @tags = Set.new(options[:tags]) || Set.new
@@ -124,7 +125,10 @@ module AnswerFactory
   
   
   def data
-    basics = self.couch_id.empty? ? {} : Hash['id',self.couch_id]
+    basics = Hash.new
+    basics["_id"] = self.couch_id unless self.couch_id.empty? 
+    basics["_rev"] = self.couch_rev unless self.couch_rev.empty? 
+    
     basics.merge!({'blueprint' => self.blueprint,
       'tags' => self.tags.to_a, 
       'scores' => self.scores,
@@ -141,6 +145,7 @@ module AnswerFactory
         
     Answer.new(value_hash["blueprint"],
       couch_id:value_hash['id'],
+      couch_rev:value_hash['_rev'],
       tags:tag_set,
       scores:symbolized_scores,
       progress:value_hash["progress"],

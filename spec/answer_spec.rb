@@ -87,7 +87,16 @@ describe "Answer" do
       
       it "should contain the couch_id, if one is set" do
         a2 = Answer.new("",couch_id:'1234')
-        a2.data['id'].should == '1234'
+        a2.data['_id'].should == '1234'
+      end
+      
+      it "should not contain the CouchDB _rev, if none was set" do
+        @a1.data['_rev'].should == nil
+      end
+      
+      it "should contain the CouchDB _rev, if the Answer has a non-nil :couch_rev" do
+        @a1.couch_rev = "88888"
+        @a1.data['_rev'].should == "88888"
       end
       
       
