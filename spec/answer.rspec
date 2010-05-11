@@ -458,6 +458,20 @@ describe "Answer" do
   end
   
   
+  describe "locations" do
+    describe "move_to" do
+      it "should change the :location" do
+        a = Answer.new("do a", location: :dzz)
+        a.move_to(:zzd).location.should == :zzd
+      end
+      
+      it "should raise an error if the argument isn't a Symbol" do
+        lambda{Answer.new("do a").move_to(99123)}.should raise_error(ArgumentError)
+      end
+    end
+  end
+  
+  
   describe "tags" do
     it "should have a tags array" do
       Answer.new("").tags.should be_a_kind_of(Set)

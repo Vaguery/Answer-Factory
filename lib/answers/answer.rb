@@ -113,6 +113,12 @@ module AnswerFactory
     end
   end
   
+  def move_to(where)
+    raise ArgumentError, "#{where} is not a Symbol" unless where.kind_of?(Symbol)
+    @location = where
+    self
+  end
+  
   
   def add_tag(new_tag)
     raise ArgumentError, "#{new_tag} is not a Symbol" unless new_tag.kind_of?(Symbol)

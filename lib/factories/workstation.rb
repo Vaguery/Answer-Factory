@@ -58,10 +58,14 @@ module AnswerFactory
     end
     
     
-    def ship_to(where, &filter)
+    def ship_to(where)
       raise ArgumentError, "Workstation#ship_to cannot ship to a #{where.class}" unless
         where.kind_of?(Symbol)
-      (@answers.find_all &filter).each {|a| a.add_tag where; a.remove_tag @name}
+        
+      @answers.each do |a|
+        next if block_given? && !yield(a)
+        a.move_to(where) if (a.location == @name)
+      end
     end
     
     

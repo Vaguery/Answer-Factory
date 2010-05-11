@@ -208,13 +208,18 @@ describe "Workstation" do
       describe "ship_to" do
         before(:each) do
           @w2 = Workstation.new(:lulu)
-          @a1 = Answer.new("do fun_stuff", tags:[:lulu])
-          @a2 = Answer.new("do sad_stuff", tags:[:lulu])
+          @a1 = Answer.new("do fun_stuff", location: :lulu)
+          @a2 = Answer.new("do sad_stuff", location: :lulu)
           @w2.answers = Batch[@a1,@a2]
         end
         
+        
         it "should accept a single argument" do
           @w2.method(:ship_to).arity.should == 1
+        end
+        
+        it "should be comfortable without any block" do
+          @w2.ship_to(:here)
         end
         
         it "should check the argument is a symbol" do
@@ -227,25 +232,17 @@ describe "Workstation" do
           @w2.ship_to(:heaven) {|a| Math.sin(12.0)}
         end
         
-        it "should add a new location tag to the answers in the filtered subset" do
-          @a1.should_receive(:add_tag).with(:xyzzy)
-          @a2.should_receive(:add_tag).with(:xyzzy)
+        it "should change the :location of the answers in the filtered subset" do
+          @a1.should_receive(:move_to).with(:xyzzy)
+          @a2.should_receive(:move_to).with(:xyzzy)
           @w2.ship_to(:xyzzy) {|a| true}
         end
         
-        it "should remove the old location tag to the answers in the filtered subset" do
-          @a1.should_receive(:remove_tag).with(:lulu)
-          @a2.should_receive(:remove_tag).with(:lulu)
-          @w2.ship_to(:xyzzy) {|a| true}
+        it "should only ship things that are still there" do
+          @a2.location = :far_away
+          @w2.ship_to(:other_place) {|a| true}
+          @a2.location.should == :far_away
         end
-        
-        it "should not touch the tags of answers not in the filtered subset" do
-          @a1.should_receive(:remove_tag).with(:lulu)
-          @a2.should_not_receive(:remove_tag)
-          @w2.ship_to(:xyzzy) {|a| a.blueprint.include? "fun"}
-        end
-        
-        it "should only ship things that are still there"
       end
     end
     
