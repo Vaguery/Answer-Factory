@@ -54,6 +54,7 @@ module AnswerFactory
         end
       rescue JSON::ParserError => e
         puts "Batch not read due to JSON ParserError: '#{e.message}'"
+        # raise e
       end
       return batch
     end

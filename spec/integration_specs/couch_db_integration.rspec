@@ -30,6 +30,7 @@ describe "CouchDB stuff" do
   end
   
   
+  
   describe "Batch reading and writing" do
     describe "updating a Batch" do
       before(:each) do

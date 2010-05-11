@@ -256,8 +256,8 @@ describe "Workstation" do
       describe "scrap_if" do
         before(:each) do
           @w3 = Workstation.new(:falafel)
-          @a1 = Answer.new("do fun_stuff", progress:1, tags:[:falafel])
-          @a2 = Answer.new("do sad_stuff", progress:99, tags:[:falafel])
+          @a1 = Answer.new("do fun_stuff", progress:1, location: :falafel)
+          @a2 = Answer.new("do sad_stuff", progress:99, location: :falafel)
           @w3.answers = Batch[@a1,@a2]
         end
         
@@ -270,32 +270,14 @@ describe "Workstation" do
           @w3.scrap_if("Math says so") {|a| Math.cos(12.0)}
         end
         
-        it "should add a new location tag :SCRAP to the answers in the filtered subset" do
-          @a1.should_receive(:add_tag).with(:SCRAP)
-          @a2.should_receive(:add_tag).with(:SCRAP)
-          @w3.scrap_if("everything dies") {|a| true}
-        end
-        
-        it "should remove the old location tag to the answers in the filtered subset" do
-          @a1.should_receive(:remove_tag).with(:falafel)
-          @a2.should_receive(:remove_tag).with(:falafel)
-          @w3.scrap_if("entropy") {|a| true}
-        end
-        
-        it "should not touch the tags of answers not in the filtered subset" do
-          @a1.should_receive(:remove_tag).with(:falafel)
-          @a2.should_not_receive(:remove_tag)
-          @w3.scrap_if("insufficient progress") {|a| a.progress < 10}
-        end
-        
         it "should not scrap things that aren't at that location"
       end
       
       describe "scrap_everything" do
         before(:each) do
           @w4 = Workstation.new(:ice_station_zebra)
-          @a1 = Answer.new("do anything", tags:[:ice_station_zebra])
-          @a2 = Answer.new("do whatevz", tags:[:ice_station_zebra])
+          @a1 = Answer.new("do anything", location: :ice_station_zebra)
+          @a2 = Answer.new("do whatevz", location: :ice_station_zebra)
           @w4.answers = Batch[@a1,@a2]
         end
         
@@ -304,20 +286,14 @@ describe "Workstation" do
         end
         
         it "should call scrap_if" do
-          @w4.should_receive(:scrap_if)
+          @w4.should_receive(:ship_to)
           @w4.scrap_everything
         end
         
         it "should send every answer to :SCRAP" do
-          @w4.answers.each {|a| a.tags.should_not include(:SCRAP)}
+          @w4.answers.each {|a| a.location.should_not == :SCRAP}
           @w4.scrap_everything
-          @w4.answers.each {|a| a.tags.should include(:SCRAP)}
-        end
-        
-        it "should remove the current location from every answer" do
-          @w4.answers.each {|a| a.tags.should include(:ice_station_zebra)}
-          @w4.scrap_everything
-          @w4.answers.each {|a| a.tags.should_not include(:ice_station_zebra)}
+          @w4.answers.each {|a| a.location.should == :SCRAP}
         end
         
         it "should be safe to repeat the statement" do

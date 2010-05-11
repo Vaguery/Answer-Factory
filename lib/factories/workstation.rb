@@ -63,8 +63,11 @@ module AnswerFactory
         where.kind_of?(Symbol)
         
       @answers.each do |a|
-        next if block_given? && !yield(a)
-        a.move_to(where) if (a.location == @name)
+        next unless a.location.to_sym == @name.to_sym
+        if block_given?
+          next unless yield(a)
+        end
+        a.move_to(where)
       end
     end
     
@@ -76,11 +79,12 @@ module AnswerFactory
     
     
     def scrap_if(why, &filter)
-      (@answers.find_all &filter).each {|a| a.add_tag :SCRAP; a.remove_tag @name}
+      ship_to(:SCRAP, &filter) 
+      # (@answers.find_all &filter).each {|a| a.add_tag :SCRAP; a.remove_tag @name}
     end
     
     def scrap_everything
-      scrap_if("everything dies") {|x| true}
+      ship_to(:SCRAP)
     end
     
     
