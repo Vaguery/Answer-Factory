@@ -137,6 +137,7 @@ module AnswerFactory
     basics["_rev"] = self.couch_rev unless self.couch_rev.empty? 
     
     basics.merge!({'blueprint' => self.blueprint,
+      'location' => self.location,
       'tags' => self.tags.to_a, 
       'scores' => self.scores,
       'progress' => self.progress,
@@ -153,6 +154,7 @@ module AnswerFactory
     Answer.new(value_hash["blueprint"],
       couch_id:value_hash['id'],
       couch_rev:value_hash['rev'],
+      location:value_hash["location"],
       tags:tag_set,
       scores:symbolized_scores,
       progress:value_hash["progress"],

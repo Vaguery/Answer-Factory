@@ -38,11 +38,11 @@ Gem::Specification.new do |s|
      "lib/machines/mutate_footnotes.rb",
      "lib/machines/select_nondominated.rb",
      "readme.md",
-     "spec/answer_spec.rb",
+     "spec/answer.rspec",
      "spec/batch_spec.rb",
      "spec/factories/factory_spec.rb",
      "spec/factories/workstation_spec.rb",
-     "spec/integration_specs/couch_db_integration.rb",
+     "spec/integration_specs/couch_db_integration.rspec",
      "spec/machines/any_one_spec.rb",
      "spec/machines/build_random_spec.rb",
      "spec/machines/evaluate_simple_score_spec.rb",
@@ -61,11 +61,9 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{Genetic Programming in the Nudge language}
   s.test_files = [
-    "spec/answer_spec.rb",
-     "spec/batch_spec.rb",
+    "spec/batch_spec.rb",
      "spec/factories/factory_spec.rb",
      "spec/factories/workstation_spec.rb",
-     "spec/integration_specs/couch_db_integration.rb",
      "spec/machines/any_one_spec.rb",
      "spec/machines/build_random_spec.rb",
      "spec/machines/evaluate_simple_score_spec.rb",
