@@ -115,7 +115,7 @@ module AnswerFactory
   
   def move_to(where)
     raise ArgumentError, "#{where} is not a Symbol" unless where.kind_of?(Symbol)
-    @location = where
+    @location = where.to_sym
     self
   end
   

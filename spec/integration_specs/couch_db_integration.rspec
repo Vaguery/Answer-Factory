@@ -29,8 +29,6 @@ describe "CouchDB stuff" do
     
   end
   
-  
-  
   describe "Batch reading and writing" do
     describe "updating a Batch" do
       before(:each) do
@@ -70,6 +68,17 @@ describe "CouchDB stuff" do
         and_now = db.get(@batch[0].couch_id)["_rev"]
         as_saved[0].should == "1"
         and_now[0].should == "2"
+      end
+      
+    end
+  end
+  
+  
+  describe "Workstation ship!" do
+    describe "ship_to" do
+      before(:each) do
+        @ws1 = Workstation.new(:masher)
+        @batch = Batch.[](Answer.new("do a", location: :masher), Answer.new("do b", location: :masher))
       end
       
     end
