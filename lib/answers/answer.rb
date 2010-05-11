@@ -2,7 +2,7 @@ require 'set'
 
 module AnswerFactory
   class Answer
-    attr_accessor :scores, :tags
+    attr_accessor :scores, :tags, :location
     attr_reader :draft_blueprint, :program, :timestamp, :ancestors
     attr_reader :initialization_options, :progress
     attr_accessor :couch_id, :couch_rev
@@ -19,6 +19,7 @@ module AnswerFactory
       end
       @timestamp = Time.now
       @couch_id = options[:couch_id] || ""
+      @location = options[:location] || ""
       @couch_rev = options[:couch_rev] || ""
       @progress = options[:progress] || 0
       @ancestors = options[:ancestors] || []

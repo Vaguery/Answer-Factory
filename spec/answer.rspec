@@ -57,6 +57,26 @@ describe "Answer" do
       Answer.new("foo").scores.should == {}
     end
     
+    it "should have a tags attribute" do
+      Answer.new("").should respond_to(:tags)
+    end
+    
+    it "should be possible to set the :tags via initialization option" do
+      Answer.new("", tags:["hi"]).tags.to_a.should == ["hi"]
+    end
+    
+    it "should not report duplicate entries" do
+      Answer.new("", tags:["hi", "hi"]).tags.to_a.should == ["hi"]
+    end
+    
+    it "should have a :location attribute" do
+      Answer.new("").should respond_to(:location)
+    end
+    
+    it "be possible to set :location via an initialization option" do
+      Answer.new("", location:"nearby").location.should == "nearby"
+    end
+    
     it "should have a #timestamp, which is when (wall clock time) it was made" do
       tn = Time.now
       Time.should_receive(:now).and_return(tn)
