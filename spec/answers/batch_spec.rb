@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), "./spec_helper")
+require File.join(File.dirname(__FILE__), "../spec_helper")
 
 describe "Batches" do
   it "should be a kind of Array" do
@@ -100,7 +100,11 @@ describe "Batches" do
             # because it hit the right URI!
         end
         
-        it "should handle errors returned from CouchDB"
+        describe "error-handling" do
+          it "should handle errors returned from CouchDB"
+          
+          it "should handle 'resource not found'"
+        end 
         
         it "should handle db connection problems"
         

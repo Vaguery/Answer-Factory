@@ -140,7 +140,7 @@ describe "Factory" do
           FakeWeb.allow_net_connect = false
         end
         
-        it "should have a method to check that couchDB is accessible" do
+        it "should be a method of Factory" do
           f1 = Factory.new(name:"boo")
           lambda{Factory.couch_available?}.should_not raise_error
         end
@@ -163,6 +163,24 @@ describe "Factory" do
           Factory.couch_available?.should == false
         end
       end
+      
+      describe "#couch_delete!" do
+        before(:each) do
+          FakeWeb.allow_net_connect = false
+        end
+        
+        it "should send the couch command to delete the db"
+        
+        it "should require authorization"
+      end
+      
+      describe "authorization" do
+        it "should be necessary to set up an admin account in couch"
+        
+        it "should not be possible to write to a factory's db without authenticating"
+        
+        it "should raise an error if authentication fails"
+      end
     end
     
     
@@ -182,6 +200,25 @@ describe "Factory" do
       describe "setting from file" do
         it "should replace configatron.workstations"
         it "should replace 'configatron.[workstation_name].[settings]' for each workstation"
+      end
+    end
+    
+    
+    describe "Factory state persistence" do
+      describe "configuration" do
+        it "should record configatron settings in a special couch document"
+        
+        it "should read from the special couch config docs"
+        
+        it "should read from the config doc upon startup"
+        
+        it "should read from the config doc every N steps, 'N' being a config"
+      end
+      
+      describe "logging basic events" do
+        it "should generate log documents for launch"
+        
+        it "should generate log documents for changes in config state during a run"
       end
     end
   end

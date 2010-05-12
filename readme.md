@@ -2,8 +2,8 @@
 
 ## Caveat
 
-**DO NOT EXPECT ANYTHING TO WORK (AT ALL) UNTIL VERSION 0.1+**
-This particular project is undergoing a lot of serious surgery right now. 
+**THIS IS A PROJECT IN RAPID TRANSITION**
+We're doing a lot of serious surgery right now (May 2010), and adding a lot of functionality very quickly.
 
 ## What it does
 
@@ -11,9 +11,12 @@ The answer-factory gem includes scripting support for
 
 * generating new design automation projects
 * Nudge, a Turing-complete programming language for readable genetic programming
-* standard genetic programming search operators
-* a standard suite of powerful metaheuristics
+* some standard genetic programming search operators
+* a standard suite of powerful metaheuristic tools
 * full automated archiving of all solutions
+
+and is introducing
+
 * analytics and reporting
 * administrative tools for managing AnswerFactory daemons
 * reporting tools for exploring and directing search
@@ -34,15 +37,18 @@ This will automatically install several dependencies, including [nudge](http://g
 ### Creating a new AnswerFactory project
 
 Use this command line script to build an AnswerFactory project folder:
+
     answer-factory your-project-name-here
 
-This will create a new directory called 'your-project-name-here', and install a rudimentary subtree of folders and files. Perhaps most important is the `Thorfile`, which contains most of the generators you can use to simplify project creation and management.
+This will create a new directory called 'your-project-name-here' (in your current working directory), and install a rudimentary subtree of folders and files. Perhaps most important is `activate.rb`, which includes both configuration information and some examples of how to proceed.
 
-### Replicating a pre-existing project or demo
 
-TBD
+### Activating the AnswerFactory daemon
 
-### Generating new Nudge type defintitions
+Make sure CouchDB is running and available, navigate to your project's root folder, and invoke
+    ruby activate.rb
+
+### Generating new Nudge type definitions
 
 The Nudge language gem installed along with `answer-factory` includes a full-featured programming language designed for genetic programming projects, with integer, floating-point, boolean, and code types.
 
@@ -50,7 +56,8 @@ Often your project's domain model will call for additional types. To generate so
     thor new_nudge_type your-nudge-type-name
 This will create a template for your class definition in the `/lib/nudge/types` subdirectory (which you should edit as indicated in the comments to use), several standard nudge instruction classes in `/lib/nudge/instructions`, and rspec files.
 
-### Activating the AnswerFactory daemon
+### Replicating a pre-existing project or demo
 
-Make sure CouchDB is running and available, navigate to your project's root folder, and invoke
-    ruby activate.rb
+TBD
+
+
