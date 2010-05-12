@@ -56,8 +56,7 @@ class VariationStation < Workstation
   
   def initialize(name, options = {})
     super
-    @mutator = Machines::MutateFootnotesUniform.new(
-      )
+    @mutator = Machines::MutateFootnotesUniform.new
     @score_1 = Machines::EvaluateSimpleScore.new(
       :name => :number_of_footnotes,
       scorer:Proc.new {|a| a.blueprint.scan(/^«/).length})
@@ -76,16 +75,13 @@ class VariationStation < Workstation
   end
   
   def ship!
-    ship_to(:picker) {|answer| true} 
+    ship_to(:picker) {|answer| rand < 0.25}
+    puts "POLISHER SHIP: kept #{@answers.find_all {|a| a.location == :polisher}.length}"
   end
   
   def scrap!
-    best_score = (@answers.collect {|a| a.scores[:number_of_footnotes]}).min
-    worst_score = (@answers.collect {|a| a.scores[:number_of_footnotes]}).max
-    puts "#{worst_score}..#{best_score}"
-    scrap_if("too many footnotes") {|a| a.scores[:number_of_footnotes] > 
-        ((worst_score - best_score)/2.0 + best_score)}
-    puts "PICKER SCRAP: kept #{@answers.find_all {|a| a.location == :polisher}.length}"
+    scrap_if("contains 'oo'") {|a| a.blueprint.include? 'oo'}
+    puts "POLISHER SCRAP: kept #{@answers.find_all {|a| a.location == :polisher}.length}"
   end
 end
 
@@ -109,12 +105,12 @@ class ScreeningStation < Workstation
   def build!
     @answers = process_with @letters
     @best = process_with @so_far_so_good
-    puts "PICKER EVERYTHING: #{@answers.length}"
+    puts "----------"
+    puts "PICKER HAS THESE: #{@answers.length}"
     @answers.each {|a| puts a.scores}
     puts "----------"
     puts "PICKER NONDOMINATED SET: #{@best.length}"
-    @best.each {|a| puts a.scores}
-    
+    @best.each {|a| puts "#{a.couch_id}: #{a.scores}"}
   end
   
   def scrap!
@@ -123,6 +119,14 @@ class ScreeningStation < Workstation
   end
 end
 
+
+##### this will soon be an attribute of the Factory, and saved as persistent config data
+# but it's the components of your Factory instance, each of which will be sent a #cycle! message,
+# in this order, by the launch code below
+workstations =[
+  GenerationStation.new(:maker),
+  VariationStation.new(:polisher),
+  ScreeningStation.new(:picker)]
 
 
 ####
@@ -146,10 +150,6 @@ Dir.glob(File.dirname(__FILE__) + configatron.project.workstations.path) {|file|
 ### these should get tucked away elsewhere:
 
 project = Factory.new()
-workstations =[
-  GenerationStation.new(:maker),
-  VariationStation.new(:polisher),
-  ScreeningStation.new(:picker)]
 
 # reset database
 db = CouchRest.database!("#{configatron.factory.couchdb.server}/#{configatron.factory.name}")
