@@ -24,6 +24,25 @@ describe "Workstation" do
     end
   end
   
+  describe "couchdb views documents" do
+    it "should respond to :couchdb_viewdoc" do
+      Workstation.new(:foo).should respond_to(:couchdb_viewdoc)
+    end
+    
+    it "should return a Hash" do
+      Workstation.new(:foo).couchdb_viewdoc.should be_a_kind_of(Hash)
+    end
+    
+    it "should have the right _id value" do
+      Workstation.new(:foo).couchdb_viewdoc["_id"].should == "_design/foo"
+    end
+    
+    it "should include the correct map code for this Workstation" do
+      Workstation.new(:foo).couchdb_viewdoc[:views][:current][:map].should ==
+        "function(doc) { if(doc.location == 'foo') { emit(doc._id, doc); } }"
+    end
+  end
+  
   
   describe "capacity" do
     it "should accept a #capacity attribute in initialization" do

@@ -87,6 +87,19 @@ describe "CouchDB stuff" do
   
   describe "Workstations passing Batches around" do
     
+    describe "couchdb_create_view" do
+      before(:each) do
+        @ws_viewer = Workstation.new(:view_maker)
+      end
+      
+      it "should save a view doc" do
+        response = @ws_viewer.couchdb_create_view
+        # "ok"=>true, "id"=>"_design/view_maker", "rev"=>"1-a813357133c1538c86168966b36f97bd"}
+        response["ok"].should == true
+        response["id"].should == "_design/view_maker"
+      end
+    end
+    
     describe "gathering" do
       before(:each) do
         @ws1 = ShipperStation.new(:this_place)

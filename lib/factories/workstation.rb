@@ -52,6 +52,22 @@ module AnswerFactory
     end
     
     
+    def couchdb_viewdoc
+      {'_id' => "_design/#{@name.to_s}",
+        views: { 
+          current: {
+            map: "function(doc) { if(doc.location == '#{@name.to_s}') { emit(doc._id, doc); } }"
+          }
+        }
+      }
+    end
+    
+    
+    def couchdb_create_view(db_uri = couchdb_uri)
+      CouchRest.database!(db_uri).save_doc(self.couchdb_viewdoc, use_uuids=false)
+    end
+    
+    
     def ship!
       # Workstation is a superclass; the default behavior (doing nothing)
       # should be overridden in a subclass definition
