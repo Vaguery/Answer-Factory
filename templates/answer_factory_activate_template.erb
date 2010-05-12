@@ -156,29 +156,12 @@ db = CouchRest.database!("#{configatron.factory.couchdb.server}/#{configatron.fa
 db.delete!
 db.create!
 
-
-# create required view document(s) [should be part of generating each workstation]
-db.batch_save_doc({'_id' => "_design/maker", views: { current: { map: "function(doc) {
-  if(doc.location == 'maker') {
-    emit(doc._id, doc);
-  }
-}"}}})
-
-db.batch_save_doc({'_id' => "_design/polisher", views: { current: { map: "function(doc) {
-  if(doc.location == 'polisher') {
-    emit(doc._id, doc);
-  }
-}"}}})
-
-db.batch_save_doc({'_id' => "_design/picker", views: { current: { map: "function(doc) {
-  if(doc.location == 'picker') {
-    emit(doc._id, doc);
-  }
-}"}}})
+# create required view document(s)
+workstations.each {|ws| ws.couchdb_create_view}
 
 
 # final workcycle behavior
-100.times do
+10.times do
   workstations.each do |ws|
     ws.cycle
   end
