@@ -1,3 +1,4 @@
+#encoding: utf-8
 require 'answer-factory'
 include Nudge
 include AnswerFactory
@@ -25,100 +26,100 @@ configatron.project.nudge.types.path =        '/lib/nudge/types/*'
 
 #### normally these should be in /lib/factory/workstations/**
 
-class GeneratorStation < Workstation
+class GenerationStation < Workstation
   attr_reader :random_program_maker
   
   def initialize(name, options = {})
     super
     @random_program_maker = Machines::BuildRandom.new(
       how_many:10,
-      target_size_in_points:7, 
+      target_size_in_points:20, 
       reference_names:["x1", "x2"])
-  end
-  
-  def receive!
-    gather_mine
-    puts "#{self.name}: received and now have: #{@answers.length}"
-    puts "\n\n#{self.name}: locations are #{@answers.collect {|a| a.location}}"
-    
   end
   
   def build!
     @answers = process_with @random_program_maker
-    @answers.each {|a| a.location = 'maker'}
-    puts "#{self.name}: built and now have: #{@answers.length}"
+    @answers.each {|a| a.location = :maker}
+    puts
+    puts "MAKER BUILD: made #{@answers.length}"
   end
   
   def ship!
-    ship_to(:breeder) {|answer| true} 
-    puts "#{self.name}: shipping to #{@answers.collect {|a| a.location}.inspect}"
+    ship_to(:polisher) {|answer| true}
+    puts "MAKER SHIP -> POLISHER"
   end
 end
 
 
-class EvaluatorStation1 < Workstation
+class VariationStation < Workstation
   attr_reader :my_length_evaluator
   
   def initialize(name, options = {})
     super
-    @my_length_evaluator = Machines::EvaluateSimpleScore.new(
-      :name => :blueprint_length,
+    @mutator = Machines::MutateFootnotesUniform.new(
+      )
+    @score_1 = Machines::EvaluateSimpleScore.new(
+      :name => :number_of_footnotes,
+      scorer:Proc.new {|a| a.blueprint.scan(/^«/).length})
+  end
+  
+  def receive!
+    gather_mine
+    puts "POLISHER RECEIVE: got #{@answers.length}"
+  end
+  
+  def build!
+    @mutants = process_with @mutator
+    @mutants.each {|a| @answers << a}
+    @answers = process_with @score_1
+    puts "POLISHER BUILD: has #{@answers.length}"
+  end
+  
+  def ship!
+    ship_to(:picker) {|answer| true} 
+  end
+  
+  def scrap!
+    best_score = (@answers.collect {|a| a.scores[:number_of_footnotes]}).min
+    worst_score = (@answers.collect {|a| a.scores[:number_of_footnotes]}).max
+    puts "#{worst_score}..#{best_score}"
+    scrap_if("too many footnotes") {|a| a.scores[:number_of_footnotes] > 
+        ((worst_score - best_score)/2.0 + best_score)}
+    puts "PICKER SCRAP: kept #{@answers.find_all {|a| a.location == :polisher}.length}"
+  end
+end
+
+
+class ScreeningStation < Workstation
+  attr_reader :letters
+  
+  def initialize(name, options = {})
+    super
+    @letters = Machines::EvaluateSimpleScore.new(
+      :name => :letters,
       scorer:Proc.new {|a| a.blueprint.length})
+    @so_far_so_good = Machines::SelectNondominated.new
   end
   
   def receive!
     gather_mine
-    puts "#{self.name}: received and now have: #{@answers.length}"
-    puts "\n\n#{self.name}: locations are #{@answers.collect {|a| a.location}}"
+    puts "PICKER RECEIVE: got #{@answers.length}"
   end
   
   def build!
-    @answers = process_with @my_length_evaluator
-    puts "#{self.name} BUILD : built and now have: #{@answers.length}"
-  end
-  
-  def ship!
-    ship_to(:marker) {|answer| rand < 0.5} 
-    puts "#{self.name} SHIP: shipping to #{@answers.collect {|a| a.location}.inspect}"
-  end
-  
-  def scrap!
-    puts "\n\n#{self.name} SCRAP: tags begin as #{(@answers.collect {|a| a.location})}"
-    @best_score = (@answers.collect {|a| a.scores[:blueprint_length]}).min
-    scrap_if("too_long") {|a| (a.scores[:blueprint_length] > @best_score)}
-    puts "#{self.name} SCRAP: tags ended as #{(@answers.collect {|a| a.location})}"
-    puts "#{self.name} SCRAP: scores ended as #{(@answers.collect {|a| a.scores.values})}\n\n"
-  end
-end
-
-
-class EvaluatorStation2 < Workstation
-  attr_reader :my_length_evaluator
-  
-  def initialize(name, options = {})
-    super
-    @my_length_evaluator = Machines::EvaluateSimpleScore.new(
-      :name => :points,
-      scorer:Proc.new {|a| a.points})
-  end
-  
-  def receive!
-    gather_mine
-    puts "#{self.name}: received and now have: #{@answers.length}"
-    puts "\n\n#{self.name}: locations are #{@answers.collect {|a| a.location}}"
-  end
-  
-  def build!
-    @answers = process_with @my_length_evaluator
-    puts "#{self.name} BUILD : built and now have: #{@answers.length}"
+    @answers = process_with @letters
+    @best = process_with @so_far_so_good
+    puts "PICKER EVERYTHING: #{@answers.length}"
+    @answers.each {|a| puts a.scores}
+    puts "----------"
+    puts "PICKER NONDOMINATED SET: #{@best.length}"
+    @best.each {|a| puts a.scores}
+    
   end
   
   def scrap!
-    puts "\n\n#{self.name} SCRAP: tags begin as #{(@answers.collect {|a| a.location})}"
-    @best_score = (@answers.collect {|a| a.scores[:points]}).min
-    scrap_if("too_long") {|a| (a.scores[:points] > @best_score)}
-    puts "#{self.name} SCRAP: tags ended as #{(@answers.collect {|a| a.location})}"
-    puts "#{self.name} SCRAP: scores ended as #{(@answers.collect {|a| a.scores.values})}\n\n"
+    scrap_if("dominated") {|a| !@best.include?(a)}
+    puts "PICKER SCRAP: kept #{@answers.find_all {|a| a.location == :picker}.length}"
   end
 end
 
@@ -146,9 +147,9 @@ Dir.glob(File.dirname(__FILE__) + configatron.project.workstations.path) {|file|
 
 project = Factory.new()
 workstations =[
-  GeneratorStation.new(:maker),
-  EvaluatorStation1.new(:breeder),
-  EvaluatorStation2.new(:marker)]
+  GenerationStation.new(:maker),
+  VariationStation.new(:polisher),
+  ScreeningStation.new(:picker)]
 
 # reset database
 db = CouchRest.database!("#{configatron.factory.couchdb.server}/#{configatron.factory.name}")
@@ -157,27 +158,27 @@ db.create!
 
 
 # create required view document(s) [should be part of generating each workstation]
-db.batch_save_doc({'_id' => "_design/marker", views: { current: { map: "function(doc) {
-  if(doc.location == 'marker') {
-    emit(doc._id, doc);
-  }
-}"}}})
-
-db.batch_save_doc({'_id' => "_design/breeder", views: { current: { map: "function(doc) {
-  if(doc.location == 'breeder') {
-    emit(doc._id, doc);
-  }
-}"}}})
-
 db.batch_save_doc({'_id' => "_design/maker", views: { current: { map: "function(doc) {
   if(doc.location == 'maker') {
     emit(doc._id, doc);
   }
 }"}}})
 
+db.batch_save_doc({'_id' => "_design/polisher", views: { current: { map: "function(doc) {
+  if(doc.location == 'polisher') {
+    emit(doc._id, doc);
+  }
+}"}}})
+
+db.batch_save_doc({'_id' => "_design/picker", views: { current: { map: "function(doc) {
+  if(doc.location == 'picker') {
+    emit(doc._id, doc);
+  }
+}"}}})
+
 
 # final workcycle behavior
-10.times do
+100.times do
   workstations.each do |ws|
     ws.cycle
   end
