@@ -13,6 +13,7 @@ require 'machines/infrastructure'
 require 'machines/any_one'
 require 'machines/build_random'
 require 'machines/evaluate_simple_score'
+require 'machines/evaluate_with_test_cases'
 require 'machines/select_nondominated'
 require 'machines/mutate_footnotes'
 
