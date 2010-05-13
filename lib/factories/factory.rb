@@ -26,6 +26,8 @@ module AnswerFactory
       @couchdb_server = options[:couchdb_server] ||
         configatron.factory.couchdb.retrieve(:server, nil) ||
         "http://127.0.0.1:5984"
+        
+        
       
       @couchdb_name = options[:couchdb_name] ||
         configatron.factory.couchdb.retrieve(:name, nil) ||
@@ -54,6 +56,7 @@ module AnswerFactory
       configatron.factory.workstation_names = @workstation_names
       configatron.factory.couchdb.server = @couchdb_server
       configatron.factory.couchdb.name = @couchdb_name
+      configatron.factory.training_datasource = self.training_datasource
     end
     
     
@@ -62,6 +65,10 @@ module AnswerFactory
       true
     rescue StandardError
       false 
+    end
+    
+    def training_datasource
+      "#{@couchdb_server}/#{@name}_training"
     end
   end
 end

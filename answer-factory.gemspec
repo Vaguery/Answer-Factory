@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
      "lib/machines/any_one.rb",
      "lib/machines/build_random.rb",
      "lib/machines/evaluate_simple_score.rb",
+     "lib/machines/evaluate_with_test_cases.rb",
      "lib/machines/infrastructure.rb",
      "lib/machines/mutate_footnotes.rb",
      "lib/machines/select_nondominated.rb",
@@ -46,6 +47,7 @@ Gem::Specification.new do |s|
      "spec/machines/any_one_spec.rb",
      "spec/machines/build_random_spec.rb",
      "spec/machines/evaluate_simple_score_spec.rb",
+     "spec/machines/evaluate_with_test_cases_spec.rb",
      "spec/machines/infrastructure_spec.rb",
      "spec/machines/mutate_footnotes_spec.rb",
      "spec/machines/select_nondominated_spec.rb",
@@ -68,6 +70,7 @@ Gem::Specification.new do |s|
      "spec/machines/any_one_spec.rb",
      "spec/machines/build_random_spec.rb",
      "spec/machines/evaluate_simple_score_spec.rb",
+     "spec/machines/evaluate_with_test_cases_spec.rb",
      "spec/machines/infrastructure_spec.rb",
      "spec/machines/mutate_footnotes_spec.rb",
      "spec/machines/select_nondominated_spec.rb",
@@ -79,7 +82,7 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<nudge>, [">= 0.2"])
+      s.add_runtime_dependency(%q<nudge>, [">= 0.2.9"])
       s.add_runtime_dependency(%q<thor>, [">= 0.13"])
       s.add_runtime_dependency(%q<couchrest>, [">= 0.33"])
       s.add_runtime_dependency(%q<configatron>, [">= 2.6.2"])
@@ -87,7 +90,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<sinatra>, [">= 0.9.4"])
       s.add_runtime_dependency(%q<activesupport>, [">= 2.3.5"])
     else
-      s.add_dependency(%q<nudge>, [">= 0.2"])
+      s.add_dependency(%q<nudge>, [">= 0.2.9"])
       s.add_dependency(%q<thor>, [">= 0.13"])
       s.add_dependency(%q<couchrest>, [">= 0.33"])
       s.add_dependency(%q<configatron>, [">= 2.6.2"])
@@ -96,7 +99,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<activesupport>, [">= 2.3.5"])
     end
   else
-    s.add_dependency(%q<nudge>, [">= 0.2"])
+    s.add_dependency(%q<nudge>, [">= 0.2.9"])
     s.add_dependency(%q<thor>, [">= 0.13"])
     s.add_dependency(%q<couchrest>, [">= 0.33"])
     s.add_dependency(%q<configatron>, [">= 2.6.2"])

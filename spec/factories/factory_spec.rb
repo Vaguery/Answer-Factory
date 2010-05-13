@@ -159,7 +159,7 @@ describe "Factory" do
             :body => "Go away!", :status => [404, "Not Found"])
           Factory.couch_available?.should == false
           
-          f1 = Factory.new(name:"boo", couchdb_server:"http://127.0.0.1:9991/place")
+          f1 = Factory.new(name:"boo", couchdb_server:"http://127.0.0.1:5984/place")
           Factory.couch_available?.should == false
         end
       end
@@ -172,6 +172,18 @@ describe "Factory" do
         it "should send the couch command to delete the db"
         
         it "should require authorization"
+      end
+      
+      describe "training data" do
+        before(:each) do
+          FakeWeb.allow_net_connect = false
+        end
+        
+        it "should get the name of the :training_datasource from configatron" do
+          Factory.new(name:"baz", couchdb_server:"http://127.0.0.1:5984").
+            training_datasource.should == "http://127.0.0.1:5984/baz_training"
+        end
+        
       end
       
       describe "authorization" do

@@ -12,7 +12,7 @@ begin
     
     gemspec.required_ruby_version = '>= 1.9.1'
     
-    gemspec.add_dependency('nudge', '>= 0.2')
+    gemspec.add_dependency('nudge', '>= 0.2.9')
     gemspec.add_dependency('thor', '>= 0.13')
     gemspec.add_dependency('couchrest', '>= 0.33')
     gemspec.add_dependency('configatron', '>= 2.6.2')
