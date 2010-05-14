@@ -112,7 +112,9 @@ describe "EvaluateWithTestCases" do
     
     it "should be able to do vertical_slicing of the :datasource"
     
-    it "should be able to train exhaustively from the :datasource"
+    it "should be able to train exhaustively from the :datasource" do
+      
+    end
     
     describe "running Interpreter" do
       before(:each) do
@@ -146,6 +148,44 @@ describe "EvaluateWithTestCases" do
     
     it "should accept an Array of TestCases"
     
+    describe "install_training_data_from_csv!" do
+      before(:each) do
+        @f1 = Factory.new(name: "dammit")
+        @my_csv = "./spec/fixtures/my_data_source.csv"
+        @m1 = EvaluateWithTestCases.new(training_data_csv: @my_csv)
+        @training_db = "http://127.0.0.1:5984/dammit_training"
+      end
+      
+      it "should get the filename as an initialization parameter" do
+        EvaluateWithTestCases.new(training_data_csv: "foo.csv").
+          csv_filename.should == "foo.csv"
+        EvaluateWithTestCases.new.csv_filename.should == nil
+      end
+      
+      it "should open a csv file" do
+        f = File.open(@my_csv)
+        File.should_receive(:open).and_return(f)
+        c = CSV.new(f, headers: true)
+        CSV.should_receive(:new).with(f, headers: true).and_return(c)
+        @m1.install_training_data_from_csv(@my_csv)
+      end
+      
+      it "should be the training_data default db" do
+        db = CouchRest.database!(@training_db)
+        CouchRest.should_receive(:database!).with(@training_db).and_return(db)
+        @m1.install_training_data_from_csv(@my_csv)
+      end
+      
+      it "makes one doc for every row" do
+        db = CouchRest.database!(@training_db)
+        CouchRest.should_receive(:database!).with(@training_db).and_return(db)
+        db.should_receive(:bulk_save_doc).exactly(3).times
+        @m1.install_training_data_from_csv(@my_csv)
+      end
+      
+      it "works with missing variables"
+      
+    end
     
     describe "load_training_data!" do
       

@@ -6,12 +6,14 @@ module AnswerFactory
       attr_accessor :data_in_hand, :sensors
       attr_accessor :test_cases
       attr_reader :name
+      attr_reader :csv_filename
       
       def initialize(options = {})
         super
         @name = options[:name] || "evaluator"
         @data_in_hand = options[:data_in_hand] || {}
         @sensors = options[:sensors] || {}
+        @csv_filename = options[:training_data_csv]
       end
       
       def score(batch, overridden_options = {})
@@ -32,23 +34,45 @@ module AnswerFactory
         return batch
       end
       
+      
       def training_datasource
         configatron.factory.training_datasource
       end
+      
       
       def training_data_view
        "#{configatron.factory.training_datasource}/_design/#{@name}/_view/test_cases"
       end
       
       
+      def install_training_data_from_csv(csv_filename = @csv_filename)
+        reader = CSV.new(File.open(csv_filename), headers: true)
+        reader.readline
+        split_point = reader.headers.find_index(nil)
+        input_headers = reader.headers[0...split_point]
+        output_headers = reader.headers[split_point+1..-1]
+        reader.rewind
+        
+        offset = input_headers.length+1
+        db = CouchRest.database!(training_datasource)
+        
+        reader.each do |row|
+          inputs = {}
+          input_headers.each_with_index {|header,i| inputs[header] = row[i]}
+          outputs = {}
+          output_headers.each_with_index {|header,i| outputs[header] = row[i+offset]}
+          db.bulk_save_doc( {:inputs => inputs, :outputs => outputs})
+        end
+        
+      end
+      
+      
       def load_training_data!
-        
-        # expected = {"total_rows"=>1, "offset"=>0, "rows"=>[{"id"=>"05d195b7bb436743ee36b4223008c4ce", "key"=>"05d195b7bb436743ee36b4223008c4ce", "value"=>{"_id"=>"05d195b7bb436743ee36b4223008c4ce", "_rev"=>"1-c9fae927001a1d4789d6396bcf0cd5a7", "inputs"=>{"x1"=>7}, "outputs"=>{"y1"=>12}}}]}
-        
         db = CouchRest.database!(training_datasource)
         result = db.view("#{@name}/test_cases")
         @test_cases = 
-          result["rows"].collect {|r| TestCase.new(inputs: r["value"]["inputs"], outputs: r["value"]["outputs"])}
+          result["rows"].collect {|r| TestCase.new(
+              inputs: r["value"]["inputs"], outputs: r["value"]["outputs"])}
       end
       
       
