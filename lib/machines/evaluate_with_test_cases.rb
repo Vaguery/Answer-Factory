@@ -49,8 +49,8 @@ module AnswerFactory
         reader = CSV.new(File.open(csv_filename), headers: true)
         reader.readline
         split_point = reader.headers.find_index(nil)
-        input_headers = reader.headers[0...split_point]
-        output_headers = reader.headers[split_point+1..-1]
+        input_headers = reader.headers[0...split_point].collect {|head| head.strip}
+        output_headers = reader.headers[split_point+1..-1].collect {|head| head.strip}
         reader.rewind
         
         offset = input_headers.length+1
@@ -58,11 +58,13 @@ module AnswerFactory
         
         reader.each do |row|
           inputs = {}
-          input_headers.each_with_index {|header,i| inputs[header] = row[i]}
+          input_headers.each_with_index {|header,i| inputs[header] = row[i].strip}
           outputs = {}
-          output_headers.each_with_index {|header,i| outputs[header] = row[i+offset]}
+          output_headers.each_with_index {|header,i| outputs[header] = row[i+offset].strip}
           db.bulk_save_doc( {:inputs => inputs, :outputs => outputs})
         end
+        
+        db.bulk_save
         
       end
       

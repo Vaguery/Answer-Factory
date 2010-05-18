@@ -51,11 +51,27 @@ describe "CouchDB stuff" do
           "function(doc) { emit(doc._id, doc); }"}}})
     end
     
-    it "should use install_training_data_from_csv to populate a db from csv" do
+    it "should accept :install_training_data_from_csv to populate a db from csv" do
       configatron.temp do
         configatron.factory.training_datasource = "http://127.0.0.1:5984/integration_test_db_training"
         @my_machine = Machines::EvaluateWithTestCases.new(name: :tester)
+        @my_machine.install_training_data_from_csv('./spec/fixtures/my_data_source.csv')
+        saved = @db.documents
+        saved["rows"].length.should == 4
+      end
+    end
+    
+    it "should strip whitespace from all the training value strings" do
+      configatron.temp do
+        configatron.factory.training_datasource = "http://127.0.0.1:5984/integration_test_db_training"
+        @my_machine = Machines::EvaluateWithTestCases.new(name: :tester)
+        @my_machine.install_training_data_from_csv('./spec/fixtures/my_data_source.csv')
+        first_doc = @db.get(@db.documents["rows"][0]["id"])
+        first_doc["outputs"].each {|k,v| k.strip.should == k}
+        first_doc["outputs"].each {|k,v| v.strip.should == v}
         
+        first_doc["inputs"].each {|k,v| k.strip.should == k}
+        first_doc["inputs"].each {|k,v| v.strip.should == v}
       end
     end
     

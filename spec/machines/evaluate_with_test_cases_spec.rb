@@ -154,6 +154,9 @@ describe "EvaluateWithTestCases" do
         @my_csv = "./spec/fixtures/my_data_source.csv"
         @m1 = EvaluateWithTestCases.new(training_data_csv: @my_csv)
         @training_db = "http://127.0.0.1:5984/dammit_training"
+        FakeWeb.register_uri(:any,
+          "http://127.0.0.1:5984/dammit_training/_bulk_docs", 
+          :body => "{}", :status => [200, "OK"])
       end
       
       it "should get the filename as an initialization parameter" do
@@ -182,6 +185,7 @@ describe "EvaluateWithTestCases" do
         db.should_receive(:bulk_save_doc).exactly(3).times
         @m1.install_training_data_from_csv(@my_csv)
       end
+      
       
       it "works with missing variables"
       
@@ -235,9 +239,6 @@ describe "EvaluateWithTestCases" do
         @m1.test_cases.should be_a_kind_of(Array)
         @m1.test_cases.length.should == 1
       end
-      
-      
-      it "does something"
       
     end
       
