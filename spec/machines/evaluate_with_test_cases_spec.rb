@@ -56,16 +56,6 @@ describe "EvaluateWithTestCases" do
       end
     end
     
-    describe "data_in_hand" do
-      it "should have a #data_in_hand attribute" do
-        EvaluateWithTestCases.new.should respond_to(:data_in_hand)
-      end
-
-      it "should default to an empty Hash" do
-        EvaluateWithTestCases.new.data_in_hand.should == {}
-      end
-    end
-    
     describe "sensors" do
       it "should have a #sensors attribute" do
         EvaluateWithTestCases.new.should respond_to(:sensors)
@@ -114,17 +104,15 @@ describe "EvaluateWithTestCases" do
       lambda{@tester.score(Batch.new)}.should_not raise_error(ArgumentError)
     end
     
-    it "should be able to train exhaustively from the :datasource"
-    
     describe "running Interpreter" do
       before(:each) do
-        @tester.data_in_hand = [TestCase.new( {"x1" => [:int, 8], "y1" => [:int, 7]} )]
+        @tester.test_cases = [TestCase.new(inputs: {"x1" => 1}, outputs: {"y1" => 2})]
         @batch = Batch.[](Answer.new("do a"))
       end
       
       it "should create one Interpreter for each TestCase of #data_in_hand" do
-        i = Interpreter.new
-        Interpreter.should_receive(:new).and_return(i)
+        i = Interpreter.new("")
+        Interpreter.should_receive(:new).at_least(1).times.and_return(i)
         @tester.score(@batch)
       end
       
@@ -139,7 +127,7 @@ describe "EvaluateWithTestCases" do
       it "should set up Interpreters correctly" do
         i = Interpreter.new
         Interpreter.should_receive(:new).with(
-          "ref x1", {:name=>:tester, :target_size_in_points=>99}).and_return(i)
+          "do a", {:name=>:tester, :target_size_in_points=>99}).and_return(i)
         @tester.score(@batch,target_size_in_points:99)
       end
       
@@ -240,19 +228,48 @@ describe "EvaluateWithTestCases" do
         @m1.test_cases.should be_a_kind_of(Array)
         @m1.test_cases.length.should == 1
       end
+    end
+    
+    describe "scoring" do
+      before(:each) do
+        @m1 = EvaluateWithTestCases.new(name: :foo)
+        @m1.test_cases = (0...10).collect do |i|
+          TestCase.new(inputs: {"x1" => i}, outputs: {"y1" => 2*i})
+        end
+        @m1.build_sensor("y1") {|a| 777}
+        @batch = Batch.[](Answer.new("do a"))
+        @i1 = Interpreter.new
+      end
+      
+      it "should make an Interpreter for each row of training data" do
+        Interpreter.should_receive(:new).exactly(10).times.and_return(@i1)
+        @m1.score(@batch)
+      end
+      
+      it "should run all the Interpreters" do
+        Interpreter.should_receive(:new).exactly(10).times.and_return(@i1)
+        @i1.should_receive(:run).at_least(1).times.and_return({})
+        @m1.score(@batch)
+      end
+      
+      it "should register its sensors before each Interpreter run" do
+        Interpreter.stub!(:new).and_return(@i1)
+        @i1.should_receive(:register_sensor).at_least(1).times
+        @m1.score(@batch)
+      end
+      
+      it "should respond to :raw_results" do
+        @m1.should respond_to(:raw_results)
+      end
+      
+      it "should collect the result of each Interpreter run in #raw_results" do
+        @m1.score(@batch)
+        @m1.raw_results["y1"].should_not == nil
+        @m1.raw_results["y1"].should == ([777] * 10)
+      end
       
     end
-      
-      
-      
     
-    
-    
-    it "should run the :error_measure Proc on all expected/observed pairs"
-    
-    it "should run the :aggregator Proc on all the error_measure results"
-    
-    it "should write the aggregated score to the Answer's :scores Hash"
     
   end
 end

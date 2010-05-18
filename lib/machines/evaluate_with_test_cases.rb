@@ -4,18 +4,21 @@ module AnswerFactory
     
     
     class EvaluateWithTestCases < Machine
-      attr_accessor :data_in_hand, :sensors
+      attr_accessor :sensors
       attr_accessor :test_cases
       attr_reader :name
       attr_reader :csv_filename
+      attr_accessor :raw_results
       
       def initialize(options = {})
         super
         @name = options[:name] || "evaluator"
-        @data_in_hand = options[:data_in_hand] || {}
         @sensors = options[:sensors] || {}
         @csv_filename = options[:training_data_csv]
+        @test_cases = []
+        @raw_results = Hash.new([])
       end
+      
       
       def score(batch, overridden_options = {})
         all_options = @options.merge(overridden_options)
@@ -26,9 +29,12 @@ module AnswerFactory
         raise ArgumentError, "EvaluateWithTestCases: Undefined #name attribute" if
           name.nil?
         
-        batch.each do |a|
-          interpreter = Interpreter.new("ref x1",all_options)
-          @sensors.each {|s_key, s_value| interpreter.register_sensor(s_key, &s_value)}
+        batch.each do |answer|
+          test_cases.each do |t|
+            interpreter = Interpreter.new(answer.blueprint,all_options)
+            @sensors.each {|s_key, s_value| interpreter.register_sensor(s_key, &s_value)}
+            interpreter.run.each {|sensor, value| @raw_results[sensor] << value}
+          end
         end
         
         
