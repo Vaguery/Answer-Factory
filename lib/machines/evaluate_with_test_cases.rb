@@ -53,6 +53,11 @@ module AnswerFactory
       end
       
       
+      def build_sensor(name, &block)
+        @sensors[name] = block
+      end
+      
+      
       def install_training_data_from_csv(csv_filename = @csv_filename)
         reader = CSV.new(File.open(csv_filename), headers: true)
         reader.readline

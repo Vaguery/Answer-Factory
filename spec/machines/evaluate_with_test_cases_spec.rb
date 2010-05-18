@@ -75,21 +75,27 @@ describe "EvaluateWithTestCases" do
         EvaluateWithTestCases.new.sensors.should == {}
       end
       
-      it "should raise an error if the length of #sensors is different from the length of #outputs"
-    end
-    
-    describe "datasource" do
+      describe ":build_sensor" do
+        before(:each) do
+          @m1 = EvaluateWithTestCases.new
+        end
+        
+        it "should respond to :build_sensor" do
+          @m1.should respond_to(:build_sensor)
+        end
+        
+        it "should use the name argument as the Hash key in #sensors" do
+          @m1.build_sensor("harbor_master_score")
+          @m1.sensors.keys.should include("harbor_master_score")
+        end
+        
+        it "should take a block and store it as a Proc as the value in #sensors" do
+          block = lambda {|a| 9}
+          @m1.build_sensor("harbor_master_score", &block)
+          @m1.sensors["harbor_master_score"].should == block
+        end
+      end
       
-      it "should have a :data_source"
-      
-      it "should have a :data_adapter"
-      
-    end
-    
-    describe "error aggregation" do
-      it "should have an :error_measure Proc"
-      
-      it "should have an :aggregator Proc"
     end
   end
   
@@ -108,13 +114,7 @@ describe "EvaluateWithTestCases" do
       lambda{@tester.score(Batch.new)}.should_not raise_error(ArgumentError)
     end
     
-    it "should be able to sample randomly from the :datasource"
-    
-    it "should be able to do vertical_slicing of the :datasource"
-    
-    it "should be able to train exhaustively from the :datasource" do
-      
-    end
+    it "should be able to train exhaustively from the :datasource"
     
     describe "running Interpreter" do
       before(:each) do
@@ -144,9 +144,6 @@ describe "EvaluateWithTestCases" do
       end
       
     end
-    
-    
-    it "should accept an Array of TestCases"
     
     describe "install_training_data_from_csv!" do
       before(:each) do
@@ -191,7 +188,6 @@ describe "EvaluateWithTestCases" do
         lambda{@m1.header_prep("x1")}.should raise_error ArgumentError
         lambda{@m1.header_prep("x1:")}.should raise_error ArgumentError
         lambda{@m1.header_prep("x1:int")}.should_not raise_error ArgumentError
-        
         lambda{@m1.header_prep(":int")}.should raise_error ArgumentError
       end
       
@@ -236,7 +232,6 @@ describe "EvaluateWithTestCases" do
       end
       
       it "should store Array of TestCases in @test_cases" do
-        
         db = CouchRest.database!(@m1.training_datasource)
         CouchRest.should_receive(:database!).and_return(db)
         db.should_receive(:view).with(@design_doc).and_return(@expected)
