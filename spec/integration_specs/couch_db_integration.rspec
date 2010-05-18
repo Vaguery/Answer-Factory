@@ -15,7 +15,6 @@ end
 
 describe "CouchDB stuff" do
   before(:each) do
-    
     configatron.factory.couchdb.server = "http://127.0.0.1:5984"
     configatron.factory.couchdb.name = "integration_test_db"
     break("CouchDB is offline") unless Factory.couch_available?
@@ -45,15 +44,16 @@ describe "CouchDB stuff" do
     before(:each) do
       the_database_name = "#{@db_uri}_training"
       @db = CouchRest.database!(the_database_name)
-      @db.save_doc(
-        {'_id' => "_design/tester",
-        views: { test_cases: { map: 
-          "function(doc) { emit(doc._id, doc); }"}}})
     end
     
     it "should accept :install_training_data_from_csv to populate a db from csv" do
       configatron.temp do
         configatron.factory.training_datasource = "http://127.0.0.1:5984/integration_test_db_training"
+        @db.save_doc(
+          {'_id' => "_design/tester",
+          views: { test_cases: { map: 
+            "function(doc) { emit(doc._id, doc); }"}}})
+        
         @my_machine = Machines::EvaluateWithTestCases.new(name: :tester)
         @my_machine.install_training_data_from_csv('./spec/fixtures/my_data_source.csv')
         saved = @db.documents
@@ -76,13 +76,11 @@ describe "CouchDB stuff" do
     end
     
     it "should use load_training_data! to access the right view" do
-      @db.save_doc({"inputs" => {"x1" => "block {}"}, "outputs" => {"y1" => "http://google.com"}})
-      
       configatron.temp do
         configatron.factory.training_datasource = "http://127.0.0.1:5984/integration_test_db_training"
         @my_machine = Machines::EvaluateWithTestCases.new(name: :tester)
         @my_machine.load_training_data!
-        @my_machine.test_cases[0].inputs["x1"].should == "block {}"
+        @my_machine.test_cases[0].inputs["x1:int"].should == "3"
       end
     end
   end

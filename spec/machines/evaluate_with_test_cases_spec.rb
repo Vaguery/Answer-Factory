@@ -187,7 +187,13 @@ describe "EvaluateWithTestCases" do
       end
       
       
-      it "works with missing variables"
+      it "should raise an error if every header doesn't contain a colon and a type string" do
+        lambda{@m1.header_prep("x1")}.should raise_error ArgumentError
+        lambda{@m1.header_prep("x1:")}.should raise_error ArgumentError
+        lambda{@m1.header_prep("x1:int")}.should_not raise_error ArgumentError
+        
+        lambda{@m1.header_prep(":int")}.should raise_error ArgumentError
+      end
       
     end
     
@@ -197,7 +203,7 @@ describe "EvaluateWithTestCases" do
         @factoreee = Factory.new(name:"grault")
         @m1 = EvaluateWithTestCases.new()
         @design_doc = "evaluator/test_cases"  # we'll assume this has been set up!
-        @expected = {"total_rows"=>1, "offset"=>0, "rows"=>[{"id"=>"05d195b7bb436743ee36b4223008c4ce", "key"=>"05d195b7bb436743ee36b4223008c4ce", "value"=>{"_id"=>"05d195b7bb436743ee36b4223008c4ce", "_rev"=>"1-c9fae927001a1d4789d6396bcf0cd5a7", "inputs"=>{"x1"=>7}, "outputs"=>{"y1"=>12}}}]}
+        @expected = {"total_rows"=>1, "offset"=>0, "rows"=>[{"id"=>"05d195b7bb436743ee36b4223008c4ce", "key"=>"05d195b7bb436743ee36b4223008c4ce", "value"=>{"_id"=>"05d195b7bb436743ee36b4223008c4ce", "_rev"=>"1-c9fae927001a1d4789d6396bcf0cd5a7", "inputs"=>{"x1:int"=>7}, "outputs"=>{"y1:grault"=>12}}}]}
         
       end
       

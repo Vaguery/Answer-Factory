@@ -1,3 +1,4 @@
+#encoding: utf-8
 module AnswerFactory
   module Machines
     
@@ -45,12 +46,21 @@ module AnswerFactory
       end
       
       
+      def header_prep(header_string)
+        raise ArgumentError, "Header must match /reference_name:nudge_type/" unless
+          header_string.match /[\p{Alpha}][\p{Alnum}_]*:[\p{Alpha}][\p{Alnum}_]/
+        header_string.strip
+      end
+      
+      
       def install_training_data_from_csv(csv_filename = @csv_filename)
         reader = CSV.new(File.open(csv_filename), headers: true)
         reader.readline
         split_point = reader.headers.find_index(nil)
-        input_headers = reader.headers[0...split_point].collect {|head| head.strip}
-        output_headers = reader.headers[split_point+1..-1].collect {|head| head.strip}
+        
+        input_headers = reader.headers[0...split_point].collect {|head| header_prep(head)}
+        output_headers = reader.headers[split_point+1..-1].collect {|head| header_prep(head)}
+        
         reader.rewind
         
         offset = input_headers.length+1
