@@ -15,6 +15,7 @@ require 'machines/build_random'
 require 'machines/evaluate_simple_score'
 require 'machines/evaluate_with_test_cases'
 require 'machines/select_nondominated'
+require 'machines/select_by_summed_rank'
 require 'machines/mutate_footnotes'
 
 

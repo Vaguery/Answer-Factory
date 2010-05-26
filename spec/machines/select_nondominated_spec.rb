@@ -4,6 +4,7 @@ describe "Machines::SelectNondominated" do
   describe "#screen method" do
     before(:each) do
       @best = Machines::SelectNondominated.new
+      
       @highlander = Batch.[](Answer.new("foo"), Answer.new("bar"), Answer.new("baz"))
       @highlander[0].scores = {e1:5, e2:15}
       @highlander[1].scores = {e1:15,e2:5}
@@ -18,6 +19,10 @@ describe "Machines::SelectNondominated" do
       @allover[0].scores = {e1:1, e2:3}
       @allover[1].scores = {e1:2, e2:2, e3:2}
       @allover[2].scores = {e1:3}
+      
+      @separate = Batch.[](Answer.new("foo"), Answer.new("bar"))
+      @separate[0].scores = {e1:1}
+      @separate[1].scores = {e2:2, e3:2}
     end
     
     it "should respond to :screen" do
@@ -37,6 +42,7 @@ describe "Machines::SelectNondominated" do
     it "should accept a template Array of score keys" do
       @best.screen(@lowlander).length.should == 3
       @best.screen(@lowlander,comparison_criteria:[:e2]).length.should == 1
+      @best.screen(@lowlander,comparison_criteria:[:e2]).should include(@lowlander[2])
     end
     
     it "should use an initialization template as well" do
@@ -56,6 +62,8 @@ describe "Machines::SelectNondominated" do
       @best.screen(@allover, comparison_criteria:[:e1]).length.should == 1
       @best.screen(@allover, comparison_criteria:[:e2]).length.should == 2
       @best.screen(@allover, comparison_criteria:[:e3]).length.should == 3
+      
+      @best.screen(@separate).should == @separate
     end
     
     it "should return the nondominated subset of the argument" do
