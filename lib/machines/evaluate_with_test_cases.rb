@@ -8,14 +8,12 @@ module AnswerFactory
       attr_accessor :test_cases
       attr_reader :name
       attr_reader :csv_filename
-      attr_accessor :raw_results
       
       def initialize(options = {})
         super
         @name = options[:name] || "evaluator"
         @sensors = options[:sensors] || {}
         @csv_filename = options[:training_data_csv]
-        @raw_results = Hash.new([])
         
         self.load_training_data!
       end
@@ -32,27 +30,30 @@ module AnswerFactory
           name.nil?
         
         batch.each do |answer|
+          raw_results = Hash.new
+          
           @test_cases.each do |t|
             interpreter = Interpreter.new(answer.blueprint,all_options)
             
-            # t.inputs.each do |variable_header, variable_value|
-            #   variable_name, variable_type = variable_header.split(":")
-            #   interpreter.bind_variable(variable_name, ValuePoint.new(variable_type, variable_value))
-            # end
+            t.inputs.each do |variable_header, variable_value|
+              variable_name, variable_type = variable_header.split(":")
+              interpreter.bind_variable(variable_name, ValuePoint.new(variable_type, variable_value))
+            end
             
             @sensors.each do |sensor_name, sensor_block|
               interpreter.register_sensor(sensor_name, &sensor_block)
+              raw_results[sensor_name] ||= []
             end
             
             interpreter.run.each do |sensor_name, sensor_result|
-              @raw_results[sensor_name] << t.outputs[sensor_name] - sensor_result
+              raw_results[sensor_name] << (t.outputs[sensor_name] - sensor_result)
             end
           end
           
           @sensors.each do |sensor_name, sensor_block|
-            answer.scores[sensor_name] = @raw_results[sensor_name].inject(0) do |sum, measurement|
-                sum + measurement.abs
-              end
+            answer.scores[sensor_name] = raw_results[sensor_name].inject(0) do |sum, measurement|
+              sum + measurement.abs
+            end
           end
         end
         

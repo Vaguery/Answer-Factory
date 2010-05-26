@@ -114,7 +114,7 @@ describe "EvaluateWithTestCases" do
     
     describe "running Interpreter" do
       before(:each) do
-        @tester.test_cases = [TestCase.new(inputs: {"x1" => 1}, outputs: {"y1" => 2})]
+        @tester.test_cases = [TestCase.new(inputs: {"x1:int" => 1}, outputs: {"y1" => 2})]
         @batch = Batch.[](Answer.new("do a"))
       end
       
@@ -249,9 +249,11 @@ describe "EvaluateWithTestCases" do
       before(:each) do
         @m1 = EvaluateWithTestCases.new(name: :tester)
         @m1.test_cases = (0...10).collect do |i|
-          TestCase.new(inputs: {"x1" => i}, outputs: {"y1" => 2*i})
+          TestCase.new(inputs: {"x1:int" => i}, outputs: {"y1" => 2*i, "y2" => 3*i})
         end
         @m1.build_sensor("y1") {|a| 777}
+        @m1.build_sensor("y2") {|a| 666}
+        
         @batch = Batch.[](Answer.new("do a"))
         @i1 = Interpreter.new
       end
@@ -273,21 +275,16 @@ describe "EvaluateWithTestCases" do
         @m1.score(@batch)
       end
       
-      it "should respond to :raw_results" do
-        @m1.should respond_to(:raw_results)
-      end
-      
-      it "should collect the result of each Interpreter run in #raw_results" do
+      it "should have a score for each sensor" do
         @m1.score(@batch)
-        @m1.raw_results["y1"].should_not == nil
-        @m1.raw_results["y1"].should == [-777, -775, -773, -771, -769, -767, -765, -763, -761, -759]
+        @batch.first.scores["y1"].should_not == nil
+        @batch.first.scores["y2"].should_not == nil
       end
       
       it "should return sum of absolute errors" do
         @m1.score(@batch)
-        @batch.each {|a| a.scores["y1"].should_not == nil}
-        expected = 777+775+773+771+769+767+765+763+761+759
-        @batch[0].scores["y1"].should == expected
+        @batch[0].scores["y1"].should == 777+775+773+771+769+767+765+763+761+759
+        @batch[0].scores["y2"].should == 666+663+660+657+654+651+648+645+642+639
       end
     end
     
