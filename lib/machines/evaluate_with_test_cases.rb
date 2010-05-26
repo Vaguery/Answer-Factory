@@ -30,7 +30,7 @@ module AnswerFactory
           name.nil?
         
         batch.each do |answer|
-          raw_results = Hash.new
+          raw_results = Hash.new {|hash, key| hash[key] = []}
           
           @test_cases.each do |t|
             interpreter = Interpreter.new(answer.blueprint,all_options)
@@ -42,7 +42,6 @@ module AnswerFactory
             
             @sensors.each do |sensor_name, sensor_block|
               interpreter.register_sensor(sensor_name, &sensor_block)
-              raw_results[sensor_name] ||= []
             end
             
             interpreter.run.each do |sensor_name, sensor_result|
