@@ -45,29 +45,41 @@ end
 
 describe "EvaluateWithTestCases" do
   
+  before(:each) do
+    @canned = '{"total_rows":1,"offset":0,"rows":[{"id":"0f60c293ad736abfdb083d33f71ef9ab","key":"ws1","value":{"_id":"0f60c293ad736abfdb083d33f71ef9ab","_rev":"1-473467b6dc1a4cba3498dd6eeb8e3206","blueprint":"do bar","tags":[],"scores":{},"progress":12,"timestamp":"2010/04/14 17:09:14 +0000"}}]}'
+    
+    FakeWeb.register_uri(:any, "http://127.0.0.1:5984/foo_training/_design/tester/_view/test_cases",
+      :body => @canned, :status => [200, "OK"])
+    @factory = Factory.new(name:"foo")
+    @tester = EvaluateWithTestCases.new(name: :tester)
+  end
+  
   describe "initialization" do
-    before(:each) do
-      @evt = EvaluateWithTestCases.new
-    end
     
     describe "name" do
       it "should have a name" do
-        @evt.should respond_to(:name)
+        @tester.should respond_to(:name)
+      end
+    end
+    
+    describe "data" do
+      it "should call #load_training_data! if" do
+        EvaluateWithTestCases.new(name: :tester)
       end
     end
     
     describe "sensors" do
       it "should have a #sensors attribute" do
-        EvaluateWithTestCases.new.should respond_to(:sensors)
+        EvaluateWithTestCases.new(name: :tester).should respond_to(:sensors)
       end
 
       it "should default to an empty Hash" do
-        EvaluateWithTestCases.new.sensors.should == {}
+        EvaluateWithTestCases.new(name: :tester).sensors.should == {}
       end
       
       describe ":build_sensor" do
         before(:each) do
-          @m1 = EvaluateWithTestCases.new
+          @m1 = EvaluateWithTestCases.new(name: :tester)
         end
         
         it "should respond to :build_sensor" do
@@ -91,10 +103,6 @@ describe "EvaluateWithTestCases" do
   
   
   describe "#score method" do
-    before(:each) do
-      @tester = EvaluateWithTestCases.new(name: :tester)
-    end
-    
     it "should respond to :score" do
       @tester.should respond_to(:score)
     end
@@ -131,23 +139,30 @@ describe "EvaluateWithTestCases" do
         @tester.score(@batch,target_size_in_points:99)
       end
       
+      
+      
     end
     
     describe "install_training_data_from_csv!" do
       before(:each) do
-        @f1 = Factory.new(name: "dammit")
-        @my_csv = "./spec/fixtures/my_data_source.csv"
-        @m1 = EvaluateWithTestCases.new(training_data_csv: @my_csv)
-        @training_db = "http://127.0.0.1:5984/dammit_training"
         FakeWeb.register_uri(:any,
           "http://127.0.0.1:5984/dammit_training/_bulk_docs", 
-          :body => "{}", :status => [200, "OK"])
+          :body => @canned, :status => [200, "OK"])
+        FakeWeb.register_uri(:any,
+          "http://127.0.0.1:5984/dammit_training/_design/tester/_view/test_cases", 
+          :body => @canned, :status => [200, "OK"])
+        
+        @f1 = Factory.new(name: "dammit")
+        @my_csv = "./spec/fixtures/my_data_source.csv"
+        @m1 = EvaluateWithTestCases.new(name: :tester, training_data_csv: @my_csv)
+        @training_db = "http://127.0.0.1:5984/dammit_training"
+        
       end
       
       it "should get the filename as an initialization parameter" do
-        EvaluateWithTestCases.new(training_data_csv: "foo.csv").
+        EvaluateWithTestCases.new(name: :tester, training_data_csv: "foo.csv").
           csv_filename.should == "foo.csv"
-        EvaluateWithTestCases.new.csv_filename.should == nil
+        EvaluateWithTestCases.new(name: :tester).csv_filename.should == nil
       end
       
       it "should open a csv file" do
@@ -184,16 +199,16 @@ describe "EvaluateWithTestCases" do
     describe "load_training_data!" do
       
       before(:each) do
-        @factoreee = Factory.new(name:"grault")
-        @m1 = EvaluateWithTestCases.new()
-        @design_doc = "evaluator/test_cases"  # we'll assume this has been set up!
+        @factoreee = Factory.new(name:"dammit")
+        @m1 = EvaluateWithTestCases.new(name: :tester)
+        @design_doc = "tester/test_cases"  # we'll assume this has been set up!
         @expected = {"total_rows"=>1, "offset"=>0, "rows"=>[{"id"=>"05d195b7bb436743ee36b4223008c4ce", "key"=>"05d195b7bb436743ee36b4223008c4ce", "value"=>{"_id"=>"05d195b7bb436743ee36b4223008c4ce", "_rev"=>"1-c9fae927001a1d4789d6396bcf0cd5a7", "inputs"=>{"x1:int"=>7}, "outputs"=>{"y1:grault"=>12}}}]}
         
       end
       
       it "should get the couch_db uri from configatron" do
         @m1.training_data_view.should ==
-          "http://127.0.0.1:5984/grault_training/_design/#{@m1.name}/_view/test_cases"
+          "http://127.0.0.1:5984/dammit_training/_design/#{@m1.name}/_view/test_cases"
       end
       
       it "should respond to :load_training_data!" do
@@ -202,8 +217,8 @@ describe "EvaluateWithTestCases" do
       
       it "should access the couch_db uri" do
         FakeWeb.register_uri(:any,
-          "http://127.0.0.1:5984/grault_training/_design/evaluator/_view/test_cases", 
-          :body => "{}", :status => [200, "OK"])
+          "http://127.0.0.1:5984/dammit_training/_design/tester/_view/test_cases", 
+          :body => @canned, :status => [200, "OK"])
         db = CouchRest.database!(@m1.training_datasource)
         CouchRest.should_receive(:database!).and_return(db)
         db.should_receive(:view).with(@design_doc).and_return(@expected)
@@ -232,7 +247,7 @@ describe "EvaluateWithTestCases" do
     
     describe "scoring" do
       before(:each) do
-        @m1 = EvaluateWithTestCases.new(name: :foo)
+        @m1 = EvaluateWithTestCases.new(name: :tester)
         @m1.test_cases = (0...10).collect do |i|
           TestCase.new(inputs: {"x1" => i}, outputs: {"y1" => 2*i})
         end
@@ -265,9 +280,15 @@ describe "EvaluateWithTestCases" do
       it "should collect the result of each Interpreter run in #raw_results" do
         @m1.score(@batch)
         @m1.raw_results["y1"].should_not == nil
-        @m1.raw_results["y1"].should == ([777] * 10)
+        @m1.raw_results["y1"].should == [-777, -775, -773, -771, -769, -767, -765, -763, -761, -759]
       end
       
+      it "should return sum of absolute errors" do
+        @m1.score(@batch)
+        @batch.each {|a| a.scores["y1"].should_not == nil}
+        expected = 777+775+773+771+769+767+765+763+761+759
+        @batch[0].scores["y1"].should == expected
+      end
     end
     
     

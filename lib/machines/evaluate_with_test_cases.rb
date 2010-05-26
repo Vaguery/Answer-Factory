@@ -15,8 +15,9 @@ module AnswerFactory
         @name = options[:name] || "evaluator"
         @sensors = options[:sensors] || {}
         @csv_filename = options[:training_data_csv]
-        @test_cases = []
         @raw_results = Hash.new([])
+        
+        self.load_training_data!
       end
       
       
@@ -24,16 +25,34 @@ module AnswerFactory
         all_options = @options.merge(overridden_options)
         name = all_options[:name]
         
+        
         raise ArgumentError, "EvaluateWithTestCases#score cannot process a #{batch.class}" unless
           batch.kind_of?(Batch)
         raise ArgumentError, "EvaluateWithTestCases: Undefined #name attribute" if
           name.nil?
         
         batch.each do |answer|
-          test_cases.each do |t|
+          @test_cases.each do |t|
             interpreter = Interpreter.new(answer.blueprint,all_options)
-            @sensors.each {|s_key, s_value| interpreter.register_sensor(s_key, &s_value)}
-            interpreter.run.each {|sensor, value| @raw_results[sensor] << value}
+            
+            # t.inputs.each do |variable_header, variable_value|
+            #   variable_name, variable_type = variable_header.split(":")
+            #   interpreter.bind_variable(variable_name, ValuePoint.new(variable_type, variable_value))
+            # end
+            
+            @sensors.each do |sensor_name, sensor_block|
+              interpreter.register_sensor(sensor_name, &sensor_block)
+            end
+            
+            interpreter.run.each do |sensor_name, sensor_result|
+              @raw_results[sensor_name] << t.outputs[sensor_name] - sensor_result
+            end
+          end
+          
+          @sensors.each do |sensor_name, sensor_block|
+            answer.scores[sensor_name] = @raw_results[sensor_name].inject(0) do |sum, measurement|
+                sum + measurement.abs
+              end
           end
         end
         
@@ -70,7 +89,7 @@ module AnswerFactory
         split_point = reader.headers.find_index(nil)
         
         input_headers = reader.headers[0...split_point].collect {|head| header_prep(head)}
-        output_headers = reader.headers[split_point+1..-1].collect {|head| header_prep(head)}
+        output_headers = reader.headers[split_point+1..-1].collect {|head| head.strip}
         
         reader.rewind
         
