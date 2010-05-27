@@ -29,10 +29,14 @@ module AnswerFactory
         raise ArgumentError, "EvaluateWithTestCases: Undefined #name attribute" if
           name.nil?
         
+        load_training_data!
+        
         batch.each do |answer|
+          
           raw_results = Hash.new {|hash, key| hash[key] = []}
           
           @test_cases.each do |t|
+            
             interpreter = Interpreter.new(answer.blueprint,all_options)
             
             t.inputs.each do |variable_header, variable_value|
@@ -45,7 +49,7 @@ module AnswerFactory
             end
             
             interpreter.run.each do |sensor_name, sensor_result|
-              raw_results[sensor_name] << (t.outputs[sensor_name] - sensor_result)
+              raw_results[sensor_name] << (t.outputs[sensor_name].to_i - sensor_result)
             end
           end
           

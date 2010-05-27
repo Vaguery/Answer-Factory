@@ -259,11 +259,13 @@ describe "EvaluateWithTestCases" do
       end
       
       it "should make an Interpreter for each row of training data" do
+        @m1.stub!(:load_training_data!)
         Interpreter.should_receive(:new).exactly(10).times.and_return(@i1)
         @m1.score(@batch)
       end
       
       it "should run all the Interpreters" do
+        @m1.stub!(:load_training_data!)
         Interpreter.should_receive(:new).exactly(10).times.and_return(@i1)
         @i1.should_receive(:run).at_least(1).times.and_return({})
         @m1.score(@batch)
@@ -282,6 +284,7 @@ describe "EvaluateWithTestCases" do
       end
       
       it "should return sum of absolute errors" do
+        @m1.stub!(:load_training_data!)
         @m1.score(@batch)
         @batch[0].scores["y1"].should == 777+775+773+771+769+767+765+763+761+759
         @batch[0].scores["y2"].should == 666+663+660+657+654+651+648+645+642+639

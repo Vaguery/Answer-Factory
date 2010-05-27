@@ -14,7 +14,8 @@ include AnswerFactory
 configatron.factory.couchdb.server =          'http://127.0.0.1:5984'
 
 #### Factory settings:
-configatron.factory.name =                    'sample_factory'
+configatron.factory.name =                    'polynomial2'
+configatron.factory.training_datasource =     "http://127.0.0.1:5984/polynomial2_training"
 
 #### Workstation definitions:
 configatron.project.workstations.path =       '/lib/factory/workstations/*'
@@ -27,68 +28,58 @@ configatron.project.nudge.types.path =        '/lib/nudge/types/*'
 #### normally these should be in /lib/factory/workstations/**
 
 class GenerationStation < Workstation
-  attr_reader :random_program_maker
-  
+
   def initialize(name, options = {})
     super
     @random_program_maker = Machines::BuildRandom.new(
-      how_many:10,
-      target_size_in_points:20, 
-      reference_names:["x1", "x2"])
+      how_many:50,
+      target_size_in_points:80, 
+      reference_names:["x1", "x2", "x3", "x4"],
+      instruction_names:[:int_add, :int_subtract, :int_multiply,
+        :int_divide, :int_modulo, :int_max, :int_min],
+      type_names:[:int])
   end
   
   def build!
     @answers = process_with @random_program_maker
     @answers.each {|a| a.location = :maker}
-    puts
-    puts "MAKER BUILD: made #{@answers.length}"
   end
   
   def ship!
-    ship_to(:polisher) {|answer| true}
-    puts "MAKER SHIP -> POLISHER"
+    ship_to(:scoring_station) {true}
   end
 end
 
 
-class VariationStation < Workstation
-  attr_reader :my_length_evaluator
-  
+class ScoringStation < Workstation
+
   def initialize(name, options = {})
     super
-    @mutator = Machines::MutateFootnotesUniform.new
-    @score_1 = Machines::EvaluateSimpleScore.new(
-      :name => :number_of_footnotes,
-      scorer:Proc.new {|a| a.blueprint.scan(/^«/).length})
+    @scorer = Machines::EvaluateWithTestCases.new(
+      :name => :polynomial_fit,
+      training_data_csv: "poly1.csv")
+      
+    @scorer.install_training_data_from_csv
+    
+    @scorer.build_sensor("y1") {|interpreter| interpreter.peek_value(:int) || 2000000}
   end
   
   def receive!
     gather_mine
-    puts "POLISHER RECEIVE: got #{@answers.length}"
   end
   
   def build!
-    @mutants = process_with @mutator
-    @mutants.each {|a| @answers << a}
-    @answers = process_with @score_1
-    puts "POLISHER BUILD: has #{@answers.length}"
+    @answers = process_with @scorer
   end
   
   def ship!
-    ship_to(:picker) {|answer| rand < 0.25}
-    puts "POLISHER SHIP: kept #{@answers.find_all {|a| a.location == :polisher}.length}"
-  end
-  
-  def scrap!
-    scrap_if("contains 'oo'") {|a| a.blueprint.include? 'oo'}
-    puts "POLISHER SCRAP: kept #{@answers.find_all {|a| a.location == :polisher}.length}"
+    ship_to(:picker) {true}
   end
 end
 
 
 class ScreeningStation < Workstation
-  attr_reader :letters
-  
+
   def initialize(name, options = {})
     super
     @letters = Machines::EvaluateSimpleScore.new(
@@ -99,7 +90,6 @@ class ScreeningStation < Workstation
   
   def receive!
     gather_mine
-    puts "PICKER RECEIVE: got #{@answers.length}"
   end
   
   def build!
@@ -115,7 +105,6 @@ class ScreeningStation < Workstation
   
   def scrap!
     scrap_if("dominated") {|a| !@best.include?(a)}
-    puts "PICKER SCRAP: kept #{@answers.find_all {|a| a.location == :picker}.length}"
   end
 end
 
@@ -123,11 +112,10 @@ end
 ##### this will soon be an attribute of the Factory, and saved as persistent config data
 # but it's the components of your Factory instance, each of which will be sent a #cycle! message,
 # in this order, by the launch code below
-workstations =[
-  GenerationStation.new(:maker),
-  VariationStation.new(:polisher),
-  ScreeningStation.new(:picker)]
-
+# workstations =[
+#   GenerationStation.new(:maker),
+#   ScoringStation.new(:scoring_station),
+#   ScreeningStation.new(:picker)]
 
 ####
 ####
@@ -156,12 +144,29 @@ db = CouchRest.database!("#{configatron.factory.couchdb.server}/#{configatron.fa
 db.delete!
 db.create!
 
+db_train = CouchRest.database!("#{configatron.factory.training_datasource}")
+db_train.delete!
+db_train.create!
+
+
+db_train.save_doc(
+  {'_id' => "_design/polynomial_fit",
+  views: { test_cases: { map: 
+    "function(doc) { emit(doc._id, doc); }"}}})
+
+    workstations =[
+      GenerationStation.new(:maker),
+      ScoringStation.new(:scoring_station),
+      ScreeningStation.new(:picker)]
+
+
+
 # create required view document(s)
 workstations.each {|ws| ws.couchdb_create_view}
 
 
 # final workcycle behavior
-10.times do
+1000.times do
   workstations.each do |ws|
     ws.cycle
   end
