@@ -127,7 +127,7 @@ describe "EvaluateWithTestCases" do
       it "should register all the sensors" do
         @tester.sensors = {"y1" => Proc.new{|interpreter| interpreter.peek_value(:int)} }
         i = Interpreter.new
-        Interpreter.should_receive(:new).and_return(i)
+        Interpreter.stub(:new).and_return(i)
         i.should_receive(:register_sensor).exactly(1).times
         @tester.score(@batch)
       end
@@ -152,10 +152,15 @@ describe "EvaluateWithTestCases" do
           "http://127.0.0.1:5984/dammit_training/_design/tester/_view/test_cases", 
           :body => @canned, :status => [200, "OK"])
         
+        
+        
         @f1 = Factory.new(name: "dammit")
         @my_csv = "./spec/fixtures/my_data_source.csv"
         @m1 = EvaluateWithTestCases.new(name: :tester, training_data_csv: @my_csv)
         @training_db = "http://127.0.0.1:5984/dammit_training"
+        @my_view = {'_id' => "_design/tester",
+            views: { test_cases: { map: 
+              "function(doc) { emit(doc._id, doc); }"}}}
         
       end
       
@@ -166,22 +171,25 @@ describe "EvaluateWithTestCases" do
       end
       
       it "should open a csv file" do
+        @m1.stub(:save_view_doc!)   # we're just checking the file is touched
         f = File.open(@my_csv)
-        File.should_receive(:open).and_return(f)
+        File.stub(:open).and_return(f)
         c = CSV.new(f, headers: true)
-        CSV.should_receive(:new).with(f, headers: true).and_return(c)
+        CSV.stub(:new).with(f, headers: true).and_return(c)
         @m1.install_training_data_from_csv(@my_csv)
       end
       
       it "should be the training_data default db" do
+        @m1.stub(:save_view_doc!)   # we're just checking the filename
         db = CouchRest.database!(@training_db)
-        CouchRest.should_receive(:database!).with(@training_db).and_return(db)
+        CouchRest.stub(:database!).with(@training_db).and_return(db)
         @m1.install_training_data_from_csv(@my_csv)
       end
       
       it "makes one doc for every row" do
+        @m1.stub(:save_view_doc!)   # we're just checking data row saving
         db = CouchRest.database!(@training_db)
-        CouchRest.should_receive(:database!).with(@training_db).and_return(db)
+        CouchRest.stub(:database!).with(@training_db).and_return(db)
         db.should_receive(:bulk_save_doc).exactly(3).times
         @m1.install_training_data_from_csv(@my_csv)
       end
@@ -192,6 +200,14 @@ describe "EvaluateWithTestCases" do
         lambda{@m1.header_prep("x1:")}.should raise_error ArgumentError
         lambda{@m1.header_prep("x1:int")}.should_not raise_error ArgumentError
         lambda{@m1.header_prep(":int")}.should raise_error ArgumentError
+      end
+      
+      it "should create the appropriate view document" do
+        db = CouchRest.database!(@training_db)
+        CouchRest.stub(:database!).with(@training_db).and_return(db)
+        db.stub(:bulk_save_doc)
+        db.should_receive(:save_doc).exactly(1).times.with(@my_view)
+        @m1.install_training_data_from_csv(@my_csv)
       end
       
     end
@@ -220,7 +236,7 @@ describe "EvaluateWithTestCases" do
           "http://127.0.0.1:5984/dammit_training/_design/tester/_view/test_cases", 
           :body => @canned, :status => [200, "OK"])
         db = CouchRest.database!(@m1.training_datasource)
-        CouchRest.should_receive(:database!).and_return(db)
+        CouchRest.stub(:database!).and_return(db)
         db.should_receive(:view).with(@design_doc).and_return(@expected)
         @m1.load_training_data!
       end
@@ -229,14 +245,14 @@ describe "EvaluateWithTestCases" do
       
       it "should ask for the view document" do
         db = CouchRest.database!(@m1.training_datasource)
-        CouchRest.should_receive(:database!).and_return(db)
+        CouchRest.stub(:database!).and_return(db)
         db.should_receive(:view).with(@design_doc).and_return(@expected)
         @m1.load_training_data!
       end
       
       it "should store Array of TestCases in @test_cases" do
         db = CouchRest.database!(@m1.training_datasource)
-        CouchRest.should_receive(:database!).and_return(db)
+        CouchRest.stub(:database!).and_return(db)
         db.should_receive(:view).with(@design_doc).and_return(@expected)
         
         @m1.load_training_data!
@@ -266,13 +282,13 @@ describe "EvaluateWithTestCases" do
       
       it "should run all the Interpreters" do
         @m1.stub!(:load_training_data!)
-        Interpreter.should_receive(:new).exactly(10).times.and_return(@i1)
+        Interpreter.stub(:new).exactly(10).times.and_return(@i1)
         @i1.should_receive(:run).at_least(1).times.and_return({})
         @m1.score(@batch)
       end
       
       it "should register its sensors before each Interpreter run" do
-        Interpreter.stub!(:new).and_return(@i1)
+        Interpreter.stub(:new).and_return(@i1)
         @i1.should_receive(:register_sensor).at_least(1).times
         @m1.score(@batch)
       end

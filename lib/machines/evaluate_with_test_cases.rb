@@ -15,7 +15,7 @@ module AnswerFactory
         @sensors = options[:sensors] || {}
         @csv_filename = options[:training_data_csv]
         
-        self.load_training_data!
+        # self.load_training_data!
       end
       
       
@@ -87,6 +87,13 @@ module AnswerFactory
       end
       
       
+      def save_view_doc!
+        db = CouchRest.database!(training_datasource)
+        db.save_doc({'_id' => "_design/#{@name}",
+          views: { test_cases: { map: "function(doc) { emit(doc._id, doc); }"}}})
+      end
+      
+      
       def install_training_data_from_csv(csv_filename = @csv_filename)
         reader = CSV.new(File.open(csv_filename), headers: true)
         reader.readline
@@ -96,6 +103,8 @@ module AnswerFactory
         output_headers = reader.headers[split_point+1..-1].collect {|head| head.strip}
         
         reader.rewind
+        
+        save_view_doc!
         
         offset = input_headers.length+1
         db = CouchRest.database!(training_datasource)

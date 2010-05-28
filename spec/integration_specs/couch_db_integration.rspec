@@ -42,18 +42,19 @@ describe "CouchDB stuff" do
   
   describe "Machine CouchDB interaction" do
     before(:each) do
-      the_database_name = "#{@db_uri}_training"
-      @db = CouchRest.database!(the_database_name)
+      @db_uri = "#{configatron.factory.couchdb.server}/#{configatron.factory.couchdb.name}"
+      training_database_name = "#{@db_uri}_training"
+      @db = CouchRest.database!(training_database_name)
     end
     
-    it "should accept :install_training_data_from_csv to populate a db from csv" do
+    after(:each) do
+      @db.delete!
+    end
+    
+    
+    it "should populate the training db from a csv upon :install_training_data_from_csv" do
       configatron.temp do
         configatron.factory.training_datasource = "http://127.0.0.1:5984/integration_test_db_training"
-        @db.save_doc(
-          {'_id' => "_design/tester",
-          views: { test_cases: { map: 
-            "function(doc) { emit(doc._id, doc); }"}}})
-        
         @my_machine = Machines::EvaluateWithTestCases.new(name: :tester)
         @my_machine.install_training_data_from_csv('./spec/fixtures/my_data_source.csv')
         saved = @db.documents
@@ -79,6 +80,7 @@ describe "CouchDB stuff" do
       configatron.temp do
         configatron.factory.training_datasource = "http://127.0.0.1:5984/integration_test_db_training"
         @my_machine = Machines::EvaluateWithTestCases.new(name: :tester)
+        @my_machine.install_training_data_from_csv('./spec/fixtures/my_data_source.csv')
         @my_machine.load_training_data!
         @my_machine.test_cases[0].inputs["x1:int"].should == "3"
       end
