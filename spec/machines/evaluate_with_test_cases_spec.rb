@@ -56,7 +56,7 @@ describe "EvaluateWithTestCases" do
   
   describe "initialization" do
     
-    describe "name" do
+    describe "machine name" do
       it "should have a name" do
         @tester.should respond_to(:name)
       end
@@ -138,10 +138,8 @@ describe "EvaluateWithTestCases" do
           "do a", {:name=>:tester, :target_size_in_points=>99}).and_return(i)
         @tester.score(@batch,target_size_in_points:99)
       end
-      
-      
-      
     end
+    
     
     describe "install_training_data_from_csv!" do
       before(:each) do
@@ -212,6 +210,8 @@ describe "EvaluateWithTestCases" do
       
     end
     
+    
+    
     describe "load_training_data!" do
       
       before(:each) do
@@ -261,6 +261,7 @@ describe "EvaluateWithTestCases" do
       end
     end
     
+    
     describe "scoring" do
       before(:each) do
         @m1 = EvaluateWithTestCases.new(name: :tester)
@@ -295,15 +296,22 @@ describe "EvaluateWithTestCases" do
       
       it "should have a score for each sensor" do
         @m1.score(@batch)
-        @batch.first.scores["y1"].should_not == nil
-        @batch.first.scores["y2"].should_not == nil
+        @batch.first.scores[:tester_y1].should_not == nil
+        @batch.first.scores[:tester_y2].should_not == nil
+      end
+      
+      it "should not re-evaluate an Answer's score if :static is true and the score is set" do
+        pending
+        @m1.score(@batch)
+        Interpreter.should_not_receive(:new)
+        @m1.score(@batch, static:true)
       end
       
       it "should return sum of absolute errors" do
         @m1.stub!(:load_training_data!)
         @m1.score(@batch)
-        @batch[0].scores["y1"].should == 777+775+773+771+769+767+765+763+761+759
-        @batch[0].scores["y2"].should == 666+663+660+657+654+651+648+645+642+639
+        @batch[0].scores[:tester_y1].should == 777+775+773+771+769+767+765+763+761+759
+        @batch[0].scores[:tester_y2].should == 666+663+660+657+654+651+648+645+642+639
       end
     end
     
