@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{answer-factory}
-  s.version = "0.1.3.4"
+  s.version = "0.1.3.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Bill Tozier", "Trek Glowacki", "Jesse Sielaff"]
-  s.date = %q{2010-05-27}
+  s.date = %q{2010-05-28}
   s.default_executable = %q{answer-factory}
   s.description = %q{The pragmaticgp gem provides a simple framework for building, running and managing genetic programming experiments which automatically discover algorithms and equations to solve user-defined problems.}
   s.email = %q{bill@vagueinnovation.com}
@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
      "lib/machines/evaluate_simple_score.rb",
      "lib/machines/evaluate_with_test_cases.rb",
      "lib/machines/infrastructure.rb",
+     "lib/machines/mutate_codeblock.rb",
      "lib/machines/mutate_footnotes.rb",
      "lib/machines/select_by_summed_rank.rb",
      "lib/machines/select_nondominated.rb",
@@ -51,6 +52,7 @@ Gem::Specification.new do |s|
      "spec/machines/evaluate_simple_score_spec.rb",
      "spec/machines/evaluate_with_test_cases_spec.rb",
      "spec/machines/infrastructure_spec.rb",
+     "spec/machines/mutate_codeblock_spec.rb",
      "spec/machines/mutate_footnotes_spec.rb",
      "spec/machines/select_by_summed_rank_spec.rb",
      "spec/machines/select_nondominated_spec.rb",
@@ -75,6 +77,7 @@ Gem::Specification.new do |s|
      "spec/machines/evaluate_simple_score_spec.rb",
      "spec/machines/evaluate_with_test_cases_spec.rb",
      "spec/machines/infrastructure_spec.rb",
+     "spec/machines/mutate_codeblock_spec.rb",
      "spec/machines/mutate_footnotes_spec.rb",
      "spec/machines/select_by_summed_rank_spec.rb",
      "spec/machines/select_nondominated_spec.rb",
