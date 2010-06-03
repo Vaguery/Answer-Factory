@@ -32,7 +32,7 @@ class GenerationStation < Workstation
   def initialize(name, options = {})
     super
     @random_program_maker = Machines::BuildRandom.new(
-      how_many:50,
+      how_many:10,
       target_size_in_points:80, 
       reference_names:["x1", "x2", "x3", "x4"],
       instruction_names:[:int_add, :int_subtract, :int_multiply,
@@ -57,10 +57,8 @@ class ScoringStation < Workstation
     super
     @scorer = Machines::EvaluateWithTestCases.new(
       :name => :polynomial_fit,
-      training_data_csv: "poly1.csv")
-      
+      training_data_csv: "poly1.csv")      
     @scorer.install_training_data_from_csv
-    
     @scorer.build_sensor("y1") {|interpreter| interpreter.peek_value(:int) || 2000000}
   end
   
@@ -148,11 +146,6 @@ db_train = CouchRest.database!("#{configatron.factory.training_datasource}")
 db_train.delete!
 db_train.create!
 
-
-db_train.save_doc(
-  {'_id' => "_design/polynomial_fit",
-  views: { test_cases: { map: 
-    "function(doc) { emit(doc._id, doc); }"}}})
 
     workstations =[
       GenerationStation.new(:maker),

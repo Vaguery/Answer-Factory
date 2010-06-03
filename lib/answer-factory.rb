@@ -18,6 +18,8 @@ require 'machines/select_nondominated'
 require 'machines/select_by_summed_rank'
 require 'machines/mutate_codeblock'
 require 'machines/mutate_footnotes'
+require 'machines/point_crossover'
+
 
 
 
