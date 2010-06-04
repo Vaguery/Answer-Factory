@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{answer-factory}
-  s.version = "0.1.3.6"
+  s.version = "0.1.3.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Bill Tozier", "Trek Glowacki", "Jesse Sielaff"]
@@ -38,6 +38,7 @@ Gem::Specification.new do |s|
      "lib/machines/infrastructure.rb",
      "lib/machines/mutate_codeblock.rb",
      "lib/machines/mutate_footnotes.rb",
+     "lib/machines/point_crossover.rb",
      "lib/machines/select_by_summed_rank.rb",
      "lib/machines/select_nondominated.rb",
      "readme.md",
@@ -54,6 +55,7 @@ Gem::Specification.new do |s|
      "spec/machines/infrastructure_spec.rb",
      "spec/machines/mutate_codeblock_spec.rb",
      "spec/machines/mutate_footnotes_spec.rb",
+     "spec/machines/point_crossover_spec.rb",
      "spec/machines/select_by_summed_rank_spec.rb",
      "spec/machines/select_nondominated_spec.rb",
      "spec/spec_helper.rb",
@@ -79,6 +81,7 @@ Gem::Specification.new do |s|
      "spec/machines/infrastructure_spec.rb",
      "spec/machines/mutate_codeblock_spec.rb",
      "spec/machines/mutate_footnotes_spec.rb",
+     "spec/machines/point_crossover_spec.rb",
      "spec/machines/select_by_summed_rank_spec.rb",
      "spec/machines/select_nondominated_spec.rb",
      "spec/spec_helper.rb"
