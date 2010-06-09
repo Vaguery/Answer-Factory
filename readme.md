@@ -38,14 +38,16 @@ This will automatically install several dependencies, including [nudge](http://g
 
 Use this command line script to build an AnswerFactory project folder:
 
-    answer-factory your-project-name-here
+    answer-factory your-project-name
 
-This will create a new directory called 'your-project-name-here' (in your current working directory), and install a rudimentary subtree of folders and files. Perhaps most important is `activate.rb`, which includes both configuration information and some examples of how to proceed.
+This will create a new directory called 'your-project-name' (in your current working directory), and install a rudimentary subtree of folders and files. Perhaps most important is `activate.rb`, which includes both configuration information and some examples of how to proceed.
+
+
 
 
 ### Activating the AnswerFactory daemon
 
-Make sure CouchDB is running and available, navigate to your project's root folder, and invoke
+Make sure CouchDB is running and available, navigate to your project's root folder, and type
     ruby activate.rb
 
 ### Generating new Nudge type definitions

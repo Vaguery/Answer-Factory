@@ -142,7 +142,7 @@ module AnswerFactory
       'tags' => self.tags.to_a, 
       'scores' => self.scores,
       'progress' => self.progress,
-      'timestamp' => self.timestamp})
+      'timestamp' => self.timestamp.to_f})
     return basics
   end
   
@@ -159,6 +159,6 @@ module AnswerFactory
       tags:tag_set,
       scores:symbolized_scores,
       progress:value_hash["progress"],
-      timestamp:value_hash["timestamp"])
+      timestamp:Time.at(value_hash["timestamp"].to_f))
   end
 end
