@@ -96,7 +96,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<thor>, [">= 0.13"])
       s.add_runtime_dependency(%q<couchrest>, [">= 0.33"])
       s.add_runtime_dependency(%q<configatron>, [">= 2.6.2"])
-      s.add_runtime_dependency(%q<fakeweb>, [">= 0.33"])
+      s.add_runtime_dependency(%q<json_pure>, [">= 1.4.1"])
       s.add_runtime_dependency(%q<sinatra>, [">= 0.9.4"])
       s.add_runtime_dependency(%q<activesupport>, [">= 2.3.5"])
     else
@@ -104,7 +104,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<thor>, [">= 0.13"])
       s.add_dependency(%q<couchrest>, [">= 0.33"])
       s.add_dependency(%q<configatron>, [">= 2.6.2"])
-      s.add_dependency(%q<fakeweb>, [">= 0.33"])
+      s.add_dependency(%q<json_pure>, [">= 1.4.1"])
       s.add_dependency(%q<sinatra>, [">= 0.9.4"])
       s.add_dependency(%q<activesupport>, [">= 2.3.5"])
     end
@@ -113,7 +113,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<thor>, [">= 0.13"])
     s.add_dependency(%q<couchrest>, [">= 0.33"])
     s.add_dependency(%q<configatron>, [">= 2.6.2"])
-    s.add_dependency(%q<fakeweb>, [">= 0.33"])
+    s.add_dependency(%q<json_pure>, [">= 1.4.1"])
     s.add_dependency(%q<sinatra>, [">= 0.9.4"])
     s.add_dependency(%q<activesupport>, [">= 2.3.5"])
   end

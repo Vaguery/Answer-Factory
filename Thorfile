@@ -31,8 +31,12 @@ class New_Nudge_Type < Thor::Group
     @camelcased_type_name = New_Nudge_Type.type_name(typename_root)
   end
   
+  def underscored_type_name
+    @camelcased_type_name.underscore
+  end
+  
   def create_lib_file
-    filename = "#{camelcased_type_name}.rb"
+    filename = "#{underscored_type_name}.rb"
     template("#{nudge_gem_path}/templates/nudge_type_class.erb",
       "#{New_Nudge_Type.source_root}/app/nudge/types/#{filename}")
   end

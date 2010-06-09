@@ -19,11 +19,11 @@ class Setup_Factory < Thor::Group
   end
   
   def set_up_project_in_this_folder
-    empty_directory("./lib")
-    empty_directory("./lib/nudge/instructions")
-    empty_directory("./lib/nudge/types")
-    empty_directory("./lib/factory/machines")
-    empty_directory("./lib/factory/workstations")
+    empty_directory("./app")
+    empty_directory("./app/nudge/instructions")
+    empty_directory("./app/nudge/types")
+    empty_directory("./app/factory/machines")
+    empty_directory("./app/factory/workstations")
     empty_directory("./spec")
   end
   
