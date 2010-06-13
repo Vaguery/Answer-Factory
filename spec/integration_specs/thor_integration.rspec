@@ -1,0 +1,14 @@
+require File.join(File.dirname(__FILE__), "./../spec_helper")
+
+require 'fileutils'
+include FileUtils::Verbose
+
+
+before(:each) do
+  
+end
+
+
+describe "setup_factory script" do
+  
+end

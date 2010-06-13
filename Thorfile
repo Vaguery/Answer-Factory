@@ -1,4 +1,4 @@
-require 'active_support'
+require 'active_support/inflections'
 require 'answer-factory'
 
 class New_Nudge_Type < Thor::Group

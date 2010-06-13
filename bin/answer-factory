@@ -14,6 +14,6 @@ else
   mkdir("#{project_root}/tasks")
   cp("#{gem_root}/tasks/setup_factory.thor","#{project_root}/tasks/setup_factory.thor")
   cd("#{project_root}")
-  puts `thor setup_factory:set_up_project_in_this_folder #{project_root}`
+  puts Kernel.`thor setup_factory:set_up_project_in_this_folder #{project_root}`
   rm("./tasks/setup_factory.thor")
 end
