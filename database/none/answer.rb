@@ -1,7 +1,9 @@
 class Answer
   attr_reader :machine_name
+  attr_reader :blueprint
   
-  def initialize (*)
+  def initialize (*args)
+    super *args
   end
   
   def Answer.load_for_workstation (workstation_name)

@@ -2,7 +2,7 @@ class Answer
   include DataMapper::Resource
   
   property :id, Serial
-  property :blueprint, Text
+  property :blueprint, Text, :lazy => false
   property :workstation_name, String
   property :machine_name, String
   property :locked, Boolean
@@ -16,7 +16,9 @@ class Answer
   end
   
   def Answer.load_for_workstation (workstation_name)
-    Answer.all(:workstation_name => workstation_name)
+    answers = Answer.all(:workstation_name => workstation_name, :locked => false)
+    answers.update(:locked => true)
+    answers
   end
   
   def Answer.new_empty_collection
