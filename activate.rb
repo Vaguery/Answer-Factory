@@ -1,3 +1,4 @@
+require '../Nudge/nudge'
 require 'answer_factory'
 
 Factory.use(:data_mapper).set_database("127.0.0.1/factory_a")
@@ -11,7 +12,7 @@ end
 Workstation.new(:shuffler) do |w|
   Machine::Nudge::SampleAnyOne.new(:sample_any_one, w) do |m|
     m.path[:of_sampled_one] = :shuffler, :send_along
-    m.path[:of_rest] = :shuffler, :keep_half
+    m.path[:of_rest] = :shuffler, :point_crossover
   end
   
   Machine.new(:send_along, w) do |m|
@@ -20,23 +21,20 @@ Workstation.new(:shuffler) do |w|
     end
   end
   
-  Machine.new(:keep_half, w) do |m|
-    def m.process (answers)
-      midpoint = answers.length / 2
-      send_answers(answers[0...midpoint], self)
-      send_answers(answers[midpoint..-1], [:shuffler, :send_to_scrap])
-    end
+  Machine::Nudge::PointCrossover.new(:point_crossover, w) do |m|
+    m.path[:of_parents] = :dead_parents
+    m.path[:of_children] = :created_children
   end
   
   Machine.new(:send_to_scrap, w) do |m|
     def m.process (answers)
-      send_answers(answers, :scrap_pile)
+      send_answers(answers, :scrapyard, :never_used)
     end
   end
   
   w.schedule :sample_any_one,
              :send_along,
-             :keep_half,
+             [:point_crossover, "20x"]
              :send_to_scrap
 end
 
