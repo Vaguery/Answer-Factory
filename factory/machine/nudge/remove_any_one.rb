@@ -1,8 +1,6 @@
 module Machine::Nudge
   class RemoveAnyOne < Machine
-    def defaults
-      path[:of_remainder] = self
-    end
+    path :of_remainder
     
     def process (answers)
       index = rand(answers.length)

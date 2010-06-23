@@ -1,14 +1,9 @@
 module Machine::Nudge
   class GenerateRandom < Machine
-    attr_accessor :number_of_points
-    attr_accessor :number_of_answers
+    options :number_of_points => 10,
+            :number_of_answers => 1
     
-    def defaults
-      @number_of_points = 10
-      @number_of_answers = 1
-      
-      path[:to_recipient] = self
-    end
+    path :to_recipient
     
     def process (answers)
       generated_answers = []

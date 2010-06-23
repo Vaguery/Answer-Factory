@@ -1,9 +1,7 @@
 module Machine::Nudge
   class SampleAnyOne < Machine
-    def defaults
-      path[:of_sampled_one] = self
-      path[:of_rest] = self
-    end
+    path :of_sampled_one,
+         :of_rest
     
     def process (answers)
       index = rand(answers.length)
