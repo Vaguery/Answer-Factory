@@ -1,4 +1,22 @@
 class Machine
+  OPTIONS = {}
+  PATHS = []
+  
+  class << Machine
+    def options (options_hash)
+      options_hash.keys.each {|option_name| attr_accessor option_name }
+      const_set(:OPTIONS, options_hash)
+    end
+    
+    alias option options
+    
+    def paths (*path_names)
+      const_set(:PATHS, path_names)
+    end
+    
+    alias path paths
+  end
+  
   attr_reader :name
   attr_reader :path
   
@@ -7,7 +25,7 @@ class Machine
     @path = {}
     
     insert_into workstation
-    defaults
+    set_defaults
     config.call(self) if block_given?
   end
   
@@ -19,8 +37,14 @@ class Machine
     @workstation.components[@name] = self
   end
   
-  # overwrite in subclasses
-  def defaults
+  def set_defaults
+    self.class::OPTIONS.each do |option_name, default_value|
+      instance_variable_set(:"@#{option_name}", default_value)
+    end
+    
+    self.class::PATHS.each do |path_name, default_value|
+      @path[path_name] = default_value || self
+    end
   end
   
   def run
