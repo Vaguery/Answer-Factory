@@ -14,14 +14,14 @@ module Machine::Nudge
           else    answers.shuffle!.pop(2)
         end
       
-      tree_a = NudgePoint.from(a.blueprint)
-      tree_b = NudgePoint.from(b.blueprint)
-      
       children = []
       
       @number_of_child_pairs.times do
-        n_of_a = rand(tree_a.points)
-        n_of_b = rand(tree_b.points)
+        tree_a = NudgePoint.from(a.blueprint)
+        tree_b = NudgePoint.from(b.blueprint)
+        
+        n_of_a = rand(a_points ||= tree_a.points)
+        n_of_b = rand(b_points ||= tree_b.points)
         
         if n_of_a != 0 && n_of_b != 0
           point_a = tree_a.get_point_at(n_of_a)
