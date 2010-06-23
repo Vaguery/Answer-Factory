@@ -5,7 +5,7 @@ Factory.use(:data_mapper).set_database("127.0.0.1/factory_a")
 Factory::Log.stream = true
 
 Workstation::Nudge::Generator.new(:generator) do |w|
-  w.generate_random.number_of_answers = 100
+  w.generate_random.number_of_answers = 40
   w.generate_random.path[:to_recipient] = :shuffler, :sample_any_one
 end
 
@@ -22,6 +22,7 @@ Workstation.new(:shuffler) do |w|
   end
   
   Machine::Nudge::PointCrossover.new(:point_crossover, w) do |m|
+    m.number_of_child_pairs = 5
     m.path[:of_parents] = :dead_parents
     m.path[:of_children] = :created_children
   end
@@ -34,7 +35,7 @@ Workstation.new(:shuffler) do |w|
   
   w.schedule :sample_any_one,
              :send_along,
-             [:point_crossover, "20x"]
+             [:point_crossover, "10x"]
              :send_to_scrap
 end
 
