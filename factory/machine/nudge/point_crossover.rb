@@ -39,6 +39,8 @@ module Machine::Nudge
         children.push(c, d)
       end
       
+      Factory::Log.answers(:create, children)
+      
       send_answers(children, path[:of_children])
       send_answers(parents, path[:of_parents])
       send_answers(answers, path[:of_unused])
