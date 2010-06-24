@@ -3,6 +3,8 @@ module Machine::Nudge
     path :of_remainder
     
     def process (answers)
+      return if answers.empty?
+      
       index = rand(answers.length)
       answers.delete_at(index)
       

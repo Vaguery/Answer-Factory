@@ -4,6 +4,8 @@ module Machine::Nudge
          :of_rest
     
     def process (answers)
+      return if answers.empty?
+      
       index = rand(answers.length)
       sampled_answer = answers.delete_at(index)
       
