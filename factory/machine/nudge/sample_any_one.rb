@@ -6,10 +6,9 @@ module Machine::Nudge
     def process (answers)
       return if answers.empty?
       
-      index = rand(answers.length)
-      sampled_answer = answers.delete_at(index)
+      sampled = answers.shuffle!.pop
       
-      send_answer(sampled_answer, path[:of_sampled_one])
+      send_answer(sampled, path[:of_sampled_one])
       send_answers(answers, path[:of_rest])
     end
   end

@@ -5,8 +5,7 @@ module Machine::Nudge
     def process (answers)
       return if answers.empty?
       
-      index = rand(answers.length)
-      answers.delete_at(index)
+      answers.shuffle!.pop
       
       send_answers(answers, path[:of_remainder])
     end
