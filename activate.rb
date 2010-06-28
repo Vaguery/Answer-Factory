@@ -10,19 +10,24 @@ Workstation::Nudge::Generator.new(:generator) do |w|
 end
 
 Workstation.new(:breeder) do |w|
-  Machine::Nudge::SampleAnyOne.new(:sample_any_one, w) do |m|
-    m.path[:of_sampled_one] = :breeder, :mutate_point
-    m.path[:of_rest] = :breeder, :point_crossover
+  Machine::Nudge::Split.new(:sample_any_one, w) do |m|
+    m.top = 1
+    m.path[:low] = :breeder, :point_crossover
+    m.path[:high] = :breeder, :mutate_point
   end
   
   Machine::Nudge::MutatePoint.new(:mutate_point, w) do |m|
     m.number_of_mutants = 10
     m.path[:of_mutated] = :breeder, :point_crossover
-    m.path[:of_mutants] = :breeder, :splitter
+    m.path[:of_mutants] = :breeder, :split_by_length
   end
   
-  Machine::Nudge::SplitThreeWays.new(:splitter, w) do |m|
-    m.proportion = 20, 60, 20
+  Machine::Nudge::Split.new(:split_by_length, w) do |m|
+    m.sort = proc do |a, b|
+      return a.blueprint.length, b.blueprint.length
+    end
+    
+    m.proportion = 80, 20
     m.path[:low] = :breeder, :mutate_point
     m.path[:high] = :breeder, :point_crossover
   end
@@ -35,7 +40,7 @@ Workstation.new(:breeder) do |w|
   
   w.schedule :sample_any_one,
              [:mutate_point, "10x"],
-             :splitter,
+             :split_by_length,
              [:point_crossover, "10x"]
 end
 
