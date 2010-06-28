@@ -2,6 +2,7 @@ class Answer
   include DataMapper::Resource
   
   property :id, Serial
+  property :scores, Text, :lazy => false
   property :blueprint, Text, :lazy => false, :length => 2**24 - 1
   property :workstation_name, String
   property :machine_name, String
@@ -13,6 +14,17 @@ class Answer
   
   def workstation_name
     @workstation_name.intern
+  end
+  
+  def score (name, score = nil)
+    scores = Score.from(@scores || "")
+    
+    if score
+      scores[name] = score
+      self.scores = Score.to_string(scores)
+    else
+      scores[name] || 1/0.0
+    end
   end
   
   def Answer.load_for_workstation (workstation_name)

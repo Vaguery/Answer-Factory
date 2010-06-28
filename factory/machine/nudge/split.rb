@@ -1,38 +1,31 @@
 module Machine::Nudge
   class Split < Machine
     options :sort => nil,
-            :proportion => [50, 50],
-            :top => nil
+            :split => [50, 50],
+            :best_n => nil
     
-    path :low,
-         :high
+    path :of_best,
+         :of_rest
     
     def process (answers)
       return if answers.empty?
       
       if @sort
-        answers.sort! do |a, b|
-          a, b = @sort.call(a, b)
-          a <=> b
-        end
+        answers.sort! {|a,b| a.score(@sort) <=> b.score(@sort) }
       else
         answers.shuffle!
       end
       
-      if @top
-        low = answers.slice!(0...-@top)
-        high = answers
-      else
-        a = @proportion[0].to_f
-        b = @proportion[1].to_f
+      unless split_point = @best_n
+        a = @split[0].to_f
+        b = @split[1].to_f
         split_point = a / (a + b) * answers.length
-        
-        low = answers[0...split_point]
-        high = answers[split_point...-1]
       end
       
-      send_answers(low, path[:low])
-      send_answers(high, path[:high])
+      best = answers.slice!(0...split_point)
+      
+      send_answers(best, path[:of_best])
+      send_answers(answers, path[:of_rest])
     end
   end
 end
