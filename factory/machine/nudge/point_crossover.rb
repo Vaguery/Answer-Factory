@@ -14,11 +14,15 @@ module Machine::Nudge
           else    answers.shuffle!.pop(2)
         end
       
+      blueprint_a = a.blueprint
+      blueprint_b = b.blueprint
+      progress = [a.progress, b.progress].max + 1
+      
       created = []
       
       @number_of_pairs_created.times do
-        tree_a = NudgePoint.from(a.blueprint)
-        tree_b = NudgePoint.from(b.blueprint)
+        tree_a = NudgePoint.from(blueprint_a)
+        tree_b = NudgePoint.from(blueprint_b)
         
         n_of_a = rand(a_points ||= tree_a.points)
         n_of_b = rand(b_points ||= tree_b.points)
@@ -33,8 +37,8 @@ module Machine::Nudge
           tree_b = tree_a.replace_point_at(n_of_a, tree_b)
         end
         
-        c = Answer.new(:blueprint => tree_a.to_script)
-        d = Answer.new(:blueprint => tree_b.to_script)
+        c = Answer.new(:blueprint => tree_a.to_script, :progress => progress)
+        d = Answer.new(:blueprint => tree_b.to_script, :progress => progress)
         
         created.push(c, d)
       end

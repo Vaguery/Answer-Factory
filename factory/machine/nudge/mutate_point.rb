@@ -11,10 +11,13 @@ module Machine::Nudge
       return if answers.empty?
       
       parent = answers.shuffle!.pop
+      blueprint = parent.blueprint
+      progress = parent.progress + 1
+      
       created = []
       
       @number_created.times do
-        tree = NudgePoint.from(parent.blueprint)
+        tree = NudgePoint.from(blueprint)
         
         n_of_mutation = rand(tree_points ||= tree.points)
         
@@ -26,7 +29,7 @@ module Machine::Nudge
           tree.replace_point_at(n_of_mutation, mutation)
         end
         
-        created.push(Answer.new(:blueprint => tree.to_script))
+        created.push(Answer.new(:blueprint => tree.to_script, :progress => progress))
       end
       
       Factory::Log.answers(:create, created)

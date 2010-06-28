@@ -3,6 +3,7 @@ class Answer
   
   property :id, Serial
   property :scores, Text, :lazy => false
+  property :progress, Integer
   property :blueprint, Text, :lazy => false, :length => 2**24 - 1
   property :workstation_name, String
   property :machine_name, String
