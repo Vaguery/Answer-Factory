@@ -4,45 +4,69 @@ require 'answer_factory'
 Factory.use(:data_mapper).set_database("127.0.0.1/factory_a")
 Factory::Log.stream = true
 
-Workstation::Nudge::Generator.new(:generator) do |w|
-  w.generate_random.number_of_answers = 10
-  w.generate_random.path[:to_recipient] = :breeder, :sample_any_one
+Writer = NudgeWriter.new do |writer|
+    writer.value_types = [:int]
+    writer.do_instructions = :int_add, :int_divide, :int_duplicate, :int_multiply,
+                             :int_negative, :int_pop, :int_shove, :int_subtract,
+                             :int_yank, :int_yankdup
 end
 
-Workstation.new(:breeder) do |w|
-  Machine::Nudge::Split.new(:sample_any_one, w) do |m|
-    m.top = 1
-    m.path[:low] = :breeder, :point_crossover
-    m.path[:high] = :breeder, :mutate_point
+Workstation::Nudge::Generator.new(:generator) do |generator|
+  generator.generate_random.number_created = 10
+  generator.generate_random.nudge_writer = Writer
+  generator.generate_random.path[:of_created] = :breeder
+end
+
+Workstation.new(:breeder) do |breeder|
+  Machine::Nudge::Split.new(:sample_any_one, breeder) do |sample_any_one|
+    sample_any_one.best_n = 1
+    sample_any_one.path[:of_best] = :breeder, :mutate_point
+    sample_any_one.path[:of_rest] = :breeder, :point_crossover
   end
   
-  Machine::Nudge::MutatePoint.new(:mutate_point, w) do |m|
-    m.number_of_mutants = 10
-    m.path[:of_mutated] = :breeder, :point_crossover
-    m.path[:of_mutants] = :breeder, :split_by_length
+  Machine::Nudge::MutatePoint.new(:mutate_point, breeder) do |mutate_point|
+    mutate_point.number_created = 10
+    mutate_point.nudge_writer = Writer
+    mutate_point.path[:of_parents] = :breeder, :point_crossover
+    mutate_point.path[:of_created] = :breeder, :score_length
   end
   
-  Machine::Nudge::Split.new(:split_by_length, w) do |m|
-    m.sort = proc do |a, b|
-      return a.blueprint.length, b.blueprint.length
-    end
-    
-    m.proportion = 80, 20
-    m.path[:low] = :breeder, :mutate_point
-    m.path[:high] = :breeder, :point_crossover
+  Machine::Nudge::PointCrossover.new(:point_crossover, breeder) do |point_crossover|
+    point_crossover.number_of_pairs_created = 1
+    point_crossover.path[:of_parents] = :breeder, :score_length
+    point_crossover.path[:of_created] = :breeder, :score_length
   end
   
-  Machine::Nudge::PointCrossover.new(:point_crossover, w) do |m|
-    m.number_of_child_pairs = 10
-    m.path[:of_parents] = :dead_parents
-    m.path[:of_children] = :created_children
+  Machine::Nudge::ScoreLength.new(:score_length, breeder) do |score_length|
+    score_length.path[:of_scored] = :breeder, :split_by_length
   end
   
-  w.schedule :sample_any_one,
-             [:mutate_point, "10x"],
-             :split_by_length,
-             [:point_crossover, "10x"]
+  Machine::Nudge::Split.new(:split_by_length, breeder) do |split|
+    split.sort = :length
+    split.split = 20, 80
+    split.path[:of_best] = :breeder, :score_errors
+    split.path[:of_rest] = :breeder, :mutate_point
+  end
+  
+  Machine::Nudge::ScoreErrors.new(:score_errors, breeder) do |score_errors|
+    score_errors.path[:of_scored] = :breeder, :split_by_errors
+  end
+  
+  Machine::Nudge::Split.new(:split_by_errors, breeder) do |split|
+    split.sort = :errors
+    split.best_n = 1
+    split.path[:of_best] = :best
+    split.path[:of_rest] = :breeder, :point_crossover
+  end
+  
+  breeder.schedule :sample_any_one,
+                   [:mutate_point, "5x"],
+                   :score_length,
+                   :split_by_length,
+                   [:point_crossover, "10x"],
+                   :score_errors,
+                   :split_by_errors
 end
 
 Factory.schedule :generator, :breeder
-Factory.run(10)
+Factory.run(5)
