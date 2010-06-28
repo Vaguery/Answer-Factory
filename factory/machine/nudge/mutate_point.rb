@@ -1,7 +1,7 @@
 module Machine::Nudge
   class MutatePoint < Machine
-    option :point_size_of_mutation => 10,
-           :number_of_mutants => 1
+    option :number_of_mutants => 1,
+           :nudge_writer => NudgeWriter.new
     
     path :of_mutated,
          :of_mutants,
@@ -18,7 +18,7 @@ module Machine::Nudge
         
         n_of_mutation = rand(tree_points ||= tree.points)
         
-        mutation = NudgePoint.from(::Nudge.random(@point_size_of_mutation))
+        mutation = NudgePoint.from(@nudge_writer.random)
         
         if n_of_mutation == 0
           tree = mutation
