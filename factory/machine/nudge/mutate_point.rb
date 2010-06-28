@@ -1,20 +1,20 @@
 module Machine::Nudge
   class MutatePoint < Machine
-    option :number_of_mutants => 1,
+    option :number_created => 1,
            :nudge_writer => NudgeWriter.new
     
-    path :of_mutated,
-         :of_mutants,
+    path :of_parents,
+         :of_created,
          :of_unused
     
     def process (answers)
       return if answers.empty?
       
-      mutated = answers.shuffle!.pop
-      mutants = []
+      parent = answers.shuffle!.pop
+      created = []
       
-      @number_of_mutants.times do
-        tree = NudgePoint.from(mutated.blueprint)
+      @number_created.times do
+        tree = NudgePoint.from(parent.blueprint)
         
         n_of_mutation = rand(tree_points ||= tree.points)
         
@@ -26,15 +26,13 @@ module Machine::Nudge
           tree.replace_point_at(n_of_mutation, mutation)
         end
         
-        mutant = Answer.new(:blueprint => tree.to_script)
-        
-        mutants.push(mutant)
+        created.push(Answer.new(:blueprint => tree.to_script))
       end
       
-      Factory::Log.answers(:create, mutants)
+      Factory::Log.answers(:create, created)
       
-      send_answer(mutated, path[:of_mutated])
-      send_answers(mutants, path[:of_mutants])
+      send_answer(parent, path[:of_parents])
+      send_answers(created, path[:of_created])
       send_answers(answers, path[:of_unused])
     end
   end

@@ -1,9 +1,9 @@
 module Machine::Nudge
   class PointCrossover < Machine
-    option :number_of_child_pairs => 1
+    option :number_of_pairs_created => 1
     
     path :of_parents,
-         :of_children,
+         :of_created,
          :of_unused
     
     def process (answers)
@@ -14,9 +14,9 @@ module Machine::Nudge
           else    answers.shuffle!.pop(2)
         end
       
-      children = []
+      created = []
       
-      @number_of_child_pairs.times do
+      @number_of_pairs_created.times do
         tree_a = NudgePoint.from(a.blueprint)
         tree_b = NudgePoint.from(b.blueprint)
         
@@ -36,13 +36,13 @@ module Machine::Nudge
         c = Answer.new(:blueprint => tree_a.to_script)
         d = Answer.new(:blueprint => tree_b.to_script)
         
-        children.push(c, d)
+        created.push(c, d)
       end
       
-      Factory::Log.answers(:create, children)
+      Factory::Log.answers(:create, created)
       
-      send_answers(children, path[:of_children])
       send_answers(parents, path[:of_parents])
+      send_answers(created, path[:of_created])
       send_answers(answers, path[:of_unused])
     end
   end
