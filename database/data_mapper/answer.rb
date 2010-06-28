@@ -2,7 +2,7 @@ class Answer
   include DataMapper::Resource
   
   property :id, Serial
-  property :blueprint, Text, :lazy => false
+  property :blueprint, Text, :lazy => false, :length => 2**24 - 1
   property :workstation_name, String
   property :machine_name, String
   property :locked, Boolean
