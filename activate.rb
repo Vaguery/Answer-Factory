@@ -44,29 +44,29 @@ Workstation.new(:breeder) do |breeder|
   Machine::Nudge::Split.new(:split_by_length, breeder) do |split|
     split.sort = :length
     split.split = 20, 80
-    split.path[:of_best] = :breeder, :score_errors
+    split.path[:of_best] = :breeder, :score_progress
     split.path[:of_rest] = :breeder, :mutate_point
   end
   
-  Machine::Nudge::ScoreErrors.new(:score_errors, breeder) do |score_errors|
-    score_errors.path[:of_scored] = :breeder, :split_by_errors
+  Machine::Nudge::ScoreProgress.new(:score_progress, breeder) do |score_progress|
+    score_progress.path[:of_scored] = :breeder, :split_by_progress
   end
   
-  Machine::Nudge::Split.new(:split_by_errors, breeder) do |split|
-    split.sort = :errors
+  Machine::Nudge::Split.new(:split_by_progress, breeder) do |split|
+    split.sort = :progress
     split.best_n = 1
     split.path[:of_best] = :best
     split.path[:of_rest] = :breeder, :point_crossover
   end
   
   breeder.schedule :sample_any_one,
-                   [:mutate_point, "5x"],
+                   [:mutate_point, "10x"],
                    :score_length,
                    :split_by_length,
-                   [:point_crossover, "10x"],
-                   :score_errors,
-                   :split_by_errors
+                   [:point_crossover, "5x"],
+                   :score_progress,
+                   :split_by_progress
 end
 
-Factory.schedule :generator, :breeder
-Factory.run(5)
+Factory.schedule :breeder
+Factory.run(10)
