@@ -20,9 +20,10 @@ class Score < Racc::Parser
     
     until ss.eos?
       tokens << case
-        when ss.scan(/([a-zA-Z_][a-zA-Z0-9_]*):/)         then [:KEY, ss[1].intern]
+        when ss.scan(/-?Infinity/)                        then [:FLOAT, 1/0.0]
         when ss.scan(/-?[0-9]+\.[0-9]+(?:e[+-][0-9]+)?/)  then [:FLOAT, ss.matched.to_f]
         when ss.scan(/-?[0-9]+/)                          then [:INT, ss.matched.to_i]
+        when ss.scan(/([a-zA-Z_][a-zA-Z0-9_]*):/)         then [:KEY, ss[1].intern]
       end
     end
     
