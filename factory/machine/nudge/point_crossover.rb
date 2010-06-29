@@ -7,12 +7,10 @@ module Machine::Nudge
          :of_unused
     
     def process (answers)
-      a, b = parents = 
-        case answers.length
-          when 0; return
-          when 1; [answers.pop] * 2
-          else    answers.shuffle!.pop(2)
-        end
+      a, b = parents =
+        answers.length > 1 ?
+        answers.shuffle!.pop(2) :
+        [answers.pop] * 2
       
       blueprint_a = a.blueprint
       blueprint_b = b.blueprint

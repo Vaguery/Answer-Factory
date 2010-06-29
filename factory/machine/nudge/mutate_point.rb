@@ -8,8 +8,6 @@ module Machine::Nudge
          :of_unused
     
     def process (answers)
-      return if answers.empty?
-      
       parent = answers.shuffle!.pop
       blueprint = parent.blueprint
       progress = parent.progress + 1

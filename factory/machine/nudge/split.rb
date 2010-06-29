@@ -8,8 +8,6 @@ module Machine::Nudge
          :of_rest
     
     def process (answers)
-      return if answers.empty?
-      
       if @sort
         answers.sort! {|a,b| a.score(@sort) <=> b.score(@sort) }
       else

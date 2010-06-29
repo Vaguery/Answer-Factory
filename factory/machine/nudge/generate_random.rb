@@ -1,5 +1,7 @@
 module Machine::Nudge
   class GenerateRandom < Machine
+    SKIP_WHEN_EMPTY = false
+    
     options :number_created => 1,
             :nudge_writer => NudgeWriter.new
     

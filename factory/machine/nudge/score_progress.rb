@@ -5,8 +5,6 @@ module Machine::Nudge
     path :of_scored
     
     def process (answers)
-      return if answers.empty?
-      
       answers.each do |answer|
         answer.score(@score_name, -answer.progress)
       end

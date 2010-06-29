@@ -1,6 +1,7 @@
 class Machine
   OPTIONS = {}
   PATHS = []
+  SKIP_WHEN_EMPTY = true
   
   class << Machine
     def options (options_hash)
@@ -49,6 +50,8 @@ class Machine
   
   def run
     answers_array = @workstation.answers_by_machine[@name]
+    return if answers_array.empty? && self.class::SKIP_WHEN_EMPTY
+    
     Factory::Log.answers(:with, answers_array)
     Factory::Log.timer("#process") { process(answers_array.slice!(0..-1)) }
     Factory::Log.answers(:keep, answers_array)
