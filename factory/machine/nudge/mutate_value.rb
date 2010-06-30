@@ -18,10 +18,7 @@ module Machine::Nudge
         tree = NudgePoint.from(blueprint)
         
         if value_type = tree.instance_variable_get(:@value_type)
-          random_value_script = @nudge_writer.random_value_point(value_type)
-          footnotes = @nudge_writer.footnotes
-          
-          tree = NudgePoint.from("#{random_value_script}\n#{footnotes}")
+          tree = NudgePoint.from(@nudge_writer.random_value(value_type))
         else
           value_point_indices = (1...tree.points).collect do |n|
             point = tree.get_point_at(n)
@@ -31,10 +28,8 @@ module Machine::Nudge
           n, value_type = value_point_indices.compact.shuffle.first
           
           if n
-            random_value_script = @nudge_writer.random_value_point(value_type)
-            footnotes = @nudge_writer.footnotes
-            
-            tree.replace_point_at(n, NudgePoint.from("#{random_value_script}\n#{footnotes}"))
+            new_value_point = NudgePoint.from(@nudge_writer.random_value(value_type))
+            tree.replace_point_at(n, new_value_point)
           end
         end
         
