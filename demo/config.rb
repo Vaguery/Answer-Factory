@@ -1,7 +1,7 @@
 nudge_writer = NudgeWriter.new do |writer|
     writer.ref_names = %w:x:
     writer.value_types = [:int]
-    writer.do_instructions = :int_add, :int_multiply
+    writer.do_instructions = :int_add, :int_subtract, :int_multiply
 end
 
 def f (x)
@@ -71,32 +71,17 @@ Workstation.new(:breeder) do |breeder|
     score.path[:of_scored] = :breeder, :score_error
   end
   
-  Machine.new(:score_error, breeder) do |score|
-    score.instance_variable_set(:@data_points, data_points)
+  Machine::Nudge::Score.new(:score_error, breeder) do |score|
+    score.data_points = data_points
     
-    def score.process (answers)
-      return if answers.empty?
+    def score.score (executable, data_point)
+      outcome = executable.bind(:x => Value.new(:int, data_point[:x])).run
+      return 1/0.0 unless top_int = outcome.stacks[:int].last
       
-      answers.each do |answer|
-        exe = Executable.new(answer.blueprint)
-        
-        scores = @data_points.collect do |data_point|
-          outcome = exe.bind(:x => Value.new(:int, data_point[:x])).run
-          
-          if top_int = outcome.stacks[:int].last
-            data_point[:y] - top_int.to_i
-          else
-            1/0.0
-          end.abs
-        end
-        
-        avg = scores.inject(0.0) {|sum,n| sum + n } / scores.length
-        
-        answer.score(:score, avg)
-      end
-      
-      send_answers(answers, [:breeder, :nondominated])
+      (data_point[:y] - top_int.to_i).abs
     end
+    
+    score.path[:of_scored] = :breeder, :nondominated
   end
   
   Machine::Nudge::SplitNondominated.new(:nondominated, breeder) do |split|
