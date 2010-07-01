@@ -18,13 +18,13 @@ class Answer
   end
   
   def score (name, score = nil)
-    scores = Score.from(@scores || "")
+    @cached_scores ||= Score.from(@scores || "")
     
     if score
-      scores[name] = score
-      self.scores = Score.to_string(scores)
+      @cached_scores[name] = score
+      self.scores = Score.to_string(@cached_scores)
     else
-      scores[name] || 1/0.0
+      @cached_scores[name] || 1/0.0
     end
   end
   
