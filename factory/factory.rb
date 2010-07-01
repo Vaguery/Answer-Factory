@@ -1,6 +1,6 @@
 class Factory
   def Factory.use (db_library)
-    require "database/#{db_library}/factory"
+    require "#{ANSWER_FACTORY_ROOT}/database/#{db_library}/factory"
     self
   end
   
