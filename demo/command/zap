@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require File.expand_path('init', File.dirname(__FILE__))
+
+Factory.zap

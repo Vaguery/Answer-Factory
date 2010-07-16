@@ -1,66 +1,62 @@
 class Workstation
-  attr_reader :name
-  attr_reader :answers_by_machine
-  attr_reader :answers_to_be_saved
-  attr_accessor :cycles
+  attr_reader :name,
+              :machines
   
-  def initialize (symbol_name, &config)
-    extend Schedule
+  def initialize (name)
+    @name = name
+    @machines = {}
+    @schedule = []
     
-    @name = symbol_name
-    @cycles = 1
-    
-    Factory.components[symbol_name] = self
+    Factory::Workstations[name] = self
     
     setup
     
-    config.call(self) if block_given?
+    yield self if block_given?
   end
   
-  # overwrite in subclasses
   def setup
   end
   
+  def schedule (*machine_names)
+    @schedule = machine_names
+  end
+  
   def run
-    return if @schedule.empty?
+    @answers_to_be_saved = []
+    @answers_by_machine = Factory.load_answers(self)
     
-    load_answers_and_distribute_to_machines!
-    
-    @cycles.times do
-      @schedule.each do |item|
-        item.run
-      end
+  # run machines
+    @schedule.each do |machine_name|
+      Factory::Log.run(machine_name, @machines[machine_name])
     end
     
-    save_answers!
-  end
-  
-  def load_answers_and_distribute_to_machines!
-    @answers_by_machine = Hash.new {|hash,key| hash[key] = [] }
-    @answers_to_be_saved = Answer.new_empty_collection
-    
-    answers = Answer.load_for_workstation(@name)
-    
-    Factory::Log.answers(:load, answers)
-    
-    default_machine_name = @schedule.first.component_name
-    
-    answers.each do |answer|
-      @answers_by_machine[answer.machine_name || default_machine_name] << answer
-    end
-  end
-  
-  def save_answers!
+  # queue answers that remain in local machines
     @answers_by_machine.each do |machine_name, answers|
-      machine_name = nil unless @components[machine_name]
-      
-      Answer.relocate(answers, @name, machine_name)
-      
-      @answers_to_be_saved.concat(answers)
+      queue(answers, @name, machine_name)
     end
     
-    Answer.save(@answers_to_be_saved)
+  # save answers to database
+    Factory.save_answers(@answers_to_be_saved)
+  end
+  
+  def dump (machine_name)
+    @answers_by_machine[machine_name].slice!(0..-1)
+  end
+  
+  def transfer (answers, machine_name)
+    @answers_by_machine[machine_name || default_machine_name].concat(answers)
+  end
+  
+  def queue (answers, workstation_name, machine_name)
+    answers.each do |answer|
+      answer.workstation = workstation_name
+      answer.machine = machine_name
+    end
     
-    Factory::Log.answers(:save, @answers_to_be_saved)
+    @answers_to_be_saved.concat(answers)
+  end
+  
+  def default_machine_name
+    @schedule.first || :none
   end
 end

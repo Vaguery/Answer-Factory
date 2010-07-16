@@ -1,36 +1,43 @@
-class Factory
-  def Factory.use (db_library)
-    require "#{ANSWER_FACTORY_ROOT}/database/#{db_library}/factory"
-    self
+class << Factory = Class.new
+  undef new
+  
+  def database (options)
+    require File.expand_path("../database/#{options['adapter']}_adapter", File.dirname(__FILE__))
+    set_database(options)
   end
   
-  def Factory.file= (config_filename)
-    @config_file = config_filename
-    Factory.reconfigure!
+  def config (text)
+    save_config(text)
   end
   
-  def Factory.reconfigure!
-    Object.instance_eval(File.read(@config_file))
-  end
-  
-  def Factory.run (n = 1)
-    Factory::Log.timer("Factory.run") do
-      Signal.trap(:INT) {|x| Log.write("Factory.run was terminated prematurely."); raise Shutdown }
-      
-      n.times do
-        @schedule.each do |item|
-          Factory.reconfigure!
-          item.run
-        end
+  def schedule (items)
+    clear_schedule
+    
+    items.each do |item|
+      case item
+        when Hash
+          key, value = item.first
+          
+          case value
+            when /([0-9]+)x/              then schedule_item($1.to_i, "x", key)
+            when /([0-9]+(?:\.[0-9]+)?)s/ then schedule_item($1.to_f, "s", key)
+            when /([0-9]+(?:\.[0-9]+)?)m/ then schedule_item($1.to_f * 60, "s", key)
+            when /([0-9]+(?:\.[0-9]+)?)h/ then schedule_item($1.to_f * 60 * 60, "s", key)
+          end
+        
+        when String, Symbol               then schedule_item(1, "x", item)
       end
     end
   end
   
-  extend Schedule
+  def run
+    loop do
+      Object.instance_eval(read_config)
+      next_item {|name| Factory::Log.run(name, Factory::Workstations[name]) }
+    end
+  end
   
-  instance_eval { undef new }
+  Factory::Workstations = {}
   
-  Shutdown = Class.new(StandardError)
-  
-  Factory.use(:none)
+  Factory::MachineNotCreated = Class.new(StandardError)
 end

@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+require File.expand_path('init', File.dirname(__FILE__))
+
+file = File.expand_path('../workstations.rb', File.dirname(__FILE__))
+Factory.config File.read(file)
+
+Factory::Log.run("Factory.run", Factory)

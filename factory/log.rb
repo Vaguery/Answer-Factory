@@ -1,19 +1,21 @@
 class Factory
-  class Log
-    @disable = false
-    @stream = false
-    @log = []
-    @nest = 0
-    
-    def Log.stream= (true_or_false)
-      @stream = true_or_false
+  class << Log = Object.new
+    Log.instance_eval do
+      @disable = false
+      @stream = false
+      @log = []
+      @nest = 0
     end
     
-    def Log.disable= (true_or_false)
+    def disable= (true_or_false)
       @disable = true_or_false
     end
     
-    def Log.write (message)
+    def stream= (true_or_false)
+      @stream = true_or_false
+    end
+    
+    def write (message)
       return if @disable
       
       indent = "  " * @nest
@@ -27,28 +29,18 @@ class Factory
       @stream ? puts(entry) : @log << entry
     end
     
-    def Log.timer (event_name)
-      return yield if @disable
+    def run (event_name, runner)
+      return runner.run if @disable
       
-      Log.write("#{event_name}...")
+      write "#{event_name}..."
       @nest += 1
       
       start = Time.now
-      yield
+      runner.run
       elapsed = "%0.3fs" % (Time.now - start)
       
       @nest -= 1
-      Log.write("...[#{elapsed}]")
-    end
-    
-    def Log.answers (action, answers, workstation_name = nil, machine_name = nil)
-      workstation_name = "#{workstation_name}:" if workstation_name
-      where = " to #{workstation_name}#{machine_name}" if machine_name
-      
-      n = answers.length
-      s = "s" unless n == 1
-      
-      Log.write("{#{action} #{n} answer#{s}#{where}}")
+      write "...[#{elapsed}]"
     end
   end
 end
