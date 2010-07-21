@@ -1,11 +1,9 @@
 module Machine::Nudge
   class ScoreSimpleError < Machine
-    paths :scored
-    
-    options :score_name => :simple_error,
-            :data_points => []
-    
     def process (answers)
+      @score_name ||= :simple_error
+      @data_points ||= []
+      
       answers.each do |answer|
         exe = Executable.new(answer.blueprint)
         scores = @data_points.collect {|data_point| score(exe, data_point) }
@@ -19,7 +17,7 @@ module Machine::Nudge
     end
     
     def score (executable, data_point)
-      0.0
+      Factory::Infinity
     end
   end
 end

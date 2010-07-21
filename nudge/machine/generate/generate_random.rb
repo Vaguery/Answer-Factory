@@ -1,13 +1,11 @@
 module Machine::Nudge
   class GenerateRandom < Machine
-    paths :created
-    
-    options :number_created => 1,
-            :nudge_writer => NudgeWriter.new
-    
     def process (answers)
+      @number_created ||= 1
+      @nudge_writer ||= NudgeWriter.new
+      
       created = (0...@number_created).collect do
-        Answer.new(:blueprint => @nudge_writer.random, :language => 'nudge', :progress => 0)
+        Answer.new(@nudge_writer.random, 'nudge')
       end
       
       return :created => created

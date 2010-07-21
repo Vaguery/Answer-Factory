@@ -1,8 +1,5 @@
 module Machine::Nudge
   class SplitUnique < Machine
-    paths :best,
-          :rest
-    
     def process (answers)
       i = 0
       unique_answers = []

@@ -1,10 +1,8 @@
 module Machine::Nudge
   class ScoreErrors < Machine
-    paths :scored
-    
-    options :score_name => :errors
-    
     def process (answers)
+      @score_name ||= :errors
+      
       answers.each do |answer|
         outcome = Executable.new(answer.blueprint).run
         answer.score(@score_name => outcome.stacks[:error].length)

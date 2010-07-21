@@ -1,11 +1,8 @@
 module Machine::Nudge
   class PointCrossover < Machine
-    paths :parents,
-          :created
-    
-    options :pairs_created => 1
-    
     def process (answers)
+      @pairs_created ||= 1
+      
       created = []
       
       answers.shuffle!.each_slice(2) do |a, b|
@@ -32,8 +29,8 @@ module Machine::Nudge
             tree_b = tree_a.replace_point_at(n_of_a, tree_b)
           end
           
-          c = Answer.new(:blueprint => tree_a.to_script, :language => 'nudge', :progress => progress)
-          d = Answer.new(:blueprint => tree_b.to_script, :language => 'nudge', :progress => progress)
+          c = Answer.new(tree_a.to_script, 'nudge', progress)
+          d = Answer.new(tree_b.to_script, 'nudge', progress)
           
           created.concat [c, d]
         end

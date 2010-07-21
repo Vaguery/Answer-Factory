@@ -1,11 +1,8 @@
 module Machine::Nudge
   class SplitNondominated < Machine
-    paths :best,
-          :rest
-    
-    options :criteria => []
-    
     def process (answers)
+      @criteria ||= []
+      
       best = []
       indices_of_best = []
       
@@ -15,7 +12,7 @@ module Machine::Nudge
         answers.each do |b|
           nondominated_vs_b = true
           
-          criteria.each do |score_name|
+          @criteria.each do |score_name|
             a_score = a.score(score_name)
             b_score = b.score(score_name)
             

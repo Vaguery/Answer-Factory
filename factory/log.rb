@@ -1,5 +1,5 @@
 class Factory
-  class << Log = Object.new
+  class << Log = Object.new # :nodoc:
     Log.instance_eval do
       @disable = false
       @stream = false

@@ -56,14 +56,14 @@ module MysqlAdapter
     execute "TRUNCATE TABLE schedule_items"
   end
   
-  def next_item
+  def next_item (&block)
     result = select "SELECT id, workstation FROM schedule_items WHERE (unit = 'x' AND x + active < needed) OR (unit = 's' AND s < needed) LIMIT 1"
     
     item_id, workstation_name = result.fetch_row
     
     unless item_id
       execute "UPDATE schedule_items SET x = (0), s = (0), active = (0), fresh = (1)"
-      retry
+      return next_item(&block)
     end
     
     execute "UPDATE schedule_items SET active = (active + 1), fresh = (0) WHERE id = #{item_id}"
@@ -80,31 +80,32 @@ module MysqlAdapter
     execute "UPDATE schedule_items SET x = (x + 1), s = (#{s}), active = (active - 1) WHERE id = #{item_id} AND fresh = 0"
   end
   
-  def load_answers (workstation)
+  def load_answers (workstation_name, default_machine_name)
     answers_by_machine = Hash.new {|hash,key| hash[key] = [] }
     
-    machine_result = select "SELECT DISTINCT machine FROM answers WHERE workstation = '#{workstation.name}'"
+    machine_result = select "SELECT DISTINCT machine FROM answers WHERE workstation = '#{workstation_name}'"
     
     while machine_row = machine_result.fetch_row
-      if (name = machine_row[0]) == ""
-        machine_name = workstation.default_machine_name
+      if (string_name = machine_row[0]) == ""
+        machine_name = default_machine_name
       else
-        machine_name = name.intern
+        machine_name = string_name.intern
       end
       
       answers = []
       
       # TODO: use a SQL join to get answers and scores at the same time
-      answer_result = select "SELECT * FROM answers WHERE workstation = '#{workstation.name}' AND machine = '#{name}'"
+      answer_result = select "SELECT id, blueprint, language, progress FROM answers WHERE workstation = '#{workstation_name}' AND machine = '#{string_name}'"
       
       while answer_row = answer_result.fetch_row
-        answers.push(answer = Answer.new({}, *answer_row))
+        answer = Answer.load(*answer_row)
+        answers << answer
         
-        score_result = select "SELECT id, name, value FROM scores WHERE answer_id = #{answer.id}"
+        score_result = select "SELECT id, value, name FROM scores WHERE answer_id = #{answer.id}"
         
         while score_row = score_result.fetch_row
-          score = Score.new({}, *score_row)
-          answer.scores[score.name] = score
+          name = score_row.pop.to_sym
+          answer.instance_variable_get(:@scores)[name] = Score.load(*score_row)
         end
       end
       
@@ -116,7 +117,15 @@ module MysqlAdapter
   
   def save_answers (answers)
     answers.each do |answer|
+      workstation = answer.workstation
+      
       if answer_id = answer.id
+        if workstation == :discard
+          execute "DELETE FROM answers WHERE id = #{answer_id}"
+          execute "DELETE FROM scores WHERE answer_id = #{answer_id}"
+          next
+        end
+        
         execute <<-query
           UPDATE answers SET
             blueprint = ('#{answer.blueprint.gsub("'","\'")}'),
@@ -127,8 +136,10 @@ module MysqlAdapter
           WHERE id = #{answer_id}
         query
       else
+        next if workstation == :discard
+        
         execute <<-query
-          INSERT INTO answers (blueprint, workstation, machine, language, progress) VALUES 
+          INSERT INTO answers (blueprint, workstation, machine, language, progress) VALUES
             ('#{answer.blueprint.gsub(/'/,"\'")}',
             '#{answer.workstation}',
             '#{answer.machine}',
@@ -139,7 +150,7 @@ module MysqlAdapter
         answer_id = @mysql.insert_id
       end
       
-      answer.scores.each do |name, score|
+      answer.instance_variable_get(:@scores).each do |name, score|
         if score_id = score.id
           execute <<-query
             UPDATE scores SET
@@ -164,6 +175,8 @@ module MysqlAdapter
     ids = answers.collect do |answer|
       answer.id
     end.compact.join(", ")
+    
+    return if answers.empty?
     
     execute "DELETE FROM answers WHERE id IN (#{ids})"
     execute "DELETE FROM scores WHERE answer_id IN (#{ids})"

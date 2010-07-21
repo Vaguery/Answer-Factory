@@ -1,13 +1,8 @@
 module Machine::Nudge
   class SplitScore < Machine
-    paths :best,
-          :rest
-    
-    options :score_name => nil,
-            :split => [50, 50],
-            :best_n => nil
-    
     def process (answers)
+      @split ||= [50, 50]
+      
       if @score_name
         answers.sort! {|a,b| a.score(@score_name) <=> b.score(@score_name) }
       else

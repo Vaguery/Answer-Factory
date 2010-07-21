@@ -1,4 +1,4 @@
-Factory::Log.stream = true
+Factory::Log.disable = true
 
 nudge_writer = NudgeWriter.new do |writer|
   writer.weight = {:block => 5, :do => 5, :ref => 1, :value => 2}
@@ -8,20 +8,12 @@ nudge_writer = NudgeWriter.new do |writer|
 end
 
 def f (x)
-  x + 6
+  (90 * x * x * x * x * x) - (135 * x * x * x * x) + (180 * x * x * x) - (225 * x * x) + (270 * x) - 315
 end
 
 data_points = {:x => -1000, :y => f(-1000)},
-              {:x => -100, :y => f(-100)},
-              {:x => -10, :y => f(-10)},
-              {:x => -1, :y => f(-1)},
               {:x => 0, :y => f(0)},
               {:x => 1, :y => f(1)},
-              {:x => 2, :y => f(2)},
-              {:x => 3, :y => f(3)},
-              {:x => 4, :y => f(4)},
-              {:x => 10, :y => f(10)},
-              {:x => 100, :y => f(100)},
               {:x => 1000, :y => f(1000)}
 
 Workstation::Nudge::Generator.new(:generator) do |w|
@@ -40,7 +32,7 @@ Workstation.new(:breeder) do |w|
   end
   
   Machine::Nudge::MutateValue.new(:mutate_value, w) do |m|
-    m.number_created = 20
+    m.number_created = 1
     m.nudge_writer = nudge_writer
     
     m.path[:parents] = :breeder, :mutate_point
@@ -71,7 +63,7 @@ Workstation.new(:breeder) do |w|
   
   Machine::Nudge::SplitUnique.new(:split_unique, w) do |m|
     m.path[:best] = :breeder, :score_length
-    m.path[:rest] = :destroyer
+    m.path[:rest] = :discard
   end
   
   Machine::Nudge::ScoreLength.new(:score_length, w) do |m|
@@ -95,15 +87,7 @@ Workstation.new(:breeder) do |w|
     m.criteria = :length, :simple_error
     
     m.path[:best] = :breeder
-    m.path[:rest] = :breeder, :split_score
-  end
-  
-  Machine::Nudge::SplitScore.new(:split_score, w) do |m|
-    m.score_name = :simple_error
-    m.best_n = 20
-    
-    m.path[:best] = :breeder
-    m.path[:rest] = :reshuffler
+    m.path[:rest] = :discard
   end
   
   w.schedule :point_crossover,
@@ -115,33 +99,5 @@ Workstation.new(:breeder) do |w|
              :split_unique,
              :score_length,
              :score_simple_error,
-             :split_nondominated,
-             :split_score
+             :split_nondominated
 end
-
-Workstation.new(:reshuffler) do |w|
-  Machine.new(:split_infinite_scores, w) do |m|
-    m.path[:best] = :reshuffler, :split_score
-    m.path[:rest] = :destroyer
-    
-    def m.process (answers)
-      infinite, finite = answers.partition {|answer| answer.score(:simple_error) == Factory::Infinity }
-      
-      return :best => finite,
-             :rest => infinite
-    end
-  end
-  
-  Machine::Nudge::SplitScore.new(:split_score, w) do |m|
-    m.score_name = :simple_error
-    m.best_n = 100
-    
-    m.path[:best] = :breeder
-    m.path[:rest] = :reshuffler
-  end
-  
-  w.schedule :split_infinite_scores,
-             :split_score
-end
-
-Workstation::Nudge::Destroyer.new(:destroyer)

@@ -1,12 +1,9 @@
 module Machine::Nudge
   class MutateValue < Machine
-    paths :parents,
-          :created
-    
-    options :number_created => 1,
-            :nudge_writer => NudgeWriter.new
-    
     def process (answers)
+      @number_created ||= 1
+      @nudge_writer ||= NudgeWriter.new
+      
       created = []
       
       answers.each do |parent|
@@ -32,7 +29,7 @@ module Machine::Nudge
             end
           end
           
-          created << Answer.new(:blueprint => tree.to_script, :language => 'nudge', :progress => progress)
+          created << Answer.new(tree.to_script, 'nudge', progress)
         end
       end
       

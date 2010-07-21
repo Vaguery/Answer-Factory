@@ -1,8 +1,5 @@
 module Machine::Nudge
   class UnfoldBlock < Machine
-    paths :parents,
-          :created
-    
     def process (answers)
       created = []
       
@@ -21,7 +18,7 @@ module Machine::Nudge
           points[index..index] = block.instance_variable_get(:@points) if block
         end
         
-        created << Answer.new(:blueprint => tree.to_script, :language => 'nudge', :progress => parent.progress + 1)
+        created << Answer.new(tree.to_script, 'nudge', parent.progress + 1)
       end
       
       return :parents => answers,

@@ -1,10 +1,8 @@
 module Machine::Nudge
   class ScoreProgress < Machine
-    paths :scored
-    
-    options :score_name => :progress
-    
     def process (answers)
+      @score_name ||= :progress
+      
       answers.each do |answer|
         answer.score(@score_name => -answer.progress)
       end
