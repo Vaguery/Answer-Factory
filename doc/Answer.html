@@ -177,7 +177,10 @@
 		<h1 class="class">Answer</h1>
 
 		<div id="description">
-			
+			<p>
+encoding: UTF-8
+</p>
+
 		</div>
 
 		<!-- Constants -->
@@ -220,13 +223,18 @@ and <tt>language</tt>.
 					<div class="method-source-code"
 						id="new-source">
 <pre>
-    <span class="ruby-comment cmt"># File factory/answer.rb, line 13</span>
-13:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span> (<span class="ruby-identifier">blueprint</span>, <span class="ruby-identifier">language</span>, <span class="ruby-identifier">progress</span> = <span class="ruby-value">0</span>)
-14:     <span class="ruby-ivar">@blueprint</span> = <span class="ruby-identifier">blueprint</span>.<span class="ruby-identifier">to_s</span>
-15:     <span class="ruby-ivar">@language</span> = <span class="ruby-identifier">language</span>.<span class="ruby-identifier">to_s</span>
-16:     <span class="ruby-ivar">@progress</span> = <span class="ruby-identifier">progress</span>.<span class="ruby-identifier">to_i</span>
-17:     <span class="ruby-ivar">@scores</span> = {}
-18:   <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File factory/answer.rb, line 14</span>
+14:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span> (<span class="ruby-identifier">blueprint</span>, <span class="ruby-identifier">language</span>, <span class="ruby-identifier">progress</span> = <span class="ruby-value">0</span>)
+15:     <span class="ruby-ivar">@blueprint</span> = <span class="ruby-identifier">blueprint</span>.<span class="ruby-identifier">to_s</span>
+16:     <span class="ruby-ivar">@language</span> = <span class="ruby-identifier">language</span>.<span class="ruby-identifier">to_s</span>
+17:     <span class="ruby-ivar">@progress</span> = <span class="ruby-identifier">progress</span>.<span class="ruby-identifier">to_i</span>
+18:     <span class="ruby-ivar">@scores</span> = {}
+19:     
+20:     <span class="ruby-keyword kw">if</span> <span class="ruby-value str">&quot;&quot;</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:force_encoding</span>)
+21:       <span class="ruby-ivar">@blueprint</span>.<span class="ruby-identifier">force_encoding</span>(<span class="ruby-value str">&quot;utf-8&quot;</span>)
+22:       <span class="ruby-ivar">@language</span>.<span class="ruby-identifier">force_encoding</span>(<span class="ruby-value str">&quot;utf-8&quot;</span>)
+23:     <span class="ruby-keyword kw">end</span>
+24:   <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>
@@ -268,10 +276,10 @@ Returns <tt>answer</tt>&#8217;s String blueprint.
 					<div class="method-source-code"
 						id="blueprint-source">
 <pre>
-    <span class="ruby-comment cmt"># File factory/answer.rb, line 29</span>
-29:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">blueprint</span>
-30:     <span class="ruby-ivar">@blueprint</span>
-31:   <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File factory/answer.rb, line 35</span>
+35:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">blueprint</span>
+36:     <span class="ruby-ivar">@blueprint</span>
+37:   <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>
@@ -307,10 +315,10 @@ Returns <tt>answer</tt>&#8217;s String language.
 					<div class="method-source-code"
 						id="language-source">
 <pre>
-    <span class="ruby-comment cmt"># File factory/answer.rb, line 42</span>
-42:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">language</span>
-43:     <span class="ruby-ivar">@language</span>
-44:   <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File factory/answer.rb, line 48</span>
+48:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">language</span>
+49:     <span class="ruby-ivar">@language</span>
+50:   <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>
@@ -346,10 +354,10 @@ Returns <tt>answer</tt>&#8217;s Integer progress.
 					<div class="method-source-code"
 						id="progress-source">
 <pre>
-    <span class="ruby-comment cmt"># File factory/answer.rb, line 55</span>
-55:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">progress</span>
-56:     <span class="ruby-ivar">@progress</span>
-57:   <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File factory/answer.rb, line 61</span>
+61:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">progress</span>
+62:     <span class="ruby-ivar">@progress</span>
+63:   <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>
@@ -399,21 +407,21 @@ If no answer exists with the given name, returns Factory::Infinity.
 					<div class="method-source-code"
 						id="score-source">
 <pre>
-    <span class="ruby-comment cmt"># File factory/answer.rb, line 78</span>
-78:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">score</span> (<span class="ruby-identifier">arg</span>)
-79:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">Symbol</span>
-80:       <span class="ruby-identifier">score</span> = (<span class="ruby-ivar">@scores</span>[<span class="ruby-identifier">arg</span>] <span class="ruby-operator">||=</span> <span class="ruby-constant">Score</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">Factory</span><span class="ruby-operator">::</span><span class="ruby-constant">Infinity</span>))
-81:       <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">score</span>.<span class="ruby-identifier">value</span>
-82:     <span class="ruby-keyword kw">end</span>
-83:     
-84:     <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
-85:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">score</span> = <span class="ruby-ivar">@scores</span>[<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>]
-86:         <span class="ruby-identifier">score</span>.<span class="ruby-identifier">value</span> = <span class="ruby-identifier">value</span>
-87:       <span class="ruby-keyword kw">else</span>
-88:         <span class="ruby-ivar">@scores</span>[<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>] = <span class="ruby-constant">Score</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">value</span>)
-89:       <span class="ruby-keyword kw">end</span>
-90:     <span class="ruby-keyword kw">end</span>
-91:   <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File factory/answer.rb, line 84</span>
+84:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">score</span> (<span class="ruby-identifier">arg</span>)
+85:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">Symbol</span>
+86:       <span class="ruby-identifier">score</span> = (<span class="ruby-ivar">@scores</span>[<span class="ruby-identifier">arg</span>] <span class="ruby-operator">||=</span> <span class="ruby-constant">Score</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">Factory</span><span class="ruby-operator">::</span><span class="ruby-constant">Infinity</span>))
+87:       <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">score</span>.<span class="ruby-identifier">value</span>
+88:     <span class="ruby-keyword kw">end</span>
+89:     
+90:     <span class="ruby-identifier">arg</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+91:       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">score</span> = <span class="ruby-ivar">@scores</span>[<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>]
+92:         <span class="ruby-identifier">score</span>.<span class="ruby-identifier">value</span> = <span class="ruby-identifier">value</span>
+93:       <span class="ruby-keyword kw">else</span>
+94:         <span class="ruby-ivar">@scores</span>[<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>] = <span class="ruby-constant">Score</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">value</span>)
+95:       <span class="ruby-keyword kw">end</span>
+96:     <span class="ruby-keyword kw">end</span>
+97:   <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>

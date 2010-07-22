@@ -1,4 +1,5 @@
-require 'answer_factory'
+# encoding: UTF-8
+require File.expand_path("../../answer_factory", File.dirname(__FILE__))
 
 describe "Score" do
   describe ".load (id: Integer, value: Float)" do

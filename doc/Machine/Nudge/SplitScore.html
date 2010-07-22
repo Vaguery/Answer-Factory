@@ -204,27 +204,27 @@
 					<div class="method-source-code"
 						id="process-source">
 <pre>
-    <span class="ruby-comment cmt"># File nudge/machine/split/split_score.rb, line 3</span>
- 3:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
- 4:       <span class="ruby-ivar">@split</span> <span class="ruby-operator">||=</span> [<span class="ruby-value">50</span>, <span class="ruby-value">50</span>]
- 5:       
- 6:       <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@score_name</span>
- 7:         <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">sort!</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">score</span>(<span class="ruby-ivar">@score_name</span>) <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">b</span>.<span class="ruby-identifier">score</span>(<span class="ruby-ivar">@score_name</span>) }
- 8:       <span class="ruby-keyword kw">else</span>
- 9:         <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">shuffle!</span>
-10:       <span class="ruby-keyword kw">end</span>
-11:       
-12:       <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">split_point</span> = <span class="ruby-ivar">@best_n</span>
-13:         <span class="ruby-identifier">a</span> = <span class="ruby-ivar">@split</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">to_f</span>
-14:         <span class="ruby-identifier">b</span> = <span class="ruby-ivar">@split</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_f</span>
-15:         <span class="ruby-identifier">split_point</span> = <span class="ruby-identifier">a</span> <span class="ruby-operator">/</span> (<span class="ruby-identifier">a</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">b</span>) * <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">length</span>
-16:       <span class="ruby-keyword kw">end</span>
-17:       
-18:       <span class="ruby-identifier">best</span> = <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">slice!</span>(<span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-identifier">split_point</span>)
-19:       
-20:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:best</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">best</span>,
-21:              <span class="ruby-value">:rest</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>
-22:     <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File nudge/machine/split/split_score.rb, line 4</span>
+ 4:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
+ 5:       <span class="ruby-ivar">@split</span> <span class="ruby-operator">||=</span> [<span class="ruby-value">50</span>, <span class="ruby-value">50</span>]
+ 6:       
+ 7:       <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@score_name</span>
+ 8:         <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">sort!</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">score</span>(<span class="ruby-ivar">@score_name</span>) <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">b</span>.<span class="ruby-identifier">score</span>(<span class="ruby-ivar">@score_name</span>) }
+ 9:       <span class="ruby-keyword kw">else</span>
+10:         <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">shuffle!</span>
+11:       <span class="ruby-keyword kw">end</span>
+12:       
+13:       <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">split_point</span> = <span class="ruby-ivar">@best_n</span>
+14:         <span class="ruby-identifier">a</span> = <span class="ruby-ivar">@split</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">to_f</span>
+15:         <span class="ruby-identifier">b</span> = <span class="ruby-ivar">@split</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_f</span>
+16:         <span class="ruby-identifier">split_point</span> = <span class="ruby-identifier">a</span> <span class="ruby-operator">/</span> (<span class="ruby-identifier">a</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">b</span>) * <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">length</span>
+17:       <span class="ruby-keyword kw">end</span>
+18:       
+19:       <span class="ruby-identifier">best</span> = <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">slice!</span>(<span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-identifier">split_point</span>)
+20:       
+21:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:best</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">best</span>,
+22:              <span class="ruby-value">:rest</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>
+23:     <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>

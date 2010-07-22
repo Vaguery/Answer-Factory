@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module MysqlAdapter
   Factory.extend MysqlAdapter
   
@@ -45,7 +46,7 @@ module MysqlAdapter
   
   def read_config
     result = select "SELECT text FROM configurations ORDER BY created_at DESC LIMIT 1"
-    return *result.fetch_row
+    result.fetch_row.first
   end
   
   def schedule_item (needed, unit, workstation)

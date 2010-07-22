@@ -204,31 +204,31 @@
 					<div class="method-source-code"
 						id="process-source">
 <pre>
-    <span class="ruby-comment cmt"># File nudge/machine/mutate/unfold_block.rb, line 3</span>
- 3:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
- 4:       <span class="ruby-identifier">created</span> = []
- 5:       
- 6:       <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
- 7:         <span class="ruby-identifier">tree</span> = <span class="ruby-constant">NudgePoint</span>.<span class="ruby-identifier">from</span>(<span class="ruby-identifier">parent</span>.<span class="ruby-identifier">blueprint</span>)
- 8:         
- 9:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">points</span> = <span class="ruby-identifier">tree</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-value">:@points</span>)
-10:           <span class="ruby-identifier">blocks</span> = []
-11:           
-12:           <span class="ruby-identifier">points</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">point</span>, <span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
-13:             <span class="ruby-identifier">blocks</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">point</span>, <span class="ruby-identifier">i</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">point</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">BlockPoint</span>)
-14:           <span class="ruby-keyword kw">end</span>
-15:           
-16:           <span class="ruby-identifier">block</span>, <span class="ruby-identifier">index</span> = <span class="ruby-identifier">blocks</span>.<span class="ruby-identifier">shuffle</span>.<span class="ruby-identifier">first</span>
-17:           
-18:           <span class="ruby-identifier">points</span>[<span class="ruby-identifier">index</span><span class="ruby-operator">..</span><span class="ruby-identifier">index</span>] = <span class="ruby-identifier">block</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-value">:@points</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block</span>
-19:         <span class="ruby-keyword kw">end</span>
-20:         
-21:         <span class="ruby-identifier">created</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Answer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">tree</span>.<span class="ruby-identifier">to_script</span>, <span class="ruby-value str">'nudge'</span>, <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">progress</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>)
-22:       <span class="ruby-keyword kw">end</span>
-23:       
-24:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:parents</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>,
-25:              <span class="ruby-value">:created</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">created</span>
-26:     <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File nudge/machine/mutate/unfold_block.rb, line 4</span>
+ 4:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
+ 5:       <span class="ruby-identifier">created</span> = []
+ 6:       
+ 7:       <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
+ 8:         <span class="ruby-identifier">tree</span> = <span class="ruby-constant">NudgePoint</span>.<span class="ruby-identifier">from</span>(<span class="ruby-identifier">parent</span>.<span class="ruby-identifier">blueprint</span>)
+ 9:         
+10:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">points</span> = <span class="ruby-identifier">tree</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-value">:@points</span>)
+11:           <span class="ruby-identifier">blocks</span> = []
+12:           
+13:           <span class="ruby-identifier">points</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">point</span>, <span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+14:             <span class="ruby-identifier">blocks</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">point</span>, <span class="ruby-identifier">i</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">point</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">BlockPoint</span>)
+15:           <span class="ruby-keyword kw">end</span>
+16:           
+17:           <span class="ruby-identifier">block</span>, <span class="ruby-identifier">index</span> = <span class="ruby-identifier">blocks</span>.<span class="ruby-identifier">shuffle</span>.<span class="ruby-identifier">first</span>
+18:           
+19:           <span class="ruby-identifier">points</span>[<span class="ruby-identifier">index</span><span class="ruby-operator">..</span><span class="ruby-identifier">index</span>] = <span class="ruby-identifier">block</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-value">:@points</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block</span>
+20:         <span class="ruby-keyword kw">end</span>
+21:         
+22:         <span class="ruby-identifier">created</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Answer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">tree</span>.<span class="ruby-identifier">to_script</span>, <span class="ruby-value str">'nudge'</span>, <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">progress</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>)
+23:       <span class="ruby-keyword kw">end</span>
+24:       
+25:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:parents</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>,
+26:              <span class="ruby-value">:created</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">created</span>
+27:     <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>

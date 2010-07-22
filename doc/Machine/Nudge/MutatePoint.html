@@ -204,37 +204,37 @@
 					<div class="method-source-code"
 						id="process-source">
 <pre>
-    <span class="ruby-comment cmt"># File nudge/machine/mutate/mutate_point.rb, line 3</span>
- 3:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
- 4:       <span class="ruby-ivar">@number_created</span> <span class="ruby-operator">||=</span> <span class="ruby-value">1</span>
- 5:       <span class="ruby-ivar">@nudge_writer</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">NudgeWriter</span>.<span class="ruby-identifier">new</span>
- 6:       
- 7:       <span class="ruby-identifier">created</span> = []
- 8:       
- 9:       <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
-10:         <span class="ruby-identifier">blueprint</span> = <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">blueprint</span>
-11:         <span class="ruby-identifier">progress</span> = <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">progress</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
-12:         
-13:         <span class="ruby-ivar">@number_created</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span>
-14:           <span class="ruby-identifier">tree</span> = <span class="ruby-constant">NudgePoint</span>.<span class="ruby-identifier">from</span>(<span class="ruby-identifier">blueprint</span>)
-15:           
-16:           <span class="ruby-identifier">n_of_mutation</span> = <span class="ruby-identifier">rand</span>(<span class="ruby-identifier">tree_points</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">tree</span>.<span class="ruby-identifier">points</span>)
-17:           
-18:           <span class="ruby-identifier">mutation</span> = <span class="ruby-constant">NudgePoint</span>.<span class="ruby-identifier">from</span>(<span class="ruby-ivar">@nudge_writer</span>.<span class="ruby-identifier">random</span>)
-19:           
-20:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n_of_mutation</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
-21:             <span class="ruby-identifier">tree</span> = <span class="ruby-identifier">mutation</span>
-22:           <span class="ruby-keyword kw">else</span>
-23:             <span class="ruby-identifier">tree</span>.<span class="ruby-identifier">replace_point_at</span>(<span class="ruby-identifier">n_of_mutation</span>, <span class="ruby-identifier">mutation</span>)
-24:           <span class="ruby-keyword kw">end</span>
-25:           
-26:           <span class="ruby-identifier">created</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Answer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">tree</span>.<span class="ruby-identifier">to_script</span>, <span class="ruby-value str">'nudge'</span>, <span class="ruby-identifier">progress</span>)
-27:         <span class="ruby-keyword kw">end</span>
-28:       <span class="ruby-keyword kw">end</span>
-29:       
-30:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:parents</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>,
-31:              <span class="ruby-value">:created</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">created</span>
-32:     <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File nudge/machine/mutate/mutate_point.rb, line 4</span>
+ 4:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
+ 5:       <span class="ruby-ivar">@number_created</span> <span class="ruby-operator">||=</span> <span class="ruby-value">1</span>
+ 6:       <span class="ruby-ivar">@nudge_writer</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">NudgeWriter</span>.<span class="ruby-identifier">new</span>
+ 7:       
+ 8:       <span class="ruby-identifier">created</span> = []
+ 9:       
+10:       <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">parent</span><span class="ruby-operator">|</span>
+11:         <span class="ruby-identifier">blueprint</span> = <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">blueprint</span>
+12:         <span class="ruby-identifier">progress</span> = <span class="ruby-identifier">parent</span>.<span class="ruby-identifier">progress</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
+13:         
+14:         <span class="ruby-ivar">@number_created</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span>
+15:           <span class="ruby-identifier">tree</span> = <span class="ruby-constant">NudgePoint</span>.<span class="ruby-identifier">from</span>(<span class="ruby-identifier">blueprint</span>)
+16:           
+17:           <span class="ruby-identifier">n_of_mutation</span> = <span class="ruby-identifier">rand</span>(<span class="ruby-identifier">tree_points</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">tree</span>.<span class="ruby-identifier">points</span>)
+18:           
+19:           <span class="ruby-identifier">mutation</span> = <span class="ruby-constant">NudgePoint</span>.<span class="ruby-identifier">from</span>(<span class="ruby-ivar">@nudge_writer</span>.<span class="ruby-identifier">random</span>)
+20:           
+21:           <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">n_of_mutation</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+22:             <span class="ruby-identifier">tree</span> = <span class="ruby-identifier">mutation</span>
+23:           <span class="ruby-keyword kw">else</span>
+24:             <span class="ruby-identifier">tree</span>.<span class="ruby-identifier">replace_point_at</span>(<span class="ruby-identifier">n_of_mutation</span>, <span class="ruby-identifier">mutation</span>)
+25:           <span class="ruby-keyword kw">end</span>
+26:           
+27:           <span class="ruby-identifier">created</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Answer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">tree</span>.<span class="ruby-identifier">to_script</span>, <span class="ruby-value str">'nudge'</span>, <span class="ruby-identifier">progress</span>)
+28:         <span class="ruby-keyword kw">end</span>
+29:       <span class="ruby-keyword kw">end</span>
+30:       
+31:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:parents</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>,
+32:              <span class="ruby-value">:created</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">created</span>
+33:     <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>

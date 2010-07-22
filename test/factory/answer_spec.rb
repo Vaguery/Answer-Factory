@@ -1,4 +1,5 @@
-require 'answer_factory'
+# encoding: UTF-8
+require File.expand_path("../../answer_factory", File.dirname(__FILE__))
 
 describe "Answer" do
   describe ".load (id: Integer, blueprint: String, language: String, progress: Integer)" do

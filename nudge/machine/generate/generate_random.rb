@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module Machine::Nudge
   class GenerateRandom < Machine
     def process (answers)

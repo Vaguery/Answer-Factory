@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module Machine::Nudge
   class FoldIntoBlock < Machine
     def process (answers)

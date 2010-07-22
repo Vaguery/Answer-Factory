@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require File.expand_path('../../answer_factory.rb', File.dirname(__FILE__))
 require 'yaml'
 

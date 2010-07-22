@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class Machine
   # call-seq:
   #   Machine.new (name: Symbol, w: Workstation) {|m| config } -> machine
@@ -65,10 +66,10 @@ class Machine
   #   machine.instance_variable_get(:@foo)  #=> 1
   # 
   def method_missing (method_name, *args)
-    symbol_id = method_name.to_i
+    method_string = method_name.to_s
     
-    if (symbol_id % 8) == 4
-      return instance_variable_set(:"@#{(symbol_id - 3).to_sym}", args[0])
+    if method_string[-1..-1] == "="
+      return instance_variable_set(:"@#{method_string[0...-1]}", args[0])
     end
     
     raise NoMethodError, "undefined method `#{method_name}' for #{self}"

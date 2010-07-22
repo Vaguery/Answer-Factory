@@ -204,28 +204,28 @@
 					<div class="method-source-code"
 						id="process-source">
 <pre>
-    <span class="ruby-comment cmt"># File nudge/machine/split/split_unique.rb, line 3</span>
- 3:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
- 4:       <span class="ruby-identifier">i</span> = <span class="ruby-value">0</span>
- 5:       <span class="ruby-identifier">unique_answers</span> = []
- 6:       
- 7:       <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">a</span> = <span class="ruby-identifier">answers</span>[<span class="ruby-identifier">i</span>]
- 8:         <span class="ruby-identifier">blueprint</span> = <span class="ruby-identifier">a</span>.<span class="ruby-identifier">blueprint</span>
- 9:         
-10:         <span class="ruby-identifier">unmatched</span> = <span class="ruby-identifier">unique_answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">b</span><span class="ruby-operator">|</span>
-11:           <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">b</span>.<span class="ruby-identifier">blueprint</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">blueprint</span>
-12:         <span class="ruby-keyword kw">end</span>
-13:         
-14:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">unmatched</span>
-15:           <span class="ruby-identifier">unique_answers</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">delete_at</span>(<span class="ruby-identifier">i</span>)
-16:         <span class="ruby-keyword kw">else</span>
-17:           <span class="ruby-identifier">i</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
-18:         <span class="ruby-keyword kw">end</span>
-19:       <span class="ruby-keyword kw">end</span>
-20:       
-21:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:best</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">unique_answers</span>,
-22:              <span class="ruby-value">:rest</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>
-23:     <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File nudge/machine/split/split_unique.rb, line 4</span>
+ 4:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
+ 5:       <span class="ruby-identifier">i</span> = <span class="ruby-value">0</span>
+ 6:       <span class="ruby-identifier">unique_answers</span> = []
+ 7:       
+ 8:       <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">a</span> = <span class="ruby-identifier">answers</span>[<span class="ruby-identifier">i</span>]
+ 9:         <span class="ruby-identifier">blueprint</span> = <span class="ruby-identifier">a</span>.<span class="ruby-identifier">blueprint</span>
+10:         
+11:         <span class="ruby-identifier">unmatched</span> = <span class="ruby-identifier">unique_answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">b</span><span class="ruby-operator">|</span>
+12:           <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">false</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">b</span>.<span class="ruby-identifier">blueprint</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">blueprint</span>
+13:         <span class="ruby-keyword kw">end</span>
+14:         
+15:         <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">unmatched</span>
+16:           <span class="ruby-identifier">unique_answers</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">delete_at</span>(<span class="ruby-identifier">i</span>)
+17:         <span class="ruby-keyword kw">else</span>
+18:           <span class="ruby-identifier">i</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+19:         <span class="ruby-keyword kw">end</span>
+20:       <span class="ruby-keyword kw">end</span>
+21:       
+22:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:best</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">unique_answers</span>,
+23:              <span class="ruby-value">:rest</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>
+24:     <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>

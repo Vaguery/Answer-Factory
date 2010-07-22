@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module Machine::Nudge
   class MutateValue < Machine
     def process (answers)

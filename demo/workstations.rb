@@ -1,3 +1,4 @@
+# encoding: UTF-8
 Factory::Log.disable = true
 
 nudge_writer = NudgeWriter.new do |writer|

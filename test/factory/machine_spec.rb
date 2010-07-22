@@ -1,4 +1,5 @@
-require 'answer_factory'
+# encoding: UTF-8
+require File.expand_path("../../answer_factory", File.dirname(__FILE__))
 
 describe "Machine" do
   describe ".new (name: Symbol, workstation: Workstation)" do

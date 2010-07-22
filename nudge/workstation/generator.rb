@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module Workstation::Nudge
   class Generator < Workstation
     attr_reader :generate_random

@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class Workstation
   # call-seq:
   #   Workstation.new (name: Symbol) {|w| config } -> workstation

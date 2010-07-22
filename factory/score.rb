@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class Score # :nodoc:
   # call-seq:
   #   Score.load (id: Integer, value: Float) -> score

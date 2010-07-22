@@ -204,17 +204,17 @@
 					<div class="method-source-code"
 						id="process-source">
 <pre>
-    <span class="ruby-comment cmt"># File nudge/machine/generate/generate_random.rb, line 3</span>
- 3:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
- 4:       <span class="ruby-ivar">@number_created</span> <span class="ruby-operator">||=</span> <span class="ruby-value">1</span>
- 5:       <span class="ruby-ivar">@nudge_writer</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">NudgeWriter</span>.<span class="ruby-identifier">new</span>
- 6:       
- 7:       <span class="ruby-identifier">created</span> = (<span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-ivar">@number_created</span>).<span class="ruby-identifier">collect</span> <span class="ruby-keyword kw">do</span>
- 8:         <span class="ruby-constant">Answer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@nudge_writer</span>.<span class="ruby-identifier">random</span>, <span class="ruby-value str">'nudge'</span>)
- 9:       <span class="ruby-keyword kw">end</span>
-10:       
-11:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:created</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">created</span>
-12:     <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File nudge/machine/generate/generate_random.rb, line 4</span>
+ 4:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
+ 5:       <span class="ruby-ivar">@number_created</span> <span class="ruby-operator">||=</span> <span class="ruby-value">1</span>
+ 6:       <span class="ruby-ivar">@nudge_writer</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">NudgeWriter</span>.<span class="ruby-identifier">new</span>
+ 7:       
+ 8:       <span class="ruby-identifier">created</span> = (<span class="ruby-value">0</span><span class="ruby-operator">...</span><span class="ruby-ivar">@number_created</span>).<span class="ruby-identifier">collect</span> <span class="ruby-keyword kw">do</span>
+ 9:         <span class="ruby-constant">Answer</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@nudge_writer</span>.<span class="ruby-identifier">random</span>, <span class="ruby-value str">'nudge'</span>)
+10:       <span class="ruby-keyword kw">end</span>
+11:       
+12:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:created</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">created</span>
+13:     <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>

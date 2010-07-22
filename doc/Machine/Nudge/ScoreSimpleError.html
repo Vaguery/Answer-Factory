@@ -206,22 +206,22 @@
 					<div class="method-source-code"
 						id="process-source">
 <pre>
-    <span class="ruby-comment cmt"># File nudge/machine/score/score_simple_error.rb, line 3</span>
- 3:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
- 4:       <span class="ruby-ivar">@score_name</span> <span class="ruby-operator">||=</span> <span class="ruby-value">:simple_error</span>
- 5:       <span class="ruby-ivar">@data_points</span> <span class="ruby-operator">||=</span> []
- 6:       
- 7:       <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">answer</span><span class="ruby-operator">|</span>
- 8:         <span class="ruby-identifier">exe</span> = <span class="ruby-constant">Executable</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">answer</span>.<span class="ruby-identifier">blueprint</span>)
- 9:         <span class="ruby-identifier">scores</span> = <span class="ruby-ivar">@data_points</span>.<span class="ruby-identifier">collect</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">data_point</span><span class="ruby-operator">|</span> <span class="ruby-identifier">score</span>(<span class="ruby-identifier">exe</span>, <span class="ruby-identifier">data_point</span>) }
-10:         
-11:         <span class="ruby-identifier">avg</span> = <span class="ruby-identifier">scores</span>.<span class="ruby-identifier">inject</span>(<span class="ruby-value">0.0</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">sum</span>,<span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-identifier">sum</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">n</span> } <span class="ruby-operator">/</span> <span class="ruby-identifier">scores</span>.<span class="ruby-identifier">length</span>
-12:         
-13:         <span class="ruby-identifier">answer</span>.<span class="ruby-identifier">score</span>(<span class="ruby-ivar">@score_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">avg</span>)
-14:       <span class="ruby-keyword kw">end</span>
-15:       
-16:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:scored</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>
-17:     <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File nudge/machine/score/score_simple_error.rb, line 4</span>
+ 4:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
+ 5:       <span class="ruby-ivar">@score_name</span> <span class="ruby-operator">||=</span> <span class="ruby-value">:simple_error</span>
+ 6:       <span class="ruby-ivar">@data_points</span> <span class="ruby-operator">||=</span> []
+ 7:       
+ 8:       <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">answer</span><span class="ruby-operator">|</span>
+ 9:         <span class="ruby-identifier">exe</span> = <span class="ruby-constant">Executable</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">answer</span>.<span class="ruby-identifier">blueprint</span>)
+10:         <span class="ruby-identifier">scores</span> = <span class="ruby-ivar">@data_points</span>.<span class="ruby-identifier">collect</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">data_point</span><span class="ruby-operator">|</span> <span class="ruby-identifier">score</span>(<span class="ruby-identifier">exe</span>, <span class="ruby-identifier">data_point</span>) }
+11:         
+12:         <span class="ruby-identifier">avg</span> = <span class="ruby-identifier">scores</span>.<span class="ruby-identifier">inject</span>(<span class="ruby-value">0.0</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">sum</span>,<span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-identifier">sum</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">n</span> } <span class="ruby-operator">/</span> <span class="ruby-identifier">scores</span>.<span class="ruby-identifier">length</span>
+13:         
+14:         <span class="ruby-identifier">answer</span>.<span class="ruby-identifier">score</span>(<span class="ruby-ivar">@score_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">avg</span>)
+15:       <span class="ruby-keyword kw">end</span>
+16:       
+17:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:scored</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>
+18:     <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>
@@ -252,10 +252,10 @@
 					<div class="method-source-code"
 						id="score-source">
 <pre>
-    <span class="ruby-comment cmt"># File nudge/machine/score/score_simple_error.rb, line 19</span>
-19:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">score</span> (<span class="ruby-identifier">executable</span>, <span class="ruby-identifier">data_point</span>)
-20:       <span class="ruby-value">0.0</span>
-21:     <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File nudge/machine/score/score_simple_error.rb, line 20</span>
+20:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">score</span> (<span class="ruby-identifier">executable</span>, <span class="ruby-identifier">data_point</span>)
+21:       <span class="ruby-constant">Factory</span><span class="ruby-operator">::</span><span class="ruby-constant">Infinity</span>
+22:     <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>

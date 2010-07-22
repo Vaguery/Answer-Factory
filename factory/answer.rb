@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class Answer
   # call-seq:
   #   Answer.new (blueprint: String, language: String) -> answer
@@ -15,6 +16,11 @@ class Answer
     @language = language.to_s
     @progress = progress.to_i
     @scores = {}
+    
+    if "".respond_to?(:force_encoding)
+      @blueprint.force_encoding("utf-8")
+      @language.force_encoding("utf-8")
+    end
   end
   
   # call-seq:

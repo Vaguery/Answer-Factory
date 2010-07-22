@@ -182,7 +182,10 @@
 		<h1 class="class">Machine</h1>
 
 		<div id="description">
-			
+			<p>
+encoding: UTF-8
+</p>
+
 		</div>
 
 		<!-- Constants -->
@@ -240,20 +243,20 @@ initialization, passing the newly created machine as its parameter.
 					<div class="method-source-code"
 						id="new-source">
 <pre>
-    <span class="ruby-comment cmt"># File factory/machine.rb, line 27</span>
-27:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span> (<span class="ruby-identifier">name</span>, <span class="ruby-identifier">workstation</span>)
-28:     <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>
-29:     <span class="ruby-ivar">@workstation</span> = <span class="ruby-identifier">workstation</span>
-30:     <span class="ruby-ivar">@path</span> = {}
-31:     
-32:     <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@workstation</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">Workstation</span>
-33:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;machine requires an instance of Workstation&quot;</span>
-34:     <span class="ruby-keyword kw">end</span>
-35:     
-36:     <span class="ruby-ivar">@workstation</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-value">:@machines</span>)[<span class="ruby-ivar">@name</span>] = <span class="ruby-keyword kw">self</span>
-37:     
-38:     <span class="ruby-keyword kw">yield</span> <span class="ruby-keyword kw">self</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
-39:   <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File factory/machine.rb, line 28</span>
+28:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span> (<span class="ruby-identifier">name</span>, <span class="ruby-identifier">workstation</span>)
+29:     <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span>
+30:     <span class="ruby-ivar">@workstation</span> = <span class="ruby-identifier">workstation</span>
+31:     <span class="ruby-ivar">@path</span> = {}
+32:     
+33:     <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@workstation</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">Workstation</span>
+34:       <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>, <span class="ruby-value str">&quot;machine requires an instance of Workstation&quot;</span>
+35:     <span class="ruby-keyword kw">end</span>
+36:     
+37:     <span class="ruby-ivar">@workstation</span>.<span class="ruby-identifier">instance_variable_get</span>(<span class="ruby-value">:@machines</span>)[<span class="ruby-ivar">@name</span>] = <span class="ruby-keyword kw">self</span>
+38:     
+39:     <span class="ruby-keyword kw">yield</span> <span class="ruby-keyword kw">self</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+40:   <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>
@@ -298,16 +301,16 @@ Creates an instance variable called @<tt>option_name</tt> and sets it to
 					<div class="method-source-code"
 						id="method-missing-source">
 <pre>
-    <span class="ruby-comment cmt"># File factory/machine.rb, line 67</span>
-67:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">method_missing</span> (<span class="ruby-identifier">method_name</span>, *<span class="ruby-identifier">args</span>)
-68:     <span class="ruby-identifier">symbol_id</span> = <span class="ruby-identifier">method_name</span>.<span class="ruby-identifier">to_i</span>
-69:     
-70:     <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">symbol_id</span> <span class="ruby-operator">%</span> <span class="ruby-value">8</span>) <span class="ruby-operator">==</span> <span class="ruby-value">4</span>
-71:       <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-value">:&quot;@#{(symbol_id - 3).to_sym}&quot;</span>, <span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>])
-72:     <span class="ruby-keyword kw">end</span>
-73:     
-74:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">NoMethodError</span>, <span class="ruby-node">&quot;undefined method `#{method_name}' for #{self}&quot;</span>
-75:   <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File factory/machine.rb, line 68</span>
+68:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">method_missing</span> (<span class="ruby-identifier">method_name</span>, *<span class="ruby-identifier">args</span>)
+69:     <span class="ruby-identifier">method_string</span> = <span class="ruby-identifier">method_name</span>.<span class="ruby-identifier">to_s</span>
+70:     
+71:     <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">method_string</span>[<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;=&quot;</span>
+72:       <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">instance_variable_set</span>(<span class="ruby-value">:&quot;@#{method_string[0...-1]}&quot;</span>, <span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>])
+73:     <span class="ruby-keyword kw">end</span>
+74:     
+75:     <span class="ruby-identifier">raise</span> <span class="ruby-constant">NoMethodError</span>, <span class="ruby-node">&quot;undefined method `#{method_name}' for #{self}&quot;</span>
+76:   <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>
@@ -347,10 +350,10 @@ Example:
 					<div class="method-source-code"
 						id="path-source">
 <pre>
-    <span class="ruby-comment cmt"># File factory/machine.rb, line 53</span>
-53:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">path</span>
-54:     <span class="ruby-ivar">@path</span>
-55:   <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File factory/machine.rb, line 54</span>
+54:   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">path</span>
+55:     <span class="ruby-ivar">@path</span>
+56:   <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>

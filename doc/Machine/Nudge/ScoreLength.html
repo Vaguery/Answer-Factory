@@ -204,16 +204,16 @@
 					<div class="method-source-code"
 						id="process-source">
 <pre>
-    <span class="ruby-comment cmt"># File nudge/machine/score/score_length.rb, line 3</span>
- 3:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
- 4:       <span class="ruby-ivar">@score_name</span> <span class="ruby-operator">||=</span> <span class="ruby-value">:length</span>
- 5:       
- 6:       <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">answer</span><span class="ruby-operator">|</span>
- 7:         <span class="ruby-identifier">answer</span>.<span class="ruby-identifier">score</span>(<span class="ruby-ivar">@score_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answer</span>.<span class="ruby-identifier">blueprint</span>.<span class="ruby-identifier">length</span>)
- 8:       <span class="ruby-keyword kw">end</span>
- 9:       
-10:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:scored</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>
-11:     <span class="ruby-keyword kw">end</span></pre>
+    <span class="ruby-comment cmt"># File nudge/machine/score/score_length.rb, line 4</span>
+ 4:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
+ 5:       <span class="ruby-ivar">@score_name</span> <span class="ruby-operator">||=</span> <span class="ruby-value">:length</span>
+ 6:       
+ 7:       <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">answer</span><span class="ruby-operator">|</span>
+ 8:         <span class="ruby-identifier">answer</span>.<span class="ruby-identifier">score</span>(<span class="ruby-ivar">@score_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answer</span>.<span class="ruby-identifier">blueprint</span>.<span class="ruby-identifier">length</span>)
+ 9:       <span class="ruby-keyword kw">end</span>
+10:       
+11:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:scored</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>
+12:     <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>

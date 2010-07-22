@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module Workstation::Nudge
   class Destroyer < Workstation
     attr_reader :destroy

@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class Factory
   class << Log = Object.new # :nodoc:
     Log.instance_eval do
