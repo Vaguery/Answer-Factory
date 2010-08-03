@@ -28,7 +28,9 @@ describe "Workstation" do
       workstation.should_receive(:setup)
       workstation.send(:initialize, :w)
     end
-    
+  end
+  
+  describe ".new (name: Symbol) {|workstation| config }" do
     it "executes the configuration block" do
       lambda { Workstation.new(:w) { raise "x" } }.should raise_error "x"
     end
