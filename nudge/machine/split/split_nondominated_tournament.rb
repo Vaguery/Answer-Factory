@@ -5,6 +5,10 @@ module Machine::Nudge
       @criteria ||= []
       @groups ||= 4
       
+      if answers.length == 0
+        return :best => [], :rest => []
+      end
+      
       group_size = (answers.length / @groups).ceil
       
       best = []
