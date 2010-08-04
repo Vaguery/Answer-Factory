@@ -87,12 +87,12 @@ require File.expand_path('init', File.dirname(__FILE__))
 Factory.zap
 FILE
 
-#File.chmod(???, migrate_path)
-#File.chmod(???, schedule_path)
-#File.chmod(???, start_path)
-#File.chmod(???, stop_path)
-#File.chmod(???, update_path)
-#File.chmod(???, zap_path)
+File.chmod(0755, migrate_path)
+File.chmod(0755, schedule_path)
+File.chmod(0755, start_path)
+File.chmod(0755, stop_path)
+File.chmod(0755, update_path)
+File.chmod(0755, zap_path)
 
 
 
