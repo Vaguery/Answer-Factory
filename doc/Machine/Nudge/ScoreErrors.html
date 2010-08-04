@@ -82,15 +82,6 @@
 		<div id="project-metadata">
 			
 			
-			<div id="fileindex-section" class="section project-section">
-				<h3 class="section-header">Files</h3>
-				<ul>
-				
-					<li class="file"><a href="../../demo/README.html">README</a></li>
-				
-				</ul>
-			</div>
-			
 
 			<div id="classindex-section" class="section project-section">
 				<h3 class="section-header">Class Index
@@ -135,6 +126,8 @@
 				
 					<li><a href="../../Machine/Nudge/SplitNondominated.html">Machine::Nudge::SplitNondominated</a></li>
 				
+					<li><a href="../../Machine/Nudge/SplitNondominatedTournament.html">Machine::Nudge::SplitNondominatedTournament</a></li>
+				
 					<li><a href="../../Machine/Nudge/SplitScore.html">Machine::Nudge::SplitScore</a></li>
 				
 					<li><a href="../../Machine/Nudge/SplitUnique.html">Machine::Nudge::SplitUnique</a></li>
@@ -154,8 +147,6 @@
 					<li><a href="../../Answer.html">Answer</a></li>
 				
 					<li><a href="../../MysqlAdapter.html">MysqlAdapter</a></li>
-				
-					<li><a href="../../Object.html">Object</a></li>
 				
 				</ul>
 				<div id="no-class-search-results" style="display: none;">No matching classes.</div>
@@ -209,8 +200,8 @@
  5:       <span class="ruby-ivar">@score_name</span> <span class="ruby-operator">||=</span> <span class="ruby-value">:errors</span>
  6:       
  7:       <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">answer</span><span class="ruby-operator">|</span>
- 8:         <span class="ruby-identifier">outcome</span> = <span class="ruby-constant">Executable</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">answer</span>.<span class="ruby-identifier">blueprint</span>).<span class="ruby-identifier">run</span>
- 9:         <span class="ruby-identifier">answer</span>.<span class="ruby-identifier">score</span>(<span class="ruby-ivar">@score_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">outcome</span>.<span class="ruby-identifier">stacks</span>[<span class="ruby-value">:error</span>].<span class="ruby-identifier">length</span>)
+ 8:         <span class="ruby-identifier">exe</span> = <span class="ruby-constant">NudgeExecutable</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">answer</span>.<span class="ruby-identifier">blueprint</span>).<span class="ruby-identifier">run</span>
+ 9:         <span class="ruby-identifier">answer</span>.<span class="ruby-identifier">score</span>(<span class="ruby-ivar">@score_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exe</span>.<span class="ruby-identifier">stacks</span>[<span class="ruby-value">:error</span>].<span class="ruby-identifier">length</span>)
 10:       <span class="ruby-keyword kw">end</span>
 11:       
 12:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:scored</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>

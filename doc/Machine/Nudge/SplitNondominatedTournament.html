@@ -5,7 +5,7 @@
 <head>
 	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
 
-	<title>Class: Machine::Nudge::ScoreSimpleError</title>
+	<title>Class: Machine::Nudge::SplitNondominatedTournament</title>
 
 	<link rel="stylesheet" href="../../rdoc.css" type="text/css" media="screen" />
 
@@ -38,8 +38,8 @@
 				<div class="section-body">
 					<ul>
 					
-						<li><a href="../../nudge/machine/score/score_simple_error_rb.html?TB_iframe=true&amp;height=550&amp;width=785"
-							class="thickbox" title="nudge/machine/score/score_simple_error.rb">nudge/machine/score/score_simple_error.rb</a></li>
+						<li><a href="../../nudge/machine/split/split_nondominated_tournament_rb.html?TB_iframe=true&amp;height=550&amp;width=785"
+							class="thickbox" title="nudge/machine/split/split_nondominated_tournament.rb">nudge/machine/split/split_nondominated_tournament.rb</a></li>
 					
 					</ul>
 				</div>
@@ -70,8 +70,6 @@
 				<ul class="link-list">
 					
 					<li><a href="#method-i-process">#process</a></li>
-					
-					<li><a href="#method-i-score">#score</a></li>
 					
 				</ul>
 			</div>
@@ -159,7 +157,7 @@
 	</div>
 
 	<div id="documentation">
-		<h1 class="class">Machine::Nudge::ScoreSimpleError</h1>
+		<h1 class="class">Machine::Nudge::SplitNondominatedTournament</h1>
 
 		<div id="description">
 			
@@ -197,56 +195,31 @@
 					<div class="method-source-code"
 						id="process-source">
 <pre>
-    <span class="ruby-comment cmt"># File nudge/machine/score/score_simple_error.rb, line 4</span>
+    <span class="ruby-comment cmt"># File nudge/machine/split/split_nondominated_tournament.rb, line 4</span>
  4:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">process</span> (<span class="ruby-identifier">answers</span>)
- 5:       <span class="ruby-ivar">@score_name</span> <span class="ruby-operator">||=</span> <span class="ruby-value">:simple_error</span>
- 6:       <span class="ruby-ivar">@data_points</span> <span class="ruby-operator">||=</span> []
+ 5:       <span class="ruby-ivar">@criteria</span> <span class="ruby-operator">||=</span> []
+ 6:       <span class="ruby-ivar">@groups</span> <span class="ruby-operator">||=</span> <span class="ruby-value">4</span>
  7:       
- 8:       <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">answer</span><span class="ruby-operator">|</span>
- 9:         <span class="ruby-identifier">exe</span> = <span class="ruby-constant">NudgeExecutable</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">answer</span>.<span class="ruby-identifier">blueprint</span>)
-10:         <span class="ruby-identifier">scores</span> = (<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">5</span>).<span class="ruby-identifier">collect</span> { <span class="ruby-identifier">score</span>(<span class="ruby-identifier">exe</span>, <span class="ruby-identifier">random_point</span>) }
-11:         
-12:         <span class="ruby-identifier">avg</span> = <span class="ruby-identifier">scores</span>.<span class="ruby-identifier">inject</span>(<span class="ruby-value">0.0</span>) {<span class="ruby-operator">|</span><span class="ruby-identifier">sum</span>,<span class="ruby-identifier">n</span><span class="ruby-operator">|</span> <span class="ruby-identifier">sum</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">n</span> } <span class="ruby-operator">/</span> <span class="ruby-identifier">scores</span>.<span class="ruby-identifier">length</span>
-13:         
-14:         <span class="ruby-identifier">answer</span>.<span class="ruby-identifier">score</span>(<span class="ruby-ivar">@score_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">avg</span>)
-15:       <span class="ruby-keyword kw">end</span>
-16:       
-17:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:scored</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>
-18:     <span class="ruby-keyword kw">end</span></pre>
-					</div>
-					
-				</div>
-
-				
-
-				
-			</div>
-
-		
-			<div id="score-method" class="method-detail ">
-				<a name="method-i-score"></a>
-
-				<div class="method-heading">
-				
-					<span class="method-name">score</span><span
-						class="method-args">(executable, data_point)</span>
-					<span class="method-click-advice">click to toggle source</span>
-				
-				</div>
-
-				<div class="method-description">
-					
-					
-					
-
-					
-					<div class="method-source-code"
-						id="score-source">
-<pre>
-    <span class="ruby-comment cmt"># File nudge/machine/score/score_simple_error.rb, line 20</span>
-20:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">score</span> (<span class="ruby-identifier">executable</span>, <span class="ruby-identifier">data_point</span>)
-21:       <span class="ruby-constant">Factory</span><span class="ruby-operator">::</span><span class="ruby-constant">Infinity</span>
-22:     <span class="ruby-keyword kw">end</span></pre>
+ 8:       <span class="ruby-identifier">group_size</span> = (<span class="ruby-identifier">answers</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">/</span> <span class="ruby-ivar">@groups</span>).<span class="ruby-identifier">ceil</span>
+ 9:       
+10:       <span class="ruby-identifier">best</span> = []
+11:       <span class="ruby-identifier">rest</span> = []
+12:       
+13:       <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each_slice</span>(<span class="ruby-identifier">group_size</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">group</span><span class="ruby-operator">|</span>
+14:         <span class="ruby-identifier">group</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span>
+15:           <span class="ruby-identifier">nondominated</span> = <span class="ruby-keyword kw">true</span>
+16:           
+17:           <span class="ruby-identifier">group</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">b</span><span class="ruby-operator">|</span>
+18:             <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">nondominated</span> <span class="ruby-operator">&amp;&amp;=</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">nondominated_vs?</span>(<span class="ruby-identifier">b</span>, <span class="ruby-ivar">@criteria</span>)
+19:           <span class="ruby-keyword kw">end</span>
+20:           
+21:           (<span class="ruby-identifier">nondominated</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">best</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">rest</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">a</span>
+22:         <span class="ruby-keyword kw">end</span>
+23:       <span class="ruby-keyword kw">end</span>
+24:       
+25:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:best</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">best</span>,
+26:              <span class="ruby-value">:rest</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">rest</span>
+27:     <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>
