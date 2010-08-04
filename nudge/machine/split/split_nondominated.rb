@@ -11,21 +11,7 @@ module Machine::Nudge
         nondominated = true
         
         answers.each do |b|
-          nondominated_vs_b = true
-          
-          @criteria.each do |score_name|
-            a_score = a.score(score_name)
-            b_score = b.score(score_name)
-            
-            if a_score < b_score
-              nondominated_vs_b = true
-              break
-            elsif nondominated_vs_b
-              nondominated_vs_b &&= (a_score == b_score)
-            end
-          end
-          
-          break unless nondominated &&= nondominated_vs_b
+          break unless nondominated &&= a.nondominated_vs?(b)
         end
         
         indices_of_best << index if nondominated

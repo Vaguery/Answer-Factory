@@ -96,6 +96,27 @@ class Answer
     end
   end
   
+  # call-seq: 
+  #   answer.nondominated_vs? (other: Answer, criteria: [name: Symbol, *]) -> true or false
+  # 
+  def nondominated_vs? (other, criteria)
+    nondominated_vs_other = true
+    
+    criteria.each do |score_name|
+      self_score = self.score(score_name)
+      other_score = other.score(score_name)
+      
+      if self_score < other_score
+        nondominated_vs_other = true
+        break
+      elsif nondominated_vs_other
+        nondominated_vs_other &&= (self_score == other_score)
+      end
+    end
+    
+    nondominated_vs_other
+  end
+  
   # 
   # 
   # 
