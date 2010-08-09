@@ -5,17 +5,14 @@ nudge_writer = NudgeWriter.new do |writer|
   writer.weight = {:block => 5, :do => 5, :ref => 1, :value => 2}
   writer.ref_names = %w:x:
   writer.value_types = [:int]
-  writer.do_instructions = :int_add, :int_subtract, :int_multiply
+  writer.do_instructions = :int_abs,:int_add,:int_depth,:int_divide,:int_duplicate,:int_equal?,:int_flush,:int_greater_than?,:int_if,:int_less_than?,:int_max,:int_min,:int_modulo,:int_multiply,:int_negative,:int_pop,:int_rotate,:int_shove,:int_subtract,:int_swap,:int_yank,:int_yankdup
 end
 
 def f (x)
   (90 * x * x * x * x * x) - (135 * x * x * x * x) + (180 * x * x * x) - (225 * x * x) + (270 * x) - 315
 end
 
-data_points = {:x => -1000, :y => f(-1000)},
-              {:x => 0, :y => f(0)},
-              {:x => 1, :y => f(1)},
-              {:x => 1000, :y => f(1000)}
+data_points = [-100,-10,-3,-2,-1,0,1,2,4,7,11,32,61,112].collect  {|r| {:x => r, :y => f(r)}}
 
 Workstation::Nudge::Generator.new(:generator) do |w|
   w.generate_random.number_created = 10
@@ -85,7 +82,7 @@ Workstation.new(:breeder) do |w|
   end
   
   Machine::Nudge::SplitNondominated.new(:split_nondominated, w) do |m|
-    m.criteria = :length, :simple_error
+    m.criteria = [:simple_error]
     
     m.path[:best] = :breeder
     m.path[:rest] = :discard
