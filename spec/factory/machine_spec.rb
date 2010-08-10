@@ -36,7 +36,9 @@ describe "Machine" do
       
       workstation.instance_variable_get(:@machines).should == {:m => machine}
     end
-    
+  end
+  
+  describe ".new (name: Symbol, workstation: Workstation) {|machine| config }" do
     it "executes the configuration block" do
       workstation = Workstation.new(:w)
       lambda { Machine.new(:m, workstation) { raise "x" } }.should raise_error "x"

@@ -6,7 +6,7 @@ module Machine::Nudge
       @data_points ||= []
       
       answers.each do |answer|
-        exe = Executable.new(answer.blueprint)
+        exe = NudgeExecutable.new(answer.blueprint)
         scores = @data_points.collect {|data_point| score(exe, data_point) }
         
         avg = scores.inject(0.0) {|sum,n| sum + n } / scores.length

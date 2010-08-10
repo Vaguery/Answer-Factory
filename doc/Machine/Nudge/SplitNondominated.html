@@ -82,15 +82,6 @@
 		<div id="project-metadata">
 			
 			
-			<div id="fileindex-section" class="section project-section">
-				<h3 class="section-header">Files</h3>
-				<ul>
-				
-					<li class="file"><a href="../../demo/README.html">README</a></li>
-				
-				</ul>
-			</div>
-			
 
 			<div id="classindex-section" class="section project-section">
 				<h3 class="section-header">Class Index
@@ -135,6 +126,8 @@
 				
 					<li><a href="../../Machine/Nudge/SplitNondominated.html">Machine::Nudge::SplitNondominated</a></li>
 				
+					<li><a href="../../Machine/Nudge/SplitNondominatedTournament.html">Machine::Nudge::SplitNondominatedTournament</a></li>
+				
 					<li><a href="../../Machine/Nudge/SplitScore.html">Machine::Nudge::SplitScore</a></li>
 				
 					<li><a href="../../Machine/Nudge/SplitUnique.html">Machine::Nudge::SplitUnique</a></li>
@@ -154,8 +147,6 @@
 					<li><a href="../../Answer.html">Answer</a></li>
 				
 					<li><a href="../../MysqlAdapter.html">MysqlAdapter</a></li>
-				
-					<li><a href="../../Object.html">Object</a></li>
 				
 				</ul>
 				<div id="no-class-search-results" style="display: none;">No matching classes.</div>
@@ -215,33 +206,19 @@
 11:         <span class="ruby-identifier">nondominated</span> = <span class="ruby-keyword kw">true</span>
 12:         
 13:         <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">b</span><span class="ruby-operator">|</span>
-14:           <span class="ruby-identifier">nondominated_vs_b</span> = <span class="ruby-keyword kw">true</span>
-15:           
-16:           <span class="ruby-ivar">@criteria</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">score_name</span><span class="ruby-operator">|</span>
-17:             <span class="ruby-identifier">a_score</span> = <span class="ruby-identifier">a</span>.<span class="ruby-identifier">score</span>(<span class="ruby-identifier">score_name</span>)
-18:             <span class="ruby-identifier">b_score</span> = <span class="ruby-identifier">b</span>.<span class="ruby-identifier">score</span>(<span class="ruby-identifier">score_name</span>)
-19:             
-20:             <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">a_score</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">b_score</span>
-21:               <span class="ruby-identifier">nondominated_vs_b</span> = <span class="ruby-keyword kw">true</span>
-22:               <span class="ruby-keyword kw">break</span>
-23:             <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">nondominated_vs_b</span>
-24:               <span class="ruby-identifier">nondominated_vs_b</span> <span class="ruby-operator">&amp;&amp;=</span> (<span class="ruby-identifier">a_score</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">b_score</span>)
-25:             <span class="ruby-keyword kw">end</span>
-26:           <span class="ruby-keyword kw">end</span>
-27:           
-28:           <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">nondominated</span> <span class="ruby-operator">&amp;&amp;=</span> <span class="ruby-identifier">nondominated_vs_b</span>
-29:         <span class="ruby-keyword kw">end</span>
-30:         
-31:         <span class="ruby-identifier">indices_of_best</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">index</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">nondominated</span>
-32:       <span class="ruby-keyword kw">end</span>
-33:       
-34:       <span class="ruby-identifier">indices_of_best</span>.<span class="ruby-identifier">reverse</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
-35:         <span class="ruby-identifier">best</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">delete_at</span>(<span class="ruby-identifier">i</span>)
-36:       <span class="ruby-keyword kw">end</span>
-37:       
-38:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:best</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">best</span>,
-39:              <span class="ruby-value">:rest</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>
-40:     <span class="ruby-keyword kw">end</span></pre>
+14:           <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">nondominated</span> <span class="ruby-operator">&amp;&amp;=</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">nondominated_vs?</span>(<span class="ruby-identifier">b</span>)
+15:         <span class="ruby-keyword kw">end</span>
+16:         
+17:         <span class="ruby-identifier">indices_of_best</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">index</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">nondominated</span>
+18:       <span class="ruby-keyword kw">end</span>
+19:       
+20:       <span class="ruby-identifier">indices_of_best</span>.<span class="ruby-identifier">reverse</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+21:         <span class="ruby-identifier">best</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">answers</span>.<span class="ruby-identifier">delete_at</span>(<span class="ruby-identifier">i</span>)
+22:       <span class="ruby-keyword kw">end</span>
+23:       
+24:       <span class="ruby-keyword kw">return</span> <span class="ruby-value">:best</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">best</span>,
+25:              <span class="ruby-value">:rest</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">answers</span>
+26:     <span class="ruby-keyword kw">end</span></pre>
 					</div>
 					
 				</div>

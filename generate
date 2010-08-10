@@ -1,0 +1,141 @@
+#!/usr/bin/env ruby
+# encoding: UTF-8
+
+factory_dir_path = File.expand_path("../Factories", File.dirname(__FILE__))
+factory_path = File.join(factory_dir_path, ARGV[0])
+
+Dir.mkdir(factory_dir_path) unless File.directory?(factory_dir_path)
+Dir.mkdir(factory_path)
+
+
+
+command_path = File.join(factory_path, "command")
+init_rb_path = File.join(command_path, "init.rb")
+migrate_path = File.join(command_path, "migrate")
+schedule_path = File.join(command_path, "schedule")
+start_path = File.join(command_path, "start")
+stop_path = File.join(command_path, "stop")
+update_path = File.join(command_path, "update")
+zap_path = File.join(command_path, "zap")
+
+Dir.mkdir(command_path)
+
+File.open(init_rb_path, 'w').write <<-FILE
+# encoding: UTF-8
+require File.expand_path('../../../AnswerFactory/answer_factory.rb', File.dirname(__FILE__))
+require File.expand_path('../../../Nudge/nudge', File.dirname(__FILE__))
+
+Dir.glob(File.expand_path("../nudge/*/*.rb", File.dirname(__FILE__))) {|file| require file }
+Dir.glob(File.expand_path("../nudge/*/*/*.rb", File.dirname(__FILE__))) {|file| require file }
+
+require 'yaml'
+
+file = File.expand_path('../config/database.yaml', File.dirname(__FILE__))
+Factory.database YAML.parser.load(File.read(file))
+FILE
+
+File.open(migrate_path, 'w').write <<-FILE
+#!/usr/bin/env ruby
+# encoding: UTF-8
+require File.expand_path('init', File.dirname(__FILE__))
+
+Factory.migrate
+FILE
+
+File.open(schedule_path, 'w').write <<-FILE
+#!/usr/bin/env ruby
+# encoding: UTF-8
+require File.expand_path('init', File.dirname(__FILE__))
+
+file = File.expand_path('../config/schedule.yaml', File.dirname(__FILE__))
+Factory.schedule YAML.parser.load(File.read(file))
+FILE
+
+File.open(start_path, 'w').write <<-FILE
+#!/usr/bin/env ruby
+# encoding: UTF-8
+require File.expand_path('init', File.dirname(__FILE__))
+
+file = File.expand_path('../config/workstations.rb', File.dirname(__FILE__))
+Factory.config File.read(file)
+
+Factory::Log.run("Factory.run", Factory)
+FILE
+
+File.open(stop_path, 'w').write <<-FILE
+#!/usr/bin/env ruby
+# encoding: UTF-8
+require File.expand_path('init', File.dirname(__FILE__))
+
+Factory.config "exit"
+FILE
+
+File.open(update_path, 'w').write <<-FILE
+#!/usr/bin/env ruby
+# encoding: UTF-8
+require File.expand_path('init', File.dirname(__FILE__))
+
+file = File.expand_path('../config/workstations.rb', File.dirname(__FILE__))
+Factory.config File.read(file)
+FILE
+
+File.open(zap_path, 'w').write <<-FILE
+#!/usr/bin/env ruby
+# encoding: UTF-8
+require File.expand_path('init', File.dirname(__FILE__))
+
+Factory.zap
+FILE
+
+File.chmod(0755, migrate_path)
+File.chmod(0755, schedule_path)
+File.chmod(0755, start_path)
+File.chmod(0755, stop_path)
+File.chmod(0755, update_path)
+File.chmod(0755, zap_path)
+
+
+
+config_path = File.join(factory_path, "config")
+schedule_yaml_path = File.join(config_path, "schedule.yaml")
+database_yaml_path = File.join(config_path, "database.yaml")
+workstations_rb_path = File.join(config_path, "workstations.rb")
+
+Dir.mkdir(config_path)
+
+File.open(database_yaml_path, 'w').write <<-FILE
+adapter: mysql
+host: 127.0.0.1
+name: #{ARGV[0].downcase}_factory
+user: root
+password:
+FILE
+
+File.open(schedule_yaml_path, 'w').write <<-FILE
+- workstation_1
+- workstation_2
+FILE
+
+File.open(workstations_rb_path, 'w').write <<-FILE
+# encoding: UTF-8
+FILE
+
+
+
+nudge_path = File.join(factory_path, "nudge")
+instructions_path = File.join(nudge_path, "instructions")
+machines_path = File.join(nudge_path, "machines")
+values_path = File.join(nudge_path, "values")
+workstations_path = File.join(nudge_path, "workstations")
+
+Dir.mkdir(nudge_path)
+Dir.mkdir(instructions_path)
+Dir.mkdir(machines_path)
+Dir.mkdir(values_path)
+Dir.mkdir(workstations_path)
+
+
+
+resources_path = File.join(factory_path, "resources")
+
+Dir.mkdir(resources_path)

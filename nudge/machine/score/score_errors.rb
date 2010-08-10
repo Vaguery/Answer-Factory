@@ -5,8 +5,8 @@ module Machine::Nudge
       @score_name ||= :errors
       
       answers.each do |answer|
-        outcome = Executable.new(answer.blueprint).run
-        answer.score(@score_name => outcome.stacks[:error].length)
+        exe = NudgeExecutable.new(answer.blueprint).run
+        answer.score(@score_name => exe.stacks[:error].length)
       end
       
       return :scored => answers
