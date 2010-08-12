@@ -59,7 +59,7 @@ describe "Machine" do
       workstation = Workstation.new(:w)
       machine = Machine.new(:m, workstation)
       
-      workstation.should_receive(:dump).with(:m)
+      workstation.should_receive(:dump).with(:m).and_return([])
       machine.stub!(:process).and_return({})
       
       machine.run
@@ -70,6 +70,7 @@ describe "Machine" do
       machine = Machine.new(:m, workstation)
       answers = [mock(:answers)]
       
+      answers.stub!(:length).and_return(0)
       workstation.stub!(:dump).and_return(answers)
       
       machine.should_receive(:process).with(answers).and_return({})
@@ -84,6 +85,7 @@ describe "Machine" do
       
       machine.path[:path] = :w, :n
       
+      answers.stub!(:length).and_return(0)
       workstation.stub!(:dump).and_return(answers)
       machine.stub!(:process).and_return({:path => answers})
       
