@@ -29,6 +29,8 @@ class Machine
     @name = name.to_sym
     @workstation = workstation
     @path = {}
+    @total_answers_in = 0
+    @total_answers_out = Hash.new {|hash,key| hash[key] = 0 }
     
     unless @workstation.is_a? Workstation
       raise ArgumentError, "machine requires an instance of Workstation"
@@ -84,11 +86,22 @@ class Machine
   # 
   def run # :nodoc:
     input_answers = @workstation.dump(@name)
+    
+    @total_answers_in += input_answers.length
+    
     output_hash = process(input_answers)
     
     output_hash.each do |path_name, output_answers|
+      @total_answers_out[path_name] += output_answers.length
       @workstation.reassign(output_answers, *@path[path_name])
     end
+  end
+  
+  # 
+  # 
+  # 
+  def average_gain (path_name)
+    @total_answers_out[path_name] / @total_answers_in.to_f
   end
   
   # 

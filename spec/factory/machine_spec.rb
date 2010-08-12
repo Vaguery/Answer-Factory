@@ -68,7 +68,7 @@ describe "Machine" do
     it "processes the dumped answers" do
       workstation = Workstation.new(:w)
       machine = Machine.new(:m, workstation)
-      answers = mock(:answers)
+      answers = [mock(:answers)]
       
       workstation.stub!(:dump).and_return(answers)
       
@@ -90,6 +90,17 @@ describe "Machine" do
       workstation.should_receive(:reassign).with(answers, :w, :n)
       
       machine.run
+    end
+  end
+  
+  describe "#average_gain (path_name: Symbol)" do
+    it "divides the #total_answers_out for this path by total_answers_in" do
+      workstation = Workstation.new(:w)
+      machine = Machine.new(:m, workstation)
+      
+      machine.instance_variable_set(:@total_answers_in, 100)
+      machine.instance_variable_set(:@total_answers_out,{foo:172})
+      machine.average_gain(:foo).should == 1.72
     end
   end
   
