@@ -43,6 +43,6 @@ Then /^the workstation should assign (\d+) Answers to :([a-zA-Z_]+)$/ do |how_ma
 end
 
 
-Then /^the flow meter in :([a-zA-Z_]+) should read "([^"]*)"$/ do |machine, reading|
-  @machines[machine.intern].flow_meter.should == reading.to_f
+Then /^the average gain in :([a-zA-Z_]+) for :([a-zA-Z_]+) should read "([^"]*)"$/ do |machine, pathname, reading|
+  @machines[machine.intern].average_gain(pathname.intern).should == reading.to_f
 end

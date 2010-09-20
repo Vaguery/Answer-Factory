@@ -9,11 +9,13 @@ module Machine::Nudge
         return :best => [], :rest => []
       end
       
-      group_size = (answers.length / @groups).ceil
+      group_size = (answers.length.to_f / @groups).ceil
+      puts "group_size = #{group_size}"
       
       best = []
       rest = []
       
+      answers.shuffle!
       answers.each_slice(group_size) do |group|
         group.each do |a|
           nondominated = true

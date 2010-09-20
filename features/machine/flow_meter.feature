@@ -1,4 +1,4 @@
-Feature: Flow meter
+Feature: Average gain
   In order to control the dynamics of answers flowing through the Factory
   As a manager
   I want to know how many answers go into and out of a machine per step
@@ -12,6 +12,6 @@ Feature: Flow meter
     And there are 100 Answers in :the_machine
     When I run :the_machine
     Then the workstation should assign 200 Answers to :the_other_machine
-    And the flow meter in :the_machine should read "2.0" 
+    And the average gain in :the_machine for :the_path should read "2.0" 
   
   
