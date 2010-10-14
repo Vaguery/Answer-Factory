@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class SplitInfiniteScores < Machine
+class SplitFiniteScores < Machine
   def criteria (*score_names)
     @criteria = score_names.collect {|name| name.to_sym }
   end
