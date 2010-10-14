@@ -1,47 +1,40 @@
 # encoding: UTF-8
 class Factory
-  class << self
-    undef new
+  def Factory.setup (&config)
+    @workstations = {}
+    @schedule = []
     
-    def database (options)
-      require File.expand_path("../database/#{options['adapter']}_adapter", File.dirname(__FILE__))
-      set_database(options)
-    end
+    Factory.instance_eval(&config)
+  end
+  
+  def Factory.database (options)
+    require File.expand_path("../built-in/adapters/#{options['adapter']}", File.dirname(__FILE__))
+    extend const_get("#{options['adapter'].capitalize}Adapter")
+    Factory.set_database(options)
+  end
+  
+  def Factory.workstation (workstation_name, class_name = :Workstation, &config)
+    workstation = const_get(class_name).new(workstation_name, &config)
     
-    def config (text)
-      save_config(text)
-    end
+    @workstations[workstation_name.to_sym] = workstation
+    @schedule << workstation_name.to_sym
+  end
+  
+  def Factory.schedule (*workstation_names)
+    @schedule = workstation_names.collect {|name| name.to_sym }
+  end
+  
+  def Factory.run
+    # self.check
     
-    def schedule (items)
-      clear_schedule
-      
-      items.each do |item|
-        case item
-          when Hash
-            key, value = item.first
-            
-            case value
-              when /([0-9]+)x/              then schedule_item($1.to_i, "x", key)
-              when /([0-9]+(?:\.[0-9]+)?)s/ then schedule_item($1.to_f, "s", key)
-              when /([0-9]+(?:\.[0-9]+)?)m/ then schedule_item($1.to_f * 60, "s", key)
-              when /([0-9]+(?:\.[0-9]+)?)h/ then schedule_item($1.to_f * 60 * 60, "s", key)
-            end
-          
-          when String, Symbol               then schedule_item(1, "x", item)
-        end
-      end
-    end
-    
-    def run
-      loop do
-        Object.instance_eval(read_config)
-        next_item {|name| Factory::Log.run(name, Factory::Workstations[name]) }
+    loop do
+      @schedule.each do |workstation_name|
+        @workstations[workstation_name].run
       end
     end
   end
   
-  Workstations = {}
-  
-  MachineNotCreated = Class.new(StandardError)
-  MachineMissing = Class.new(StandardError)
+  def Factory.score (answers, scorer_class)
+    scorer_class.new(answers).score
+  end
 end
