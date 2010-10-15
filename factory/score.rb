@@ -5,9 +5,7 @@ class Score
     @value = value.to_f
     @answer_id = answer_id.to_i
     
-    if "".respond_to?(:force_encoding)
-      @name.force_encoding("utf-8")
-    end
+    @name.force_encoding("utf-8") if "".respond_to?(:force_encoding)
   end
   
   def id

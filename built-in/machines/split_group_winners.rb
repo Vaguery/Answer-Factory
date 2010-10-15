@@ -1,11 +1,11 @@
 # encoding: UTF-8
-class SplitNondominated < Machine
+class SplitGroupWinners < Machine
   def criteria (*score_names)
     @criteria = score_names
   end
   
-  def layers (n)
-    @layers = n
+  def group_size (n)
+    @group_size = n
   end
   
   def maximum (n)
@@ -14,30 +14,24 @@ class SplitNondominated < Machine
   
   def process_answers
     @criteria ||= []
-    @layers ||= 1
+    @group_size ||= 10
     
     best = []
-    rest = answers.shuffle
+    rest = []
     
-    @layers.times do
-      indices_of_best = []
-      
-      rest.each_with_index do |a, index|
+    answers.shuffle.each_slice(@group_size) do |group|
+      group.each do |a|
         nondominated = true
         
-        answers.each do |b|
+        group.each do |b|
           break unless nondominated &&= a.nondominated_vs?(b, @criteria)
         end
         
-        indices_of_best << index if nondominated
+        (nondominated ? best : rest) << a
       end
-      
-      indices_of_best.reverse.each do |i|
-        best << rest.delete_at(i)
-      end
-    end
+    end unless @group_size == 0
     
-    if @maximum && best.shuffle!.length > @maximum
+    if @maximum && best.length > @maximum
       rest.concat best.slice!(@maximum..-1)
     end
     

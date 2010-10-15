@@ -1,14 +1,11 @@
 # encoding: UTF-8
 class Answer
-  def initialize (blueprint, language)
-    @blueprint = blueprint.to_s
-    @language = language.to_s
+  def initialize (blueprint)
+    @blueprint = blueprint
+    @language = blueprint.language
     @scores = {}
     
-    if "".respond_to?(:force_encoding)
-      @blueprint.force_encoding("utf-8")
-      @language.force_encoding("utf-8")
-    end
+    @blueprint.force_encoding("utf-8") if "".respond_to?(:force_encoding)
   end
   
   def blueprint

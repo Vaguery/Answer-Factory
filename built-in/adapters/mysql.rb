@@ -45,7 +45,7 @@ module MysqlAdapter
     answers = []
     
     while row = result.fetch_row
-      answer = Answer.new(row[1], row[2])
+      answer = Answer.new(const_get("#{row[2]}Blueprint").new(row[1]))
       answer.instance_variable_set(:@id, row[0])
       answers << answer
     end
@@ -70,7 +70,7 @@ module MysqlAdapter
     while row = result.fetch_row
       # add an answer if the row contains an answer that hasn't been seen
       if row[0] != last_seen_answer_id
-        answer = Answer.new(row[1], row[2])
+        answer = Answer.new(const_get("#{row[2]}Blueprint").new(row[1]))
         answer.instance_variable_set(:@id, last_seen_answer_id = row[0])
         answers << answer
       end
