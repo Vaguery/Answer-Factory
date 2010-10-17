@@ -4,6 +4,10 @@ class NudgeBlueprint < Blueprint
     :Nudge
   end
   
+  def points
+    NudgePoint.from(self).points
+  end
+  
   def blending_crossover (other)
     tree_a = NudgePoint.from(self)
     tree_b = NudgePoint.from(other)
@@ -112,7 +116,7 @@ class NudgeBlueprint < Blueprint
         blocks << [point, i] if point.is_a?(BlockPoint)
       end
       
-      block, index = blocks.shuffle.first
+      block, index = blocks.sample
       
       points[index..index] = block.instance_variable_get(:@points) if block
     end

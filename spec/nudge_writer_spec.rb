@@ -55,115 +55,124 @@ describe "NudgeWriter" do
   
   describe ".new {|writer| config }" do
     it "executes the configuration block" do
+      pending
       lambda { NudgeWriter.new { raise "x" } }.should raise_error "x"
     end
   end
   
-  describe "#do_instructions= (*instruction_names: [Symbol, *])" do
+  describe "#use_instructions (*instruction_names: [Symbol, *])" do
     it "sets @do_instructions" do
       writer = NudgeWriter.new
-      writer.do_instructions = [:int_add, :int_subtract]
+      writer.use_instructions(:int_add, :int_subtract)
       
       writer.instance_variable_get(:@do_instructions).should == [:int_add, :int_subtract]
     end
     
     it "disallows keyword instruction names" do
       writer = NudgeWriter.new
-      writer.do_instructions = [:int_add, :block, :do, :ref, :value]
+      writer.use_instructions :int_add, :block, :do, :ref, :value
       
       writer.instance_variable_get(:@do_instructions).should == [:int_add]
     end
   end
   
-  describe "#ref_names= (*ref_names: [Symbol, *])" do
+  describe "#use_refs (*ref_names: [Symbol, *])" do
     it "sets @ref_names" do
       writer = NudgeWriter.new
-      writer.ref_names = [:x, :y]
+      writer.use_refs :x, :y
       
       writer.instance_variable_get(:@ref_names).should == [:x, :y]
     end
     
     it "disallows keyword ref names" do
       writer = NudgeWriter.new
-      writer.ref_names = [:x, :block, :do, :ref, :value]
+      writer.use_refs :x, :block, :do, :ref, :value
       
       writer.instance_variable_get(:@ref_names).should == [:x]
     end
   end
   
-  describe "#value_types= (*value_types: [Symbol, *])" do
+  describe "#use_random_values (*value_types: [Symbol, *])" do
     it "sets @value_types" do
       writer = NudgeWriter.new
-      writer.value_types = [:int, :float]
+      writer.use_random_values :int, :float
       
       writer.instance_variable_get(:@value_types).should == [:int, :float]
     end
     
     it "disallows keyword value types" do
       writer = NudgeWriter.new
-      writer.value_types = [:int, :block, :do, :ref, :value]
+      writer.use_random_values :int, :block, :do, :ref, :value
       
       writer.instance_variable_get(:@value_types).should == [:int]
     end
     
     it "disallows :name, :exec, and :error value types" do
       writer = NudgeWriter.new
-      writer.value_types = [:int, :name, :exec, :error]
+      writer.use_random_values :int, :name, :exec, :error
       
       writer.instance_variable_get(:@value_types).should == [:int]
     end
   end
   
-  describe "#weight= (weight: Hash)" do
+  describe "#weight (weight: Hash)" do
     it "sets @block probability range" do
       writer = NudgeWriter.new
-      writer.weight = {:block => 10, :do => 30, :ref => 20, :value => 40}
+      writer.weight( block:10, do:30, ref:20, value:40 )
       
       writer.instance_variable_get(:@block).should == (0...0.1)
     end
     
     it "sets @do probability range" do
       writer = NudgeWriter.new
-      writer.weight = {:block => 10, :do => 30, :ref => 20, :value => 40}
+      writer.weight( block:10, do:30, ref:20, value:40 )
       
       writer.instance_variable_get(:@do).should == (0.1...0.4)
     end
     
     it "sets @ref probability range" do
       writer = NudgeWriter.new
-      writer.weight = {:block => 10, :do => 30, :ref => 20, :value => 40}
+      writer.weight( block:10, do:30, ref:20, value:40 )
       
       writer.instance_variable_get(:@ref).should == (0.4...0.6)
     end
+    
+    it "assumes any unspecified key has value 1" do
+      pending "needs validation"
+    end
+    
+    it "ignores any keys not in [:block, :do, :ref, :value]" do
+      pending "needs validation"
+    end
   end
   
-  describe "#float_range= (range: Range)" do
+  describe "#float_range (range: Range)" do
     it "sets @min_float" do
       writer = NudgeWriter.new
-      writer.float_range = 50..10
+      writer.float_range 50..10
       
       writer.instance_variable_get(:@min_float).should == 10
     end
     
     it "sets @max_float" do
       writer = NudgeWriter.new
-      writer.float_range = 5..10
+      writer.float_range 5..10
       
       writer.instance_variable_get(:@max_float).should == 10
     end
   end
   
-  describe "#int_range= (range: Range)" do
+  describe "#int_range (range: Range)" do
     it "sets @min_float" do
       writer = NudgeWriter.new
-      writer.int_range = 50..10
+      writer.int_range 50..10
       
       writer.instance_variable_get(:@min_int).should == 10
     end
     
     it "sets @max_float" do
       writer = NudgeWriter.new
-      writer.int_range = 5..10
+      writer.int_range 5..10
       
       writer.instance_variable_get(:@max_int).should == 10
     end
@@ -185,4 +194,39 @@ describe "NudgeWriter" do
       point.instance_variable_get(:@value_type).should == :int
     end
   end
+  
+  describe "values" do
+    describe ":int defaults" do
+      it "should be an :int in the range given, inclusive" do
+        pending
+      end
+    end
+    
+    describe ":float defaults" do
+      it "should be an :float in the range given, inclusive" do
+        pending
+      end
+    end
+    
+    describe ":bool defaults" do
+      it "should be a coin flip" do
+        pending
+      end
+    end
+    
+    describe ":code defaults" do
+      it "should be a recursive call" do
+        pending
+      end
+    end
+    
+    describe ":proportion defaults" do
+      it "should be a :proportion in the range given, inclusive" do
+        pending
+      end
+    end
+    
+    
+  end
+  
 end

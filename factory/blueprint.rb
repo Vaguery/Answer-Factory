@@ -4,6 +4,10 @@ class Blueprint < String
     :""
   end
   
+  def points
+    0
+  end
+  
   def blending_crossover (other)
     self
   end
