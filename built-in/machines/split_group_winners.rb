@@ -1,11 +1,11 @@
 # encoding: UTF-8
-class SplitNondominatedTournament < Machine
+class SplitGroupWinners < Machine
   def criteria (*score_names)
     @criteria = score_names
   end
   
-  def groups (n)
-    @groups = n
+  def group_size (n)
+    @group_size = n
   end
   
   def maximum (n)
@@ -14,14 +14,12 @@ class SplitNondominatedTournament < Machine
   
   def process_answers
     @criteria ||= []
-    @groups ||= 4
-    
-    group_size = (answers.length / @groups.to_f).ceil
+    @group_size ||= 10
     
     best = []
     rest = []
     
-    answers.shuffle.each_slice(group_size) do |group|
+    answers.shuffle.each_slice(@group_size) do |group|
       group.each do |a|
         nondominated = true
         
@@ -31,7 +29,7 @@ class SplitNondominatedTournament < Machine
         
         (nondominated ? best : rest) << a
       end
-    end unless group_size == 0
+    end unless @group_size == 0
     
     if @maximum && best.length > @maximum
       rest.concat best.slice!(@maximum..-1)

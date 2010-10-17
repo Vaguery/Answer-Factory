@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class NudgeWriter
+class NudgeWriter < Writer
   def initialize
     @footnotes_needed = []
     
@@ -11,14 +11,23 @@ class NudgeWriter
     use_refs :x1, :x2, :x3, :x4, :x5, :x6, :x7, :x8, :x9, :x10
     use_random_values *([:bool, :code, :float, :int, :proportion] + NudgeValue::TYPES.keys)
     
-    weight({:block => 1, :do => 1, :ref => 1, :value => 1})
+    weight block: 1, do: 1, ref: 1, value: 1
     float_range(-100..100)
     int_range(-100..100)
     
     setup
   end
   
-  def setup
+  def language
+    :Nudge
+  end
+  
+  def random
+    NudgeBlueprint.new("#{generate_block(@block_depth)}\n#{generate_footnotes}")
+  end
+  
+  def random_value (value_type)
+    "#{generate_value(value_type)}\n#{generate_footnotes}"
   end
   
   def block_width (n)
@@ -70,16 +79,6 @@ class NudgeWriter
   def int_range (range)
     @min_int, @max_int = [range.begin, range.end].sort
   end
-  
-  def random
-    "#{generate_block(@block_depth)}\n#{generate_footnotes}"
-  end
-  
-  def random_value (value_type)
-    "#{generate_value(value_type)}\n#{generate_footnotes}"
-  end
-  
-  private
   
   def generate_block (remaining_depth)
     points = (0...@block_width).collect do

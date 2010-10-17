@@ -29,6 +29,16 @@ class Machine
     @answers
   end
   
+  def answers_keyed_by_language
+    hash = Hash.new {|h,k| h[k] = [] }
+    
+    @answers.each do |answer|
+      hash[answer.language] << answer
+    end
+    
+    hash
+  end
+  
   def run
     @answers = Factory.load_answers(@location, @load_scores)
     

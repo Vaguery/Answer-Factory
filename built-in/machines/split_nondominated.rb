@@ -4,27 +4,44 @@ class SplitNondominated < Machine
     @criteria = score_names
   end
   
+  def layers (n)
+    @layers = n
+  end
+  
+  def maximum (n)
+    @maximum = n
+  end
+  
   def process_answers
     @criteria ||= []
+    @layers ||= 1
     
     best = []
-    indices_of_best = []
+    rest = answers.shuffle
     
-    answers.shuffle!.each_with_index do |a, index|
-      nondominated = true
+    @layers.times do
+      indices_of_best = []
       
-      answers.each do |b|
-        break unless nondominated &&= a.nondominated_vs?(b, @criteria)
+      rest.each_with_index do |a, index|
+        nondominated = true
+        
+        answers.each do |b|
+          break unless nondominated &&= a.nondominated_vs?(b, @criteria)
+        end
+        
+        indices_of_best << index if nondominated
       end
       
-      indices_of_best << index if nondominated
+      indices_of_best.reverse.each do |i|
+        best << rest.delete_at(i)
+      end
     end
     
-    indices_of_best.reverse.each do |i|
-      best << answers.delete_at(i)
+    if @maximum && best.shuffle!.length > @maximum
+      rest.concat best.slice!(@maximum..-1)
     end
     
     return :best => best,
-           :rest => answers
+           :rest => rest
   end
 end

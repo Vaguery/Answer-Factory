@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class GenerateRandomNudgeAnswer < Machine
+class GenerateRandomAnswers < Machine
   def create (n)
     @number_to_create = n
   end
@@ -10,10 +10,12 @@ class GenerateRandomNudgeAnswer < Machine
   
   def process_answers
     @number_to_create ||= 1
-    @writer ||= NudgeWriter.new
+    @writer ||= Writer.new
     
-    created = (0...@number_to_create).collect do
-      Answer.new(@writer.random, 'nudge')
+    created = []
+    
+    @number_to_create.times do
+      created << Answer.new(@writer.random)
     end
     
     return :created => created
