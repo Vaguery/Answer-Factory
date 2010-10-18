@@ -53,13 +53,6 @@ describe "NudgeWriter" do
     end
   end
   
-  describe ".new {|writer| config }" do
-    it "executes the configuration block" do
-      pending
-      lambda { NudgeWriter.new { raise "x" } }.should raise_error "x"
-    end
-  end
-  
   describe "#use_instructions (*instruction_names: [Symbol, *])" do
     it "sets @do_instructions" do
       writer = NudgeWriter.new
@@ -137,12 +130,17 @@ describe "NudgeWriter" do
       writer.instance_variable_get(:@ref).should == (0.4...0.6)
     end
     
-    it "assumes any unspecified key has value 1" do
-      pending "needs validation"
+    it "assumes any unspecified key has value 0" do
+      writer = NudgeWriter.new
+      writer.weight(do:2, ref:2, value:3)
+      
+      writer.instance_variable_get(:@block).should == (0.0...0.0)
     end
     
-    it "ignores any keys not in [:block, :do, :ref, :value]" do
-      pending "needs validation"
+    it "ignores any key-value pairs for keys not in [:block, :do, :ref, :value]" do
+      writer = NudgeWriter.new
+      lambda{writer.weight(block:2, do:2, ref:2, value:2, foo:8)}.should_not raise_error
+      writer.instance_variable_get(:@do).should == (0.25...0.5)
     end
   end
   
@@ -198,35 +196,66 @@ describe "NudgeWriter" do
   describe "values" do
     describe ":int defaults" do
       it "should be an :int in the range given, inclusive" do
-        pending
+        writer = NudgeWriter.new
+        writer.int_range 123...456
+        writer.generate_value(:int)
+        Random.should_receive(:rand).with(333.0)
+        writer.generate_footnotes
+      end
+      
+      it "should handle 0-width ranges" do
+        writer = NudgeWriter.new
+        writer.int_range 123...123
+        writer.generate_value(:int)
+        Random.should_receive(:rand).with(0.0).and_return(0.5)
+        writer.generate_footnotes.should match(/123$/)
       end
     end
     
     describe ":float defaults" do
       it "should be an :float in the range given, inclusive" do
-        pending
+        writer = NudgeWriter.new
+        writer.float_range 123...456
+        writer.generate_value(:float)
+        Random.should_receive(:rand).with(no_args()).and_return(0.0)
+        writer.generate_footnotes.should match(/123.0$/)
+      end
+      
+      it "should handle 0-width ranges" do
+        writer = NudgeWriter.new
+        writer.float_range 0.333...0.333
+        writer.generate_value(:float)
+        Random.should_receive(:rand).with(no_args()).and_return(0.123)
+        writer.generate_footnotes.should match(/0.333$/)
       end
     end
     
     describe ":bool defaults" do
       it "should be a coin flip" do
-        pending
+        writer = NudgeWriter.new
+        writer.generate_value(:bool)
+        Random.should_receive(:rand).with(no_args()).and_return(0.1)
+        writer.generate_footnotes.should match(/true$/)
       end
     end
     
     describe ":code defaults" do
-      it "should be a recursive call" do
-        pending
+      it "should invoke a recursive call to #generate_block" do
+        writer = NudgeWriter.new
+        writer.generate_value(:code)
+        writer.should_receive(:generate_block).with(any_args())
+        writer.generate_footnotes
       end
     end
     
     describe ":proportion defaults" do
-      it "should be a :proportion in the range given, inclusive" do
-        pending
+      it "should be a :proportion you get when you call Random.rand()" do
+        writer = NudgeWriter.new
+        writer.generate_value(:proportion)
+        Random.should_receive(:rand).with(no_args()).and_return(0.0)
+        writer.generate_footnotes
       end
     end
-    
-    
   end
   
 end

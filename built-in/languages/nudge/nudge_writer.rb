@@ -109,10 +109,10 @@ class NudgeWriter < Writer
     
     while value_type = @footnotes_needed.pop
       value_string = case value_type
-        when :bool       then rand < 0.5
-        when :float      then rand * (@max_float - @min_float).to_f + @min_float
-        when :int        then rand(@max_int - @min_int).to_i + @min_int
-        when :proportion then rand
+        when :bool       then Random.rand < 0.5
+        when :float      then Random.rand * (@max_float - @min_float).to_f + @min_float
+        when :int        then Random.rand(@max_int - @min_int).to_i + @min_int
+        when :proportion then Random.rand
         when :code
           @code_type_switch.delete(:code) unless (@code_recursion -= 1) >= 0
           generate_block(@block_depth)
