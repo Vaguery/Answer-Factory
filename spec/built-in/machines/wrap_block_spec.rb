@@ -13,7 +13,7 @@ describe "#process_answers" do
   before(:each) do
     Factory.stub!(:save_answers)
     @spec_machine = WrapBlock.new(:here)
-    @dummy_answer = Answer.new(NudgeBlueprint.new("block{ do foo do bar do baz}"))
+    @dummy_answer = Answer.new(NudgeBlueprint.new("block{do foo do bar do baz}"))
   end
   
   
@@ -25,7 +25,7 @@ describe "#process_answers" do
     
     output_hash = @spec_machine.process_answers
     
-    # by convention, result is {path_for_originals: some_answers, path_for_new_ones: new_answers}
+    # by convention, result is {path_for_originals: old_answers, path_for_new_ones: new_answers}
     (output_hash.values[0].length * 7).should == output_hash.values[1].length
   end
   
@@ -40,7 +40,6 @@ describe "#process_answers" do
       exactly(3).times.and_return(NudgeBlueprint.new("nothing"))
     
     output_hash = @spec_machine.process_answers
-    # by convention, result is {path_for_originals: some_answers, path_for_new_ones: new_answers}
   end
   
   
@@ -49,6 +48,8 @@ describe "#process_answers" do
       at_least(1).times.and_return([@dummy_answer])
     
     output_hash = @spec_machine.process_answers
+    
+    # by convention, result is {path_for_originals: old_answers, path_for_new_ones: new_answers}
     output_hash.values[0].should include(@dummy_answer)
     output_hash.values[1].should_not include(@dummy_answer)
   end
@@ -60,6 +61,7 @@ describe "#process_answers" do
     @spec_machine.should_receive(:answers).
       at_least(1).times.and_return([@dummy_answer])
     output_hash = @spec_machine.process_answers
-    output_hash.values[1].each {|answer| answer.blueprint.should_not match_script(@dummy_answer.blueprint)}
+    output_hash.values[1].each {|answer| answer.blueprint.
+      should_not match_script(@dummy_answer.blueprint)}
   end
 end

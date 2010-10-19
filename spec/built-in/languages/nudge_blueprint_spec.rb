@@ -56,12 +56,41 @@ describe "blending_crossover" do
 end
 
 
+describe "#delete_n_points_at_random" do
+  it "should remove 1 point at random from large trees" do
+    mom = NudgeBlueprint.new("block { ref a ref b ref c}") # 4 points
+    Random.should_receive(:rand).with(3).and_return(0)
+    mom.delete_n_points_at_random(1).should match_script("block { ref b ref c }")
+  end
+  
+  it "should delete the root of 1-point programs and return an empty block" do
+    pending "broken"
+    mom = NudgeBlueprint.new("ref a")
+    mom.delete_n_points_at_random(1).should match_script("block {}") # not a NilPoint
+  end
+  
+  it "should be robust to over-deletion by returning an empty block if everything goes" do
+    pending "broken"
+    mom = NudgeBlueprint.new("block { ref a ref b ref c}")
+    mom.delete_n_points_at_random(12).should match_script("block {}") # not a NilPoint
+  end
+  
+  it "should update the point count between iterations of deletion" do
+    mom = NudgeBlueprint.new("block { block {ref b ref c} ref a}")
+    Random.should_receive(:rand).with(4).and_return(1)
+    Random.should_receive(:rand).with(3).and_return(0)
+      # to work, this needs to re-count points between iterations
+    
+    mom.delete_n_points_at_random(2).should match_script("block {ref a}")
+  end
+end
+
+
 describe "#wrap_block" do
   it "should wrap the root for all 1-point programs" do
     pending "broken"
     NudgeBlueprint.new("do a").wrap_block.should match_script("block { do a }")
     NudgeBlueprint.new("block {}").wrap_block.should match_script("block { block {} }")
-    
   end
   
   it "should [appear to] wrap the root for all 2-point programs" do
