@@ -130,7 +130,8 @@ class NudgeBlueprint < Blueprint
     if points = tree.instance_variable_get(:@points)
       block_start, block_end = [Random.rand(points.length), Random.rand(points.length)].sort
       
-      unless block_start == block_end
+      if block_start == block_end
+      else
         block = BlockPoint.new(*points.slice!(block_start..block_end))
         points[block_start...block_start] = block
       end

@@ -54,3 +54,29 @@ describe "blending_crossover" do
     mom.blending_crossover(dad).should =~ /((FIRP|DING)\s){2}/
   end
 end
+
+
+describe "#wrap_block" do
+  it "should wrap the root for all 1-point programs" do
+    pending "broken"
+    NudgeBlueprint.new("do a").wrap_block.should match_script("block { do a }")
+    NudgeBlueprint.new("block {}").wrap_block.should match_script("block { block {} }")
+    
+  end
+  
+  it "should [appear to] wrap the root for all 2-point programs" do
+    pending "broken"
+    NudgeBlueprint.new("block {do a}").wrap_block.should match_script("block {block { do a }}")
+  end
+  
+  it "should sometimes wrap some or all of the top level for 3+ point programs" do
+    pending "broken"
+    # stub Random.rand appropriately
+    NudgeBlueprint.new("block {do a do b}").wrap_block.should match_script("block {block {do a do b}}")
+    # stub Random.rand appropriately
+    NudgeBlueprint.new("block {do a do b}").wrap_block.should match_script("block {block {do a} do b}")
+    # stub Random.rand appropriately
+    NudgeBlueprint.new("block {do a do b}").wrap_block.should match_script("block {do a block {do b}}")
+  end
+  
+end
