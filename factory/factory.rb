@@ -18,6 +18,7 @@ class Factory
     
     @workstations[workstation_name.to_sym] = workstation
     @schedule << workstation_name.to_sym
+    workstation
   end
   
   def Factory.schedule (*workstation_names)
