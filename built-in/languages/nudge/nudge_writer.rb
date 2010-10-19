@@ -82,7 +82,7 @@ class NudgeWriter < Writer
   
   def generate_block (remaining_depth)
     points = (0...@block_width).collect do
-      case rand
+      case Random.rand
         when @block then generate_block(remaining_depth - 1) if remaining_depth > 0
         when @do    then "do #{@do_instructions.shuffle.first}"
         when @ref   then "ref #{@ref_names.shuffle.first}"
