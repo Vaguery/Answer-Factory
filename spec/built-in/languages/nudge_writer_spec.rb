@@ -177,9 +177,16 @@ describe "NudgeWriter" do
   end
   
   describe "#random" do
-    it "returns a valid Nudge script" do
-      script = NudgeWriter.new.random
-      NudgePoint.from(script).should_not be_a NilPoint
+    it "should use the settings specified elsewhere" do
+      pending "what needs to be specced?"
+      boring_writer = NudgeWriter.new
+      boring_writer.block_width 10
+      boring_writer.block_depth 0
+      boring_writer.int_range 13...13
+      boring_writer.use_instructions :float_add
+      boring_writer.use_refs :t66
+      boring_writer.use_random_values :int
+      puts boring_writer.random
     end
   end
   
