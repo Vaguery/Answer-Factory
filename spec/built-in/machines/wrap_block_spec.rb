@@ -13,7 +13,7 @@ describe "#process_answers" do
   before(:each) do
     Factory.stub!(:save_answers)
     @spec_machine = WrapBlock.new(:here)
-    @dummy_answer = Answer.new(NudgeBlueprint.new("block{ do foo do bar}"))
+    @dummy_answer = Answer.new(NudgeBlueprint.new("block{ do foo do bar do baz}"))
   end
   
   
@@ -51,5 +51,15 @@ describe "#process_answers" do
     output_hash = @spec_machine.process_answers
     output_hash.values[0].should include(@dummy_answer)
     output_hash.values[1].should_not include(@dummy_answer)
+  end
+  
+  
+  it "should always modify the blueprints of the answers it makes" do
+    pending "broken in NudgeBlueprint#wrap_block"
+    @spec_machine.create 100
+    @spec_machine.should_receive(:answers).
+      at_least(1).times.and_return([@dummy_answer])
+    output_hash = @spec_machine.process_answers
+    output_hash.values[1].each {|answer| answer.blueprint.should_not match_script(@dummy_answer.blueprint)}
   end
 end
