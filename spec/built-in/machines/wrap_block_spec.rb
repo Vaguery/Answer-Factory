@@ -30,7 +30,7 @@ describe "#process_answers" do
   end
   
   
-  it "should call the [Language].wrap_block method for each original answer" do
+  it "should call the [Language].wrap_block method once for each original answer" do
     @spec_machine.create 3
     
     @spec_machine.should_receive(:answers).
