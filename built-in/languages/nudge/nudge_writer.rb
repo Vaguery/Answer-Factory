@@ -90,7 +90,7 @@ class NudgeWriter < Writer
       end
     end
     
-    points.length > 1 ? ["block {", points.compact, "}"].join(" ") : points
+    points.length > 1 ? ["block {", points.compact, "}"].join(" ") : points[0]
   end
   
   def generate_value (value_type = nil)

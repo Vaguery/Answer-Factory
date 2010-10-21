@@ -11,40 +11,67 @@ describe NudgeWriter do
   end
   
   describe "block depth" do
-    it "defaults to 5" do
-      @writer.instance_variable_get("@block_depth").should == 5
+    it "is ignored if block width is 1" do
+      @writer.block_depth(15)
+      @writer.block_width(1)
+      @writer.use_instructions :int_add
+      
+      Random.should_receive(:rand).and_return(0,0,0.25)
+      
+      @writer.random.should == "do int_add\n"
+    end
+  end
+  
+  describe "block depth" do
+    before(:each) do
+      @writer.block_width(2)
+      @writer.use_instructions :int_add
+    end
+    
+    it "defaults to 5" do      
+      Random.should_receive(:rand).exactly(12).times.and_return(0, 0, 0, 0, 0, 0.25)
+      @writer.random.should == "block { block { block { block { block { block { do int_add do int_add } do int_add } do int_add } do int_add } do int_add } do int_add }\n"
     end
     
     it "is set with block_depth" do
-      @writer.block_depth(10)
-      @writer.instance_variable_get("@block_depth").should == 10
+      Random.should_receive(:rand).exactly(14).times.and_return(0, 0, 0, 0, 0, 0, 0.25)
+      
+      @writer.block_depth(6)
+      @writer.random.should == "block { block { block { block { block { block { block { do int_add do int_add } do int_add } do int_add } do int_add } do int_add } do int_add } do int_add }\n"
     end
   end
   
   describe "block width" do
+    before(:each) do
+      @writer.block_depth(1)
+      @writer.use_instructions :int_add
+    end
+        
     it "defaults to 5" do
-      @writer.instance_variable_get("@block_width").should == 5
+      Random.should_receive(:rand).exactly(5).times.and_return(0.25)
+      @writer.random.should == "block { do int_add do int_add do int_add do int_add do int_add }\n"
     end
     
-    it "is set with block_depth" do
-      @writer.block_width(10)
-      @writer.instance_variable_get("@block_width").should == 10
+    it "is set with block_width" do
+      @writer.block_width(6)
+      Random.should_receive(:rand).exactly(6).times.and_return(0.25)
+      @writer.random.should == "block { do int_add do int_add do int_add do int_add do int_add do int_add }\n"
     end
   end
   
   describe "code recursion depth" do
     it "defaults to 5" do
-      @writer.instance_variable_get("@code_recursion").should == 5
+      pending
     end
     
     it "is set with block_depth" do
+      pending
       @writer.code_recursion(10)
-      @writer.instance_variable_get("@code_recursion").should == 10
     end
   end
   
   describe "core language construct weights for block generation" do
-    it "defaults to equal weight for each construct" do
+    it "default to equal weight for each construct" do
       @writer.block_width(1)
       @writer.use_instructions :int_add
       @writer.use_refs :y
@@ -54,10 +81,10 @@ describe NudgeWriter do
       # 0: block call
       # 0.25 recursive generate_block from block call
       Random.should_receive(:rand).and_return(0, 0.25, 0.25, 0.5, 0.75)
-      @writer.generate_block(1).should == [["do int_add"]]
-      @writer.generate_block(1).should == ["do int_add"]
-      @writer.generate_block(1).should == ["ref y"]
-      @writer.generate_block(1).should == ["value «float»"]
+      @writer.generate_block(1).should == "do int_add"
+      @writer.generate_block(1).should == "do int_add"
+      @writer.generate_block(1).should == "ref y"
+      @writer.generate_block(1).should == "value «float»"
     end
     
     it "can be set with weight method" do
@@ -76,57 +103,49 @@ describe NudgeWriter do
       # 0: block call
       # 0.2 recursive generate_block call from block call
       Random.should_receive(:rand).and_return(0, 0.2, 0.2, 0.6, 0.8)
-      @writer.generate_block(1).should == [["do int_add"]]
-      @writer.generate_block(1).should == ["do int_add"]
-      @writer.generate_block(1).should == ["ref y"]
-      @writer.generate_block(1).should == ["value «float»"]
+      @writer.generate_block(1).should == "do int_add"
+      @writer.generate_block(1).should == "do int_add"
+      @writer.generate_block(1).should == "ref y"
+      @writer.generate_block(1).should == "value «float»"
     end
   end
   
   describe "float range" do
     it 'defaults to -100 to 100' do
-      @writer.instance_variable_get("@min_float").should == -100
-      @writer.instance_variable_get("@max_float").should == 100
+      pending
     end
     
     it 'can be set to a range' do
-      @writer.float_range(-10..5)
-      @writer.instance_variable_get("@min_float").should == -10
-      @writer.instance_variable_get("@max_float").should == 5
+      pending
     end
     
     it 'can be set to a range in reverse order' do
-      @writer.float_range(5..-10)
-      @writer.instance_variable_get("@min_float").should == -10
-      @writer.instance_variable_get("@max_float").should == 5
+      pending
     end
   end
   
   describe "int range" do
     it 'defaults to -100 to 100' do
-      @writer.instance_variable_get("@min_int").should == -100
-      @writer.instance_variable_get("@max_int").should == 100
+      pending
     end
     
     it 'can be set to a range' do
-      @writer.int_range(-10..5)
-      @writer.instance_variable_get("@min_int").should == -10
-      @writer.instance_variable_get("@max_int").should == 5
+      pending
     end
     
     it 'can be set to a range in reverse order' do
-      @writer.int_range(5..-10)
-      @writer.instance_variable_get("@min_int").should == -10
-      @writer.instance_variable_get("@max_int").should == 5
+      pending
     end
   end
 
   describe "available reference names" do    
     it "defaults to x1 through x10" do
+      pending
       @writer.instance_variable_get("@ref_names").should == [:x1, :x2, :x3, :x4, :x5, :x6, :x7, :x8, :x9, :x10]
     end
     
     it "are set with use_refs" do
+      pending
       @writer.use_refs :y5, :image
       @writer.instance_variable_get("@ref_names").should == [:y5, :image]
     end
