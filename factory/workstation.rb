@@ -15,6 +15,7 @@ class Workstation
     
     @machines[machine_name.to_sym] = machine
     @schedule << machine_name.to_sym
+    machine
   end
   
   def setup

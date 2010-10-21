@@ -1,5 +1,6 @@
 # encoding: UTF-8
 class Machine
+  class SomeError < StandardError;end
   def initialize (location, &config)
     @location = location.to_s
     @routes = {}

@@ -82,7 +82,7 @@ class NudgeWriter < Writer
   
   def generate_block (remaining_depth)
     points = (0...@block_width).collect do
-      case rand
+      case Random.rand
         when @block then generate_block(remaining_depth - 1) if remaining_depth > 0
         when @do    then "do #{@do_instructions.sample}"
         when @ref   then "ref #{@ref_names.sample}"
@@ -90,7 +90,7 @@ class NudgeWriter < Writer
       end
     end
     
-    points.length > 1 ? ["block {", points.compact, "}"].join(" ") : points
+    points.length > 1 ? ["block {", points.compact, "}"].join(" ") : points[0]
   end
   
   def generate_value (value_type = nil)
