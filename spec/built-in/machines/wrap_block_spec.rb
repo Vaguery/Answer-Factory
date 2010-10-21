@@ -56,7 +56,7 @@ describe "#process_answers" do
   
   
   it "should always modify the blueprints of the answers it makes" do
-    pending "broken in NudgeBlueprint#wrap_block"
+    pending "fails via in NudgeBlueprint#wrap_block"
     @spec_machine.create 100
     @spec_machine.should_receive(:answers).
       at_least(1).times.and_return([@dummy_answer])
