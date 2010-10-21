@@ -177,6 +177,12 @@ describe "NudgeWriter" do
   end
   
   describe "#random" do
+    it "should make a block" do
+      dummy = NudgeWriter.new
+      dummy.block_width 1
+      puts dummy.random
+    end
+    
     it "should use the settings specified elsewhere" do
       pending "what needs to be specced?"
       boring_writer = NudgeWriter.new
