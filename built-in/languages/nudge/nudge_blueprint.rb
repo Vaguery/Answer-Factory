@@ -35,7 +35,7 @@ class NudgeBlueprint < Blueprint
     
     n.times do
       n_of_insertion = Random.rand(tree.points - 1) + 1
-      tree.insert_point_after(n_of_insertion, writer.random)
+      tree.insert_point_after(n_of_insertion, NudgePoint.from(writer.random))
     end
     
     NudgeBlueprint.new(tree.to_script)
